@@ -11,5 +11,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true
+  },
+  // Configuración para manejar rutas
+  base: '/',
+  // Configuración para el servidor de desarrollo
+  preview: {
+    port: 3000
   }
 }) 

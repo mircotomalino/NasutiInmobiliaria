@@ -1,7 +1,7 @@
 [build]
-  base = "nasutiInmobiliaria/catalogo"
-  command = "npm run build:explicit"
-  publish = "nasutiInmobiliaria/catalogo/dist"
+  base = "."
+  command = "npm run build"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"

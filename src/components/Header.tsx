@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({
             
             {/* Botón para ir a inicio */}
             <a 
-              href="/landing-page.html" 
+              href="/" 
               className="home-button"
               title="Ir a página de inicio"
             >
