@@ -1,0 +1,17 @@
+[build]
+  base = "nasutiInmobiliaria/catalogo"
+  command = "npm run build:explicit"
+  publish = "nasutiInmobiliaria/catalogo/dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/catalogo"
+  to = "/catalogo.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

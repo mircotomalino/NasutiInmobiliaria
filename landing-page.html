@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inmobiliaria Durio - 60 Años de Experiencia</title>
+    
+    <!-- TailwindCSS CDN - Única dependencia externa -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración personalizada de colores -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1F2937',    // Gris oscuro elegante
+                        secondary: '#6B7280',  // Gris medio
+                        accent: '#f0782c'      // Azul para acentos
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Estilos personalizados -->
+    <style>
+        .logo-container img {
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .logo-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-container h1 {
+            font-weight: 700;
+            background: linear-gradient(135deg, #1F2937 0%, #f0782c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @media (max-width: 640px) {
+            .logo-container h1 {
+                font-size: 1.25rem;
+            }
+        }
+        
+        /* Mobile menu styles */
+        #mobile-menu {
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            border-top: 0px solid #e5e7eb;
+        }
+        
+        #mobile-menu.show {
+            max-height: 300px;
+            opacity: 1;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        #mobile-menu nav a {
+            position: relative;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        #mobile-menu nav a:hover {
+            transform: translateX(5px);
+        }
+        
+        #mobile-menu nav a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #f0782c;
+            transition: width 0.2s ease-in-out;
+        }
+        
+        #mobile-menu nav a:hover::before {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    
+    <!-- ========================================
+         HEADER - ENCABEZADO DE NAVEGACIÓN
+         ======================================== -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Logo del negocio -->
+                <div class="logo-container">
+                    <img src="img/LogonNasuti.png" alt="Logo Nasuti Inmobiliaria" class="h-10 w-auto" />
+                    <h1 class="text-2xl">Nasuti Inmobiliaria</h1>
+                </div>
+                
+                <!-- Menú de navegación - Desktop -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#inicio" class="text-gray-600 hover:text-accent transition-colors duration-200">Inicio</a>
+                    <a href="#propiedades" class="text-gray-600 hover:text-accent transition-colors duration-200">Propiedades</a>
+                    <a href="#quienes-somos" class="text-gray-600 hover:text-accent transition-colors duration-200">Quiénes Somos</a>
+                    <a href="#contacto" class="text-gray-600 hover:text-accent transition-colors duration-200">Contacto</a>
+                </nav>
+                
+                <!-- Botón menú móvil -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-accent transition-colors duration-200">
+                        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Menú móvil -->
+            <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 shadow-lg">
+                <nav class="px-4 py-6 space-y-4">
+                    <a href="#inicio" class="block text-gray-600 hover:text-accent transition-colors duration-200 py-2">Inicio</a>
+                    <a href="#propiedades" class="block text-gray-600 hover:text-accent transition-colors duration-200 py-2">Propiedades</a>
+                    <a href="#quienes-somos" class="block text-gray-600 hover:text-accent transition-colors duration-200 py-2">Quiénes Somos</a>
+                    <a href="#contacto" class="block text-gray-600 hover:text-accent transition-colors duration-200 py-2">Contacto</a>
+                </nav>
+            </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================
+         HERO SECTION - SECCIÓN PRINCIPAL
+         ======================================== -->
+    <section id="inicio" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Contenido textual -->
+                <div class="space-y-6">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-primary leading-tight">
+                        60 Años de
+                        <span class="text-accent">Confianza</span>
+                    </h2>
+                    <p class="text-xl text-secondary leading-relaxed">
+                        Desde 1966 asesorando y acompañando los negocios inmobiliarios de Marcos Juárez.
+                        Nuestro compromiso es brindar un servicio personalizado y profesional para 
+                        encontrar la propiedad ideal para usted.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="http://localhost:3000/" class="bg-accent hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center">
+                            Ver Propiedades
+                        </a>
+                        <a href="#contacto" class="border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center">
+                            Contactar
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Imagen de portada placeholder -->
+                <div class="relative">
+                    <img src="img/portadaNasuti.png" 
+                         alt="Inmobiliaria Durio" 
+                         class="w-full h-auto rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         SECCIÓN QUIÉNES SOMOS
+         ======================================== -->
+    <section id="quienes-somos" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Título de sección -->
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-primary mb-4">Quiénes Somos</h2>
+                <p class="text-xl text-secondary max-w-2xl mx-auto">
+                    Conozca a los socios y gerentes que lideran nuestra empresa
+                </p>
+            </div>
+            
+            <!-- Grid de socios -->
+            <div class="grid md:grid-cols-2 gap-12">
+                
+                <!-- Gastón -->
+                <div class="text-center">
+                    <div class="mb-6">
+                        <img src="img/GastonPerfil.jpeg" 
+                             alt="Gastón - Socio" 
+                             class="w-48 h-48 rounded-full mx-auto shadow-lg">
+                    </div>
+                    <h3 class="text-2xl font-semibold text-primary mb-2">Gastón</h3>
+                    <p class="text-secondary">Socio y Gerente</p>
+                </div>
+                
+                <!-- Sergio -->
+                <div class="text-center">
+                    <div class="mb-6">
+                        <img src="https://via.placeholder.com/300x300/6B7280/FFFFFF?text=Sergio" 
+                             alt="Sergio - Socio" 
+                             class="w-48 h-48 rounded-full mx-auto shadow-lg">
+                    </div>
+                    <h3 class="text-2xl font-semibold text-primary mb-2">Sergio</h3>
+                    <p class="text-secondary">Socio y Gerente</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         SECCIÓN RESEÑA HISTÓRICA
+         ======================================== -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Título de sección -->
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-primary mb-4">Nuestra Historia</h2>
+            </div>
+            
+            <!-- Contenido histórico -->
+            <div class="bg-gray-50 p-8 lg:p-12 rounded-lg shadow-sm">
+                <div class="text-center mb-8">
+                    <img src="https://via.placeholder.com/400x250/1F2937/FFFFFF?text=Fundador" 
+                         alt="Fundador de la empresa" 
+                         class="w-full max-w-md mx-auto rounded-lg shadow-md">
+                </div>
+                
+                <div class="prose prose-lg mx-auto text-center">
+                    <p class="text-xl text-secondary leading-relaxed mb-6">
+                        Hace más de 60 años, nuestro fundador, a quien todos conocían cariñosamente como "el viejo", 
+                        tuvo la visión de crear una inmobiliaria que se distinguiera por su honestidad, 
+                        profesionalismo y compromiso con los clientes.
+                    </p>
+                    
+                    <p class="text-xl text-secondary leading-relaxed mb-6">
+                        Desde entonces, nuestra empresa ha funcionado ininterrumpidamente, 
+                        adaptándose a los cambios del mercado y manteniendo siempre los valores 
+                        que nos inculcó nuestro fundador: transparencia, dedicación y excelencia en el servicio.
+                    </p>
+                    
+                    <p class="text-xl text-secondary leading-relaxed">
+                        Hoy, bajo la dirección de Gastón y Sergio, continuamos honrando esa herencia 
+                        y trabajando para mantener el legado de confianza que construyó "el viejo" 
+                        durante más de seis décadas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         SECCIÓN DE CONTACTO
+         ======================================== -->
+    <section id="contacto" class="py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Título de sección -->
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-primary mb-4">Contáctenos</h2>
+                <p class="text-xl text-secondary">
+                    Estamos aquí para ayudarle a encontrar la propiedad de sus sueños
+                </p>
+            </div>
+            
+            <!-- Formulario de contacto -->
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <form class="space-y-6">
+                    
+                    <!-- Campo Nombre -->
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-primary mb-2">
+                            Nombre completo
+                        </label>
+                        <input type="text" 
+                               id="nombre" 
+                               name="nombre" 
+                               required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200"
+                               placeholder="Ingrese su nombre completo">
+                    </div>
+                    
+                    <!-- Campo Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-primary mb-2">
+                            Correo electrónico
+                        </label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200"
+                               placeholder="ejemplo@correo.com">
+                    </div>
+                    
+                    <!-- Campo Mensaje -->
+                    <div>
+                        <label for="mensaje" class="block text-sm font-medium text-primary mb-2">
+                            Mensaje
+                        </label>
+                        <textarea id="mensaje" 
+                                  name="mensaje" 
+                                  rows="5" 
+                                  required
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200 resize-none"
+                                  placeholder="Cuéntenos en qué podemos ayudarle..."></textarea>
+                    </div>
+                    
+                    <!-- Botón de envío -->
+                    <div class="text-center">
+                        <button type="submit" 
+                                class="bg-accent hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
+                            Enviar Mensaje
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         FOOTER - PIE DE PÁGINA
+         ======================================== -->
+    <footer class="bg-primary text-white py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-gray-300">
+                    © 2024 Inmobiliaria Durio. Todos los derechos reservados.
+                </p>
+                <p class="text-gray-400 text-sm mt-2">
+                    60 años de experiencia en el mercado inmobiliario
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript para el menú móvil -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+            
+            // Función para alternar el menú móvil
+            function toggleMobileMenu() {
+                const isOpen = mobileMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    // Cerrar menú
+                    mobileMenu.classList.remove('show');
+                    setTimeout(() => {
+                        menuIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                    }, 150);
+                } else {
+                    // Abrir menú
+                    mobileMenu.classList.add('show');
+                    menuIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                }
+            }
+            
+            // Event listener para el botón del menú
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            
+            // Cerrar menú al hacer clic en un enlace
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Cerrar menú después de un pequeño delay para que se vea la transición
+                    setTimeout(() => {
+                        mobileMenu.classList.remove('show');
+                        setTimeout(() => {
+                            menuIcon.classList.remove('hidden');
+                            closeIcon.classList.add('hidden');
+                        }, 150);
+                    }, 100);
+                });
+            });
+            
+            // Cerrar menú al redimensionar la ventana (si se cambia a desktop)
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) { // md breakpoint
+                    mobileMenu.classList.remove('show');
+                    setTimeout(() => {
+                        menuIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                    }, 150);
+                }
+            });
+            
+            // Smooth scrolling para los enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html> 
