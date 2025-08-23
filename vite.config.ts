@@ -6,11 +6,18 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    open: true
+    open: true,
+    // Configuración para manejar rutas de SPA en desarrollo
+    historyApiFallback: true
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: false, // Reducir tamaño para producción
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   },
   // Configuración para manejar rutas
   base: '/',
