@@ -9,7 +9,7 @@
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configuración personalizada de colores -->
+    <!-- Configuración personalizada de colores y gradientes -->
     <script>
         tailwind.config = {
             theme: {
@@ -18,6 +18,10 @@
                         primary: '#1F2937',
                         secondary: '#6B7280',
                         accent: '#f0782c'
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, #1F2937 0%, #f0782c 100%)',
+                        'gradient-accent': 'linear-gradient(135deg, #f0782c 0%, #e65a1a 100%)'
                     }
                 }
             }

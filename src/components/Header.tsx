@@ -26,7 +26,9 @@ const Header: React.FC<HeaderProps> = ({
             </div>
             
             <div className="header-title">
-              <h1>Catálogo de Propiedades</h1>
+              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Catálogo de Propiedades
+              </h1>
             </div>
           </div>
           
