@@ -12,7 +12,7 @@ const LandingPage: React.FC = () => {
               {/* Logo y nombre */}
               <div className="logo-container">
                 <img src="/img/LogonNasuti.png" alt="Nasuti Inmobiliaria Logo" className="h-12 w-auto" />
-                <h1 className="text-xl sm:text-2xl">Nasuti Inmobiliaria</h1>
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">Nasuti Inmobiliaria</h1>
               </div>
               
               {/* Navegación desktop */}
