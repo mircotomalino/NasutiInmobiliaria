@@ -90,29 +90,62 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* Sección Historia */}
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-[#1F2937] mb-4">Nuestra Historia</h2>
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">Nuestra Historia</h2>
+              <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full"></div>
             </div>
             
-            <div className="bg-gray-50 p-8 lg:p-12 rounded-lg shadow-sm">
-              <div className="prose prose-lg mx-auto text-center">
-                <p className="text-xl text-[#6B7280] leading-relaxed mb-6">
-                  Hace más de 60 años, nuestro fundador, a quien todos conocían cariñosamente como "el viejo", 
-                  tuvo la visión de crear una inmobiliaria que se distinguiera por su honestidad, 
-                  profesionalismo y compromiso con los clientes.
+            {/* Timeline visual */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-[#f0782c] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <span className="text-white text-2xl font-bold">1964</span>
+                </div>
+                <h3 className="text-[#1F2937] text-lg font-semibold mb-2">Fundación</h3>
+                <p className="text-[#6B7280] text-sm">Nacimiento de la empresa</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 bg-[#f0782c] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <span className="text-white text-2xl font-bold">60+</span>
+                </div>
+                <h3 className="text-[#1F2937] text-lg font-semibold mb-2">Años de Experiencia</h3>
+                <p className="text-[#6B7280] text-sm">Funcionamiento ininterrumpido</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 bg-[#f0782c] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <span className="text-white text-2xl font-bold">2024</span>
+                </div>
+                <h3 className="text-[#1F2937] text-lg font-semibold mb-2">Presente</h3>
+                <p className="text-[#6B7280] text-sm">Liderazgo moderno</p>
+              </div>
+            </div>
+            
+            {/* Contenido principal */}
+            <div className="bg-white p-8 lg:p-12 rounded-xl shadow-lg border border-gray-100">
+              <div className="text-center mb-8">
+                <h3 className="text-[#1F2937] text-2xl font-bold mb-4">El Legado de "El Viejo"</h3>
+              </div>
+              
+              <div className="space-y-6">
+                <p className="text-lg text-[#6B7280] leading-relaxed">
+                  Hace más de <span className="text-[#f0782c] font-semibold">60 años</span>, nuestro fundador, a quien todos conocían cariñosamente como <span className="text-[#f0782c] font-semibold">"el viejo"</span>, 
+                  tuvo la visión de crear una inmobiliaria que se distinguiera por su <span className="text-[#1F2937] font-semibold">honestidad</span>, 
+                  <span className="text-[#1F2937] font-semibold"> profesionalismo</span> y <span className="text-[#1F2937] font-semibold">compromiso</span> con los clientes.
                 </p>
                 
-                <p className="text-xl text-[#6B7280] leading-relaxed mb-6">
-                  Desde entonces, nuestra empresa ha funcionado ininterrumpidamente, 
+                <p className="text-lg text-[#6B7280] leading-relaxed">
+                  Desde entonces, nuestra empresa ha funcionado <span className="text-[#f0782c] font-semibold">ininterrumpidamente</span>, 
                   adaptándose a los cambios del mercado y manteniendo siempre los valores 
-                  que nos inculcó nuestro fundador: transparencia, dedicación y excelencia en el servicio.
+                  que nos inculcó nuestro fundador: <span className="text-[#1F2937] font-semibold">transparencia</span>, <span className="text-[#1F2937] font-semibold">dedicación</span> y <span className="text-[#1F2937] font-semibold">excelencia</span> en el servicio.
                 </p>
                 
-                <p className="text-xl text-[#6B7280] leading-relaxed">
-                  Hoy, bajo la dirección de Gastón y Sergio, continuamos honrando esa herencia 
-                  y trabajando para mantener el legado de confianza que construyó "el viejo" 
+                <p className="text-lg text-[#6B7280] leading-relaxed">
+                  Hoy, bajo la dirección de <span className="text-[#f0782c] font-semibold">Gastón y Sergio</span>, continuamos honrando esa herencia 
+                  y trabajando para mantener el <span className="text-[#1F2937] font-semibold">legado de confianza</span> que construyó "el viejo" 
                   hace más de seis décadas.
                 </p>
               </div>
