@@ -1,6 +1,81 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { sampleProperties } from '../data/properties';
+import { 
+  MapPin, 
+  Bed, 
+  Bath, 
+  Square, 
+  Calendar,
+  Eye,
+  Home,
+  Building,
+  Store,
+  Briefcase,
+  TreePine,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
+import { Property, PropertyType } from '../types';
 
 const LandingPage: React.FC = () => {
+  // Estado para el carrusel
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Obtener propiedades destacadas (las primeras 3 disponibles)
+  const featuredProperties = sampleProperties.filter(p => p.status === 'disponible').slice(0, 3);
+  
+  // Función para obtener el ícono según el tipo de propiedad
+  const getPropertyTypeIcon = (type: PropertyType) => {
+    switch (type) {
+      case 'casa':
+        return <Home className="w-4 h-4" />;
+      case 'departamento':
+        return <Building className="w-4 h-4" />;
+      case 'oficina':
+        return <Briefcase className="w-4 h-4" />;
+      case 'local':
+        return <Store className="w-4 h-4" />;
+      case 'quinta':
+        return <TreePine className="w-4 h-4" />;
+      case 'terreno':
+        return <Square className="w-4 h-4" />;
+      default:
+        return <Home className="w-4 h-4" />;
+    }
+  };
+
+  // Función para formatear el precio
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
+  // Función para formatear la fecha
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-AR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  // Funciones para el carrusel
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % featuredProperties.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + featuredProperties.length) % featuredProperties.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <div>
       {/* Esta será la landing page que actualmente está en index.html */}
@@ -53,6 +128,161 @@ const LandingPage: React.FC = () => {
               <div className="relative">
                 <img src="/img/portadaNasuti.png" alt="Inmobiliaria Durio" className="w-full h-auto rounded-lg shadow-lg" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección Propiedades Destacadas */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">Propiedades Destacadas</h2>
+              <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4"></div>
+              <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
+                Descubre nuestras mejores propiedades disponibles
+              </p>
+            </div>
+            
+            {/* Carrusel de propiedades */}
+            <div className="relative">
+              {/* Contenedor del carrusel */}
+              <div className="overflow-hidden rounded-xl shadow-lg">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {featuredProperties.map((property, index) => (
+                    <div key={property.id} className="w-full flex-shrink-0">
+                      <div className="bg-white p-6 lg:p-8">
+                        <div className="grid lg:grid-cols-2 gap-8 items-center">
+                          {/* Imagen de la propiedad */}
+                          <div className="relative">
+                            <img
+                              src={property.imageUrl}
+                              alt={property.title}
+                              className="w-full h-64 lg:h-80 object-cover rounded-lg shadow-md"
+                            />
+                            {/* Badges */}
+                            <div className="absolute top-4 left-4 flex flex-col gap-2">
+                              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium text-[#1F2937]">
+                                {getPropertyTypeIcon(property.type)}
+                                <span className="capitalize">{property.type}</span>
+                              </div>
+                              <div className="bg-green-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white">
+                                Disponible
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Información de la propiedad */}
+                          <div className="space-y-6">
+                            <div>
+                              <h3 className="text-2xl lg:text-3xl font-bold text-[#1F2937] mb-2">
+                                {property.title}
+                              </h3>
+                              <div className="text-2xl lg:text-3xl font-bold text-[#f0782c] mb-4">
+                                {formatPrice(property.price)}
+                              </div>
+                            </div>
+                            
+                            <p className="text-[#6B7280] text-lg leading-relaxed">
+                              {property.description}
+                            </p>
+                            
+                            {/* Ubicación */}
+                            <div className="flex items-center gap-2 text-[#6B7280]">
+                              <MapPin className="w-5 h-5" />
+                              <span className="text-lg">{property.address}, {property.city}</span>
+                            </div>
+                            
+                            {/* Características */}
+                            <div className="flex flex-wrap gap-4">
+                              {property.bedrooms > 0 && (
+                                <div className="flex items-center gap-2 text-[#6B7280]">
+                                  <Bed className="w-5 h-5" />
+                                  <span>{property.bedrooms} hab.</span>
+                                </div>
+                              )}
+                              {property.bathrooms > 0 && (
+                                <div className="flex items-center gap-2 text-[#6B7280]">
+                                  <Bath className="w-5 h-5" />
+                                  <span>{property.bathrooms} baños</span>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-2 text-[#6B7280]">
+                                <Square className="w-5 h-5" />
+                                <span>{property.area}m²</span>
+                              </div>
+                            </div>
+                            
+                            {/* Fecha de publicación */}
+                            <div className="flex items-center gap-2 text-[#6B7280] text-sm">
+                              <Calendar className="w-4 h-4" />
+                              <span>Publicado: {formatDate(property.publishedDate)}</span>
+                            </div>
+                            
+                            {/* Botón de acción */}
+                            <div className="pt-4">
+                              <a 
+                                href="#contacto" 
+                                className="inline-block bg-[#f0782c] hover:bg-black text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center w-full sm:w-auto"
+                              >
+                                Consultar
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Controles del carrusel */}
+              {featuredProperties.length > 1 && (
+                <>
+                  {/* Botones de navegación */}
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-[#1F2937]" />
+                  </button>
+                  
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                  >
+                    <ChevronRight className="w-6 h-6 text-[#1F2937]" />
+                  </button>
+                  
+                  {/* Indicadores */}
+                  <div className="flex justify-center mt-8 gap-2">
+                    {featuredProperties.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                          index === currentSlide 
+                            ? 'bg-[#f0782c] scale-125' 
+                            : 'bg-gray-300 hover:bg-gray-400'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            
+            {/* Botón para ver todas las propiedades */}
+            <div className="text-center mt-12">
+              <a 
+                href="/catalogo" 
+                className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-black text-white font-semibold py-4 px-8 rounded-lg transition-colors duration-200"
+              >
+                Ver todas las propiedades
+                <ChevronRight className="w-5 h-5" />
+              </a>
             </div>
           </div>
         </section>
