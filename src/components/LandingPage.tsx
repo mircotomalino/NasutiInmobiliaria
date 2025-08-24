@@ -18,7 +18,7 @@ const LandingPage: React.FC = () => {
               {/* Navegación desktop */}
               <nav className="hidden md:flex space-x-8">
                 <a href="#inicio" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Inicio</a>
-                <a href="#propiedades" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Propiedades</a>
+                <a href="/catalogo" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Propiedades</a>
                 <a href="#quienes-somos" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Quiénes Somos</a>
                 <a href="#contacto" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Contacto</a>
               </nav>
