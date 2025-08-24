@@ -14,7 +14,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 2,
     area: 180,
     publishedDate: '2024-01-15',
-    imageUrl: 'https://via.placeholder.com/400x300/f0782c/FFFFFF?text=Casa+Moderna'
+    imageUrl: '/img/Casa1.webp'
   },
   {
     id: '2',
@@ -29,7 +29,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 1,
     area: 85,
     publishedDate: '2024-01-10',
-    imageUrl: 'https://via.placeholder.com/400x300/10B981/FFFFFF?text=Depto+Lujo'
+    imageUrl: '/img/casa2.webp'
   },
   {
     id: '3',
@@ -44,7 +44,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 0,
     area: 500,
     publishedDate: '2024-01-08',
-    imageUrl: 'https://via.placeholder.com/400x300/F59E0B/FFFFFF?text=Terreno+Comercial'
+    imageUrl: '/img/casa3.webp'
   },
   {
     id: '4',
@@ -59,7 +59,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 1,
     area: 120,
     publishedDate: '2024-01-05',
-    imageUrl: 'https://via.placeholder.com/400x300/8B5CF6/FFFFFF?text=Oficina+Ejecutiva'
+    imageUrl: '/img/casa4.jpg'
   },
   {
     id: '5',
@@ -74,7 +74,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 1,
     area: 80,
     publishedDate: '2024-01-12',
-    imageUrl: 'https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Local+Comercial'
+    imageUrl: '/img/casa5.jpg'
   },
   {
     id: '6',
@@ -89,7 +89,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 3,
     area: 250,
     publishedDate: '2024-01-03',
-    imageUrl: 'https://via.placeholder.com/400x300/06B6D4/FFFFFF?text=Quinta+Fin+Semana'
+    imageUrl: '/img/casa6.jpg'
   },
   {
     id: '7',
@@ -104,7 +104,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 2,
     area: 200,
     publishedDate: '2023-12-20',
-    imageUrl: 'https://via.placeholder.com/400x300/84CC16/FFFFFF?text=Casa+Familiar'
+    imageUrl: '/img/casa7.jpg'
   },
   {
     id: '8',
@@ -119,7 +119,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 1,
     area: 45,
     publishedDate: '2024-01-18',
-    imageUrl: 'https://via.placeholder.com/400x300/F97316/FFFFFF?text=Studio+Palermo'
+    imageUrl: '/img/Casa1.webp'
   },
   {
     id: '9',
@@ -134,7 +134,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 1,
     area: 60,
     publishedDate: '2024-01-14',
-    imageUrl: 'https://via.placeholder.com/400x300/6366F1/FFFFFF?text=Oficina+Histórica'
+    imageUrl: '/img/casa2.webp'
   },
   {
     id: '10',
@@ -149,7 +149,7 @@ export const sampleProperties: Property[] = [
     bathrooms: 0,
     area: 800,
     publishedDate: '2024-01-16',
-    imageUrl: 'https://via.placeholder.com/400x300/EC4899/FFFFFF?text=Terreno+Panorámico'
+    imageUrl: '/img/casa3.webp'
   }
 ];
 
