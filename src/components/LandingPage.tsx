@@ -6,7 +6,6 @@ import {
   Bath, 
   Square, 
   Calendar,
-  Eye,
   Home,
   Building,
   Store,
@@ -15,7 +14,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { Property, PropertyType } from '../types';
+import { PropertyType } from '../types';
 
 const LandingPage: React.FC = () => {
   // Estado para el carrusel
@@ -151,7 +150,7 @@ const LandingPage: React.FC = () => {
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
-                  {featuredProperties.map((property, index) => (
+                  {featuredProperties.map((property) => (
                     <div key={property.id} className="w-full flex-shrink-0">
                       <div className="bg-white p-6 lg:p-8">
                         <div className="grid lg:grid-cols-2 gap-8 items-center">
@@ -258,12 +257,12 @@ const LandingPage: React.FC = () => {
                   
                   {/* Indicadores */}
                   <div className="flex justify-center mt-8 gap-2">
-                    {featuredProperties.map((_, index) => (
+                    {featuredProperties.map((_, slideIndex) => (
                       <button
-                        key={index}
-                        onClick={() => goToSlide(index)}
+                        key={slideIndex}
+                        onClick={() => goToSlide(slideIndex)}
                         className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                          index === currentSlide 
+                          slideIndex === currentSlide 
                             ? 'bg-[#f0782c] scale-125' 
                             : 'bg-gray-300 hover:bg-gray-400'
                         }`}
