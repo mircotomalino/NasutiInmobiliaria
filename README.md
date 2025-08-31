@@ -1,85 +1,177 @@
-# Nasuti Inmobiliaria - Catálogo de Propiedades
+# Nasuti Inmobiliaria - Panel de Gestión
 
-Este es el proyecto principal del catálogo de propiedades de Nasuti Inmobiliaria, desarrollado con React, TypeScript y Vite.
+Sistema completo de gestión inmobiliaria con panel administrativo y catálogo público.
 
-## Estructura del Proyecto
+## 🚀 Características
+
+- **Panel de Gestión**: Administración completa de propiedades
+- **Catálogo Público**: Visualización de propiedades para clientes
+- **Base de Datos PostgreSQL**: Almacenamiento persistente de datos
+- **Subida de Imágenes**: Gestión de múltiples imágenes por propiedad
+- **Filtros Avanzados**: Búsqueda y filtrado de propiedades
+- **Diseño Responsive**: Compatible con todos los dispositivos
+
+## 📋 Requisitos Previos
+
+- Node.js 20.19+ o 22.12+
+- PostgreSQL
+- npm o yarn
+
+## 🛠️ Instalación
+
+### 1. Clonar el repositorio
+```bash
+git clone <repository-url>
+cd ProjectDurio
+```
+
+### 2. Instalar dependencias
+```bash
+npm install
+```
+
+### 3. Configurar Base de Datos PostgreSQL
+
+Crear una base de datos PostgreSQL:
+```sql
+CREATE DATABASE nasuti_inmobiliaria;
+```
+
+### 4. Configurar Variables de Entorno
+
+Crear un archivo `.env` en la raíz del proyecto:
+```env
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=nasuti_inmobiliaria
+DB_PASSWORD=tu_password
+DB_PORT=5432
+```
+
+### 5. Ejecutar el Proyecto
+
+#### Opción A: Ejecutar todo junto (recomendado)
+```bash
+npm run dev:full
+```
+
+#### Opción B: Ejecutar por separado
+```bash
+# Terminal 1 - Servidor backend
+npm run server
+
+# Terminal 2 - Cliente frontend
+npm run dev
+```
+
+## 🌐 URLs de Acceso
+
+- **Página Principal**: http://localhost:3000/
+- **Catálogo de Propiedades**: http://localhost:3000/catalogo
+- **Panel de Gestión**: http://localhost:3000/managerLogin
+- **API Backend**: http://localhost:3001/api
+
+## 📊 Estructura de la Base de Datos
+
+### Tabla: properties
+- `id` (SERIAL PRIMARY KEY)
+- `title` (VARCHAR(255) NOT NULL)
+- `description` (TEXT NOT NULL)
+- `price` (DECIMAL(12,2) NOT NULL)
+- `address` (VARCHAR(255) NOT NULL)
+- `city` (VARCHAR(100) NOT NULL)
+- `province` (VARCHAR(100) NOT NULL)
+- `type` (VARCHAR(50) NOT NULL)
+- `bedrooms` (INTEGER)
+- `bathrooms` (INTEGER)
+- `area` (INTEGER)
+- `status` (VARCHAR(20) DEFAULT 'disponible')
+- `published_date` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+- `created_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+- `updated_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+
+### Tabla: property_images
+- `id` (SERIAL PRIMARY KEY)
+- `property_id` (INTEGER REFERENCES properties(id) ON DELETE CASCADE)
+- `image_url` (TEXT NOT NULL)
+- `created_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+
+## 🎯 Funcionalidades del Panel de Gestión
+
+### Gestión de Propiedades
+- ✅ Agregar nuevas propiedades
+- ✅ Editar propiedades existentes
+- ✅ Eliminar propiedades
+- ✅ Subir múltiples imágenes
+- ✅ Gestión de estados (disponible, vendida, alquilada, reservada)
+
+### Tipos de Propiedades Soportados
+- 🏠 Casa
+- 🏢 Departamento
+- 🏢 Oficina
+- 🏪 Local
+- 🌳 Quinta
+- 📐 Terreno
+
+### Características Técnicas
+- 📱 Diseño responsive
+- 🔍 Filtros avanzados
+- 📸 Subida de imágenes múltiples
+- 💾 Base de datos PostgreSQL
+- 🔄 API REST completa
+
+## 🚀 Despliegue
+
+### Build para Producción
+```bash
+npm run build
+```
+
+### Configuración de Netlify
+El proyecto está configurado para desplegarse en Netlify con:
+- Node.js 20.19.0
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Redirects configurados para SPA
+
+## 📁 Estructura del Proyecto
 
 ```
 ProjectDurio/
-├── src/                    # Código fuente de la aplicación React
-│   ├── components/         # Componentes React
-│   ├── data/              # Datos de propiedades
-│   ├── types/             # Definiciones de tipos TypeScript
-│   ├── App.tsx            # Componente principal
-│   ├── main.tsx           # Punto de entrada
-│   └── index.css          # Estilos globales
-├── img/                   # Imágenes del proyecto
-├── dist/                  # Archivos de distribución (generados)
-├── index.html             # Página principal (Landing Page)
-├── catalogo.html          # Página del catálogo React
-├── package.json           # Dependencias y scripts
-├── vite.config.ts         # Configuración de Vite
-├── tsconfig.json          # Configuración de TypeScript
-├── netlify.toml           # Configuración de Netlify
-├── _redirects             # Redirecciones para Netlify
-└── README.md              # Este archivo
+├── src/
+│   ├── components/
+│   │   ├── ManagerPanel.tsx      # Panel de gestión
+│   │   ├── LandingPage.tsx       # Página principal
+│   │   ├── App.tsx              # Catálogo de propiedades
+│   │   └── ...
+│   ├── types/
+│   └── main.tsx
+├── server/
+│   ├── index.js                 # Servidor Express
+│   └── db.js                    # Configuración de base de datos
+├── public/
+│   └── uploads/                 # Imágenes subidas
+└── package.json
 ```
 
-## URLs del Proyecto
+## 🔧 Scripts Disponibles
 
-- **🏠 Página Principal:** `/` - Landing page con información de la empresa
-- **📋 Catálogo:** `/catalogo` - Aplicación React con filtros y búsqueda de propiedades
+- `npm run dev` - Ejecutar solo el frontend
+- `npm run server` - Ejecutar solo el backend
+- `npm run dev:full` - Ejecutar frontend y backend juntos
+- `npm run build` - Build para producción
+- `npm run preview` - Preview del build
 
-## Instalación y Ejecución
+## 🛡️ Seguridad
 
-1. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
+- El panel de gestión es accesible solo por URL directa (`/managerLogin`)
+- No hay autenticación implementada (requerimiento del proyecto)
+- Las imágenes se almacenan localmente en `public/uploads/`
 
-2. **Ejecutar en modo desarrollo:**
-   ```bash
-   npm run dev
-   ```
+## 📞 Soporte
 
-3. **Construir para producción:**
-   ```bash
-   npm run build
-   ```
+Para soporte técnico o consultas sobre el proyecto, contactar al equipo de desarrollo.
 
-4. **Vista previa de producción:**
-   ```bash
-   npm run preview
-   ```
+---
 
-## Tecnologías Utilizadas
-
-- **React 18** - Biblioteca de interfaz de usuario
-- **TypeScript** - Tipado estático
-- **Vite** - Herramienta de construcción
-- **CSS Modules** - Estilos modulares
-- **TailwindCSS** - Framework CSS (en landing page)
-
-## Características
-
-- **Landing Page** - Página de inicio con información de la empresa
-- **Catálogo de propiedades** - Aplicación React interactiva
-- **Filtros de búsqueda** - Búsqueda avanzada de propiedades
-- **Vista detallada** - Información completa de cada propiedad
-- **Diseño responsivo** - Optimizado para todos los dispositivos
-- **Interfaz moderna** - Diseño elegante y profesional
-
-## Desarrollo
-
-El proyecto está configurado con:
-- Hot Module Replacement (HMR)
-- TypeScript para mejor desarrollo
-- ESLint para linting
-- Prettier para formateo de código
-
-## Despliegue
-
-El proyecto está configurado para desplegarse en Netlify con:
-- Configuración automática de rutas
-- Redirecciones para SPA
-- Build optimizado para producción
+**Desarrollado para Nasuti Inmobiliaria** 🏠

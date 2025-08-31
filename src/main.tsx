@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.tsx'
 import LandingPage from './components/LandingPage.tsx'
+import ManagerPanel from './components/ManagerPanel.tsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -11,6 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/catalogo" element={<App />} />
+        <Route path="/managerLogin" element={<ManagerPanel />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

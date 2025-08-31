@@ -1,15 +1,36 @@
-import { useState, useEffect } from 'react';
+`\import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
 import PropertyModal from './components/PropertyModal';
 import { Property, FilterOptions } from './types';
-import { sampleProperties } from './data/properties';
 
 function App() {
   // Estados principales
-  const [properties] = useState<Property[]>(sampleProperties);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(sampleProperties);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const API_BASE = 'http://localhost:3001/api';
+
+  // Cargar propiedades desde la API
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/properties`);
+        const data = await response.json();
+        setProperties(data);
+        setFilteredProperties(data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({
     searchTerm: '',
@@ -97,6 +118,14 @@ function App() {
     setIsModalOpen(false);
     setSelectedProperty(null);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-xl">Cargando catálogo...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
