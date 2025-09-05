@@ -1,7 +1,7 @@
 import React from 'react';
 import { Filter, X } from 'lucide-react';
 import { FilterOptions } from '../types';
-import { cities, propertyTypes, propertyStatuses } from '../data/properties';
+import { propertyTypes, propertyStatuses, provinces, cities } from '../data/properties';
 
 interface PropertyFiltersProps {
   filters: FilterOptions;
@@ -49,6 +49,23 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
 
       <div className="filters-grid">
         
+        {/* Filtro por Provincia */}
+        <div className="filter-group">
+          <label>Provincia</label>
+          <select
+            value={filters.province || ''}
+            onChange={(e) => handleFilterChange('province', e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Todas las provincias</option>
+            {provinces.map((province) => (
+              <option key={province} value={province}>
+                {province}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Filtro por Ciudad */}
         <div className="filter-group">
           <label>Ciudad</label>

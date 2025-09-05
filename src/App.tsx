@@ -1,4 +1,4 @@
-`\import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
@@ -10,6 +10,18 @@ function App() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<FilterOptions>({
+    searchTerm: '',
+    province: '',
+    city: '',
+    type: '',
+    minPrice: 0,
+    maxPrice: 0,
+    status: ''
+  });
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const API_BASE = 'http://localhost:3001/api';
 
@@ -31,17 +43,7 @@ function App() {
     fetchProperties();
   }, []);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<FilterOptions>({
-    searchTerm: '',
-    city: '',
-    type: '',
-    minPrice: 0,
-    maxPrice: 0,
-    status: ''
-  });
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   // Efecto para aplicar filtros
   useEffect(() => {
@@ -54,8 +56,14 @@ function App() {
         property.title.toLowerCase().includes(term) ||
         property.description.toLowerCase().includes(term) ||
         property.address.toLowerCase().includes(term) ||
-        property.city.toLowerCase().includes(term)
+        property.city.toLowerCase().includes(term) ||
+        property.province.toLowerCase().includes(term)
       );
+    }
+
+    // Filtro por provincia
+    if (filters.province) {
+      filtered = filtered.filter(property => property.province === filters.province);
     }
 
     // Filtro por ciudad
@@ -98,6 +106,7 @@ function App() {
   const handleClearFilters = () => {
     setFilters({
       searchTerm: '',
+      province: '',
       city: '',
       type: '',
       minPrice: 0,

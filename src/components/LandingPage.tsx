@@ -157,7 +157,7 @@ const LandingPage: React.FC = () => {
                           {/* Imagen de la propiedad */}
                           <div className="relative">
                             <img
-                              src={property.imageUrl}
+                              src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
                               alt={property.title}
                               className="w-full h-64 lg:h-80 object-cover rounded-lg shadow-md"
                             />

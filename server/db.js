@@ -1,4 +1,5 @@
-const { Pool } = require('pg');
+import pg from 'pg';
+const { Pool } = pg;
 
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
@@ -48,4 +49,4 @@ const initDatabase = async () => {
   }
 };
 
-module.exports = { pool, initDatabase };
+export { pool, initDatabase };

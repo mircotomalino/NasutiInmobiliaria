@@ -75,7 +75,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
           
           {/* Imagen principal */}
           <img
-            src={property.imageUrl}
+            src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
             alt={property.title}
             className="modal-image"
           />

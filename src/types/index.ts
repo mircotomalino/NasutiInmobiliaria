@@ -4,6 +4,7 @@ export interface Property {
   description: string;
   address: string;
   city: string;
+  province: string;
   price: number;
   type: PropertyType;
   status: PropertyStatus;
@@ -11,7 +12,8 @@ export interface Property {
   bathrooms: number;
   area: number; // en m²
   publishedDate: string;
-  imageUrl: string;
+  imageUrl?: string; // Para compatibilidad con datos estáticos
+  images?: string[]; // Para imágenes subidas desde el panel de gestión
 }
 
 export type PropertyType = 'casa' | 'departamento' | 'terreno' | 'oficina' | 'local' | 'quinta';
@@ -20,6 +22,7 @@ export type PropertyStatus = 'disponible' | 'reservada' | 'vendida';
 
 export interface FilterOptions {
   searchTerm: string;
+  province: string;
   city: string;
   type: PropertyType | '';
   minPrice: number;

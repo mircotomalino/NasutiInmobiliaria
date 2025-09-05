@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
-  X, 
-  Upload,
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
   Home,
   Building,
   Store,
@@ -13,6 +12,7 @@ import {
   TreePine,
   Square
 } from 'lucide-react';
+import { provinces, propertyStatuses, cities } from '../data/properties';
 
 interface Property {
   id?: number;
@@ -46,12 +46,7 @@ const ManagerPanel: React.FC = () => {
     { value: 'terreno', label: 'Terreno', icon: <Square className="w-4 h-4" /> }
   ];
 
-  const statusOptions = [
-    { value: 'disponible', label: 'Disponible' },
-    { value: 'vendida', label: 'Vendida' },
-    { value: 'alquilada', label: 'Alquilada' },
-    { value: 'reservada', label: 'Reservada' }
-  ];
+
 
   const API_BASE = 'http://localhost:3001/api';
 
@@ -283,9 +278,9 @@ const ManagerPanel: React.FC = () => {
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, status: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {statusOptions.map(status => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
+                    {propertyStatuses.map(status => (
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
                       </option>
                     ))}
                   </select>
@@ -310,13 +305,19 @@ const ManagerPanel: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Ciudad *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={editingProperty?.city || ''}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, city: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar ciudad</option>
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Provincia */}
@@ -324,13 +325,19 @@ const ManagerPanel: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Provincia *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={editingProperty?.province || ''}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, province: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar provincia</option>
+                    {provinces.map((province) => (
+                      <option key={province} value={province}>
+                        {province}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Habitaciones */}

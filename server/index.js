@@ -1,14 +1,22 @@
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const { pool, initDatabase } = require('./db');
+import express from 'express';
+import cors from 'cors';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { pool, initDatabase } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3006'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -43,11 +51,16 @@ initDatabase();
 app.get('/api/properties', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.*, 
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+             p.type, p.bedrooms, p.bathrooms, p.area, p.status,
+             p.published_date as "publishedDate",
+             p.created_at, p.updated_at,
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
-      GROUP BY p.id
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.status,
+               p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
     `);
     res.json(result.rows);
@@ -61,7 +74,13 @@ app.get('/api/properties', async (req, res) => {
 app.get('/api/properties/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const propertyResult = await pool.query('SELECT * FROM properties WHERE id = $1', [id]);
+    const propertyResult = await pool.query(`
+      SELECT id, title, description, price, address, city, province, 
+             type, bedrooms, bathrooms, area, status,
+             published_date as "publishedDate",
+             created_at, updated_at
+      FROM properties WHERE id = $1
+    `, [id]);
     const imagesResult = await pool.query('SELECT * FROM property_images WHERE property_id = $1', [id]);
     
     if (propertyResult.rows.length === 0) {
@@ -99,7 +118,10 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
     const propertyResult = await pool.query(`
       INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, status)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      RETURNING *
+      RETURNING id, title, description, price, address, city, province, 
+                type, bedrooms, bathrooms, area, status,
+                published_date as "publishedDate",
+                created_at, updated_at
     `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, status]);
 
     const property = propertyResult.rows[0];
@@ -145,7 +167,10 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
           province = $6, type = $7, bedrooms = $8, bathrooms = $9, area = $10, 
           status = $11, updated_at = CURRENT_TIMESTAMP
       WHERE id = $12
-      RETURNING *
+      RETURNING id, title, description, price, address, city, province, 
+                type, bedrooms, bathrooms, area, status,
+                published_date as "publishedDate",
+                created_at, updated_at
     `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, status, id]);
 
     if (propertyResult.rows.length === 0) {
@@ -203,7 +228,7 @@ app.delete('/api/properties/:id/images/:imageId', async (req, res) => {
 });
 
 // Crear directorio de uploads si no existe
-const fs = require('fs');
+import fs from 'fs';
 const uploadsDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
