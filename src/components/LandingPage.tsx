@@ -31,16 +31,21 @@ const LandingPage: React.FC = () => {
         const response = await fetch(`${API_BASE}/properties`);
         const data = await response.json();
         
-        // Filtrar propiedades disponibles y reservadas (ambas son relevantes para el carrusel)
-        const availableProperties = data.filter((p: Property) => p.status === 'disponible' || p.status === 'reservada');
-        
         // Eliminar duplicados basándose en el ID
-        const uniqueProperties = availableProperties.filter((property: Property, index: number, self: Property[]) => 
+        const uniqueProperties = data.filter((property: Property, index: number, self: Property[]) => 
           index === self.findIndex((p: Property) => p.id === property.id)
         );
         
-        // Tomar hasta 3 propiedades únicas
-        const featuredProperties = uniqueProperties.slice(0, 3);
+        // Priorizar propiedades por estado: disponible > reservada > vendida > otros
+        const prioritizedProperties = uniqueProperties.sort((a: Property, b: Property) => {
+          const statusPriority = { 'disponible': 1, 'reservada': 2, 'vendida': 3 };
+          const aPriority = statusPriority[a.status as keyof typeof statusPriority] || 4;
+          const bPriority = statusPriority[b.status as keyof typeof statusPriority] || 4;
+          return aPriority - bPriority;
+        });
+        
+        // Tomar hasta 3 propiedades priorizadas
+        const featuredProperties = prioritizedProperties.slice(0, 3);
         
         setFeaturedProperties(featuredProperties);
       } catch (error) {
@@ -215,10 +220,13 @@ const LandingPage: React.FC = () => {
                                 ? 'bg-green-500/90' 
                                 : property.status === 'reservada'
                                 ? 'bg-yellow-500/90'
+                                : property.status === 'vendida'
+                                ? 'bg-red-500/90'
                                 : 'bg-gray-500/90'
                             }`}>
                               {property.status === 'disponible' ? 'Disponible' : 
                                property.status === 'reservada' ? 'Reservada' : 
+                               property.status === 'vendida' ? 'Vendida' :
                                property.status}
                             </div>
                           </div>
