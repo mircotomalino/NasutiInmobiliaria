@@ -31,8 +31,8 @@ const LandingPage: React.FC = () => {
         const response = await fetch(`${API_BASE}/properties`);
         const data = await response.json();
         
-        // Filtrar propiedades disponibles y eliminar duplicados
-        const availableProperties = data.filter((p: Property) => p.status === 'disponible');
+        // Filtrar propiedades disponibles y reservadas (ambas son relevantes para el carrusel)
+        const availableProperties = data.filter((p: Property) => p.status === 'disponible' || p.status === 'reservada');
         
         // Eliminar duplicados basándose en el ID
         const uniqueProperties = availableProperties.filter((property: Property, index: number, self: Property[]) => 
@@ -210,8 +210,16 @@ const LandingPage: React.FC = () => {
                               {getPropertyTypeIcon(property.type)}
                               <span className="capitalize">{property.type}</span>
                             </div>
-                            <div className="bg-green-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white">
-                              Disponible
+                            <div className={`backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white ${
+                              property.status === 'disponible' 
+                                ? 'bg-green-500/90' 
+                                : property.status === 'reservada'
+                                ? 'bg-yellow-500/90'
+                                : 'bg-gray-500/90'
+                            }`}>
+                              {property.status === 'disponible' ? 'Disponible' : 
+                               property.status === 'reservada' ? 'Reservada' : 
+                               property.status}
                             </div>
                           </div>
                         </div>
