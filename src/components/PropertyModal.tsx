@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, MapPin, Bed, Bath, Square, Calendar, Home, Building, Store, Briefcase, TreePine } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, MapPin, Bed, Bath, Square, Calendar, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Property, PropertyType } from '../types';
 
 interface PropertyModalProps {
@@ -9,6 +9,8 @@ interface PropertyModalProps {
 }
 
 const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
   if (!property || !isOpen) return null;
 
   // Función para obtener el ícono según el tipo de propiedad
@@ -52,6 +54,33 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
     });
   };
 
+  // Funciones para manejar el carrusel de imágenes
+  const nextImage = () => {
+    const images = property.images || [];
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }
+  };
+
+  const prevImage = () => {
+    const images = property.images || [];
+    if (images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    }
+  };
+
+  // Obtener la imagen actual
+  const getCurrentImage = () => {
+    const images = property.images || [];
+    if (images.length > 0) {
+      return images[currentImageIndex];
+    }
+    return property.imageUrl || '/img/default-property.jpg';
+  };
+
+  // Verificar si hay múltiples imágenes
+  const hasMultipleImages = property.images && property.images.length > 1;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       {/* Modal */}
@@ -73,12 +102,56 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
         {/* Contenido del modal */}
         <div className="modal-body">
           
-          {/* Imagen principal */}
-          <img
-            src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
-            alt={property.title}
-            className="modal-image"
-          />
+          {/* Carrusel de imágenes */}
+          <div className="modal-image-container">
+            <img
+              src={getCurrentImage()}
+              alt={property.title}
+              className="modal-image"
+            />
+            
+            {/* Controles de navegación del carrusel */}
+            {hasMultipleImages && (
+              <>
+                {/* Botón anterior */}
+                <button
+                  onClick={prevImage}
+                  className="modal-carousel-btn modal-carousel-btn-prev"
+                  aria-label="Imagen anterior"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                
+                {/* Botón siguiente */}
+                <button
+                  onClick={nextImage}
+                  className="modal-carousel-btn modal-carousel-btn-next"
+                  aria-label="Imagen siguiente"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+                
+                {/* Indicadores de posición */}
+                <div className="modal-carousel-indicators">
+                  {property.images?.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`modal-carousel-indicator ${
+                        index === currentImageIndex ? 'active' : ''
+                      }`}
+                      aria-label={`Ir a imagen ${index + 1}`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Contador de imágenes */}
+                <div className="modal-carousel-counter">
+                  {currentImageIndex + 1} / {property.images?.length}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Información principal */}
           <div className="modal-grid">
