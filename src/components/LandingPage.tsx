@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sampleProperties } from '../data/properties';
 import { 
   MapPin, 
@@ -14,14 +14,37 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { PropertyType } from '../types';
+import { PropertyType, Property } from '../types';
 
 const LandingPage: React.FC = () => {
   // Estado para el carrusel
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // Obtener propiedades destacadas (las primeras 3 disponibles)
-  const featuredProperties = sampleProperties.filter(p => p.status === 'disponible').slice(0, 3);
+  const API_BASE = 'http://localhost:3001/api';
+  
+  // Obtener propiedades destacadas desde la API
+  useEffect(() => {
+    const fetchFeaturedProperties = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/properties`);
+        const data = await response.json();
+        // Filtrar propiedades disponibles y tomar las primeras 3
+        const availableProperties = data.filter((p: Property) => p.status === 'disponible').slice(0, 3);
+        setFeaturedProperties(availableProperties);
+      } catch (error) {
+        console.error('Error fetching featured properties:', error);
+        // Fallback a propiedades estáticas si hay error
+        const fallbackProperties = sampleProperties.filter(p => p.status === 'disponible').slice(0, 3);
+        setFeaturedProperties(fallbackProperties);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProperties();
+  }, []);
   
   // Función para obtener el ícono según el tipo de propiedad
   const getPropertyTypeIcon = (type: PropertyType) => {
@@ -141,8 +164,19 @@ const LandingPage: React.FC = () => {
                 Descubre nuestras mejores propiedades disponibles
               </p>
             </div>
-            
-            {/* Carrusel de propiedades */}
+
+            {/* Estado de carga */}
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="text-xl text-gray-600">Cargando propiedades destacadas...</div>
+              </div>
+            ) : featuredProperties.length === 0 ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="text-xl text-gray-600">No hay propiedades disponibles en este momento</div>
+              </div>
+            ) : (
+              <>
+                {/* Carrusel de propiedades */}
             <div className="relative">
               {/* Contenedor del carrusel */}
               <div className="overflow-hidden rounded-xl shadow-lg">
@@ -283,6 +317,8 @@ const LandingPage: React.FC = () => {
                 <ChevronRight className="w-5 h-5" />
               </a>
             </div>
+              </>
+            )}
           </div>
         </section>
 
