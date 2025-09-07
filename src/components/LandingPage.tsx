@@ -15,12 +15,17 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { PropertyType, Property } from '../types';
+import PropertyModal from './PropertyModal';
 
 const LandingPage: React.FC = () => {
   // Estado para el carrusel
   const [currentSlide, setCurrentSlide] = useState(0);
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Estados para el modal
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const API_BASE = 'http://localhost:3001/api';
   
@@ -60,6 +65,17 @@ const LandingPage: React.FC = () => {
 
     fetchFeaturedProperties();
   }, []);
+  
+  // Funciones para manejar el modal
+  const handleViewDetails = (property: Property) => {
+    setSelectedProperty(property);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProperty(null);
+  };
   
   // Función para obtener el ícono según el tipo de propiedad
   const getPropertyTypeIcon = (type: PropertyType) => {
@@ -290,12 +306,12 @@ const LandingPage: React.FC = () => {
                           
                           {/* Botones de acción */}
                           <div className="flex gap-3 mt-auto">
-                            <a 
-                              href="/catalogo" 
+                            <button 
+                              onClick={() => handleViewDetails(property)}
                               className="flex-1 bg-[#1F2937] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
                             >
                               Ver Detalles
-                            </a>
+                            </button>
                             <a 
                               href="#contacto" 
                               className="flex-1 bg-[#f0782c] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
@@ -640,6 +656,13 @@ const LandingPage: React.FC = () => {
           </div>
         </footer>
       </div>
+      
+      {/* Modal de detalles de propiedad */}
+      <PropertyModal
+        property={selectedProperty}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
