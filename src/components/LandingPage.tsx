@@ -186,83 +186,96 @@ const LandingPage: React.FC = () => {
                 >
                   {featuredProperties.map((property) => (
                     <div key={property.id} className="w-full flex-shrink-0">
-                      <div className="bg-white p-6 lg:p-8">
-                        <div className="grid lg:grid-cols-2 gap-8 items-center">
-                          {/* Imagen de la propiedad */}
-                          <div className="relative">
-                            <img
-                              src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
-                              alt={property.title}
-                              className="w-full h-64 lg:h-80 object-cover rounded-lg shadow-md"
-                            />
-                            {/* Badges */}
-                            <div className="absolute top-4 left-4 flex flex-col gap-2">
-                              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium text-[#1F2937]">
-                                {getPropertyTypeIcon(property.type)}
-                                <span className="capitalize">{property.type}</span>
-                              </div>
-                              <div className="bg-green-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white">
-                                Disponible
-                              </div>
+                      <div className="bg-white p-6 lg:p-8 h-[600px] flex flex-col">
+                        {/* Imagen de la propiedad */}
+                        <div className="relative mb-6">
+                          <img
+                            src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
+                            alt={property.title}
+                            className="w-full h-48 object-cover rounded-lg shadow-md"
+                          />
+                          {/* Badges */}
+                          <div className="absolute top-4 left-4 flex flex-col gap-2">
+                            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium text-[#1F2937]">
+                              {getPropertyTypeIcon(property.type)}
+                              <span className="capitalize">{property.type}</span>
+                            </div>
+                            <div className="bg-green-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white">
+                              Disponible
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Información de la propiedad */}
+                        <div className="flex-1 flex flex-col">
+                          <div className="mb-4">
+                            <h3 className="text-xl lg:text-2xl font-bold text-[#1F2937] mb-2 overflow-hidden" style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical'
+                            }}>
+                              {property.title}
+                            </h3>
+                            <div className="text-xl lg:text-2xl font-bold text-[#f0782c] mb-3">
+                              {formatPrice(property.price)}
                             </div>
                           </div>
                           
-                          {/* Información de la propiedad */}
-                          <div className="space-y-6">
-                            <div>
-                              <h3 className="text-2xl lg:text-3xl font-bold text-[#1F2937] mb-2">
-                                {property.title}
-                              </h3>
-                              <div className="text-2xl lg:text-3xl font-bold text-[#f0782c] mb-4">
-                                {formatPrice(property.price)}
+                          {/* Descripción limitada */}
+                          <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-1 overflow-hidden" style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical'
+                          }}>
+                            {property.description}
+                          </p>
+                          
+                          {/* Ubicación */}
+                          <div className="flex items-center gap-2 text-[#6B7280] mb-3">
+                            <MapPin className="w-4 h-4" />
+                            <span className="text-sm">{property.address}, {property.city}</span>
+                          </div>
+                          
+                          {/* Características */}
+                          <div className="flex flex-wrap gap-3 mb-4">
+                            {property.bedrooms > 0 && (
+                              <div className="flex items-center gap-1 text-[#6B7280] text-sm">
+                                <Bed className="w-4 h-4" />
+                                <span>{property.bedrooms} hab.</span>
                               </div>
-                            </div>
-                            
-                            <p className="text-[#6B7280] text-lg leading-relaxed">
-                              {property.description}
-                            </p>
-                            
-                            {/* Ubicación */}
-                            <div className="flex items-center gap-2 text-[#6B7280]">
-                              <MapPin className="w-5 h-5" />
-                              <span className="text-lg">{property.address}, {property.city}</span>
-                            </div>
-                            
-                            {/* Características */}
-                            <div className="flex flex-wrap gap-4">
-                              {property.bedrooms > 0 && (
-                                <div className="flex items-center gap-2 text-[#6B7280]">
-                                  <Bed className="w-5 h-5" />
-                                  <span>{property.bedrooms} hab.</span>
-                                </div>
-                              )}
-                              {property.bathrooms > 0 && (
-                                <div className="flex items-center gap-2 text-[#6B7280]">
-                                  <Bath className="w-5 h-5" />
-                                  <span>{property.bathrooms} baños</span>
-                                </div>
-                              )}
-                              <div className="flex items-center gap-2 text-[#6B7280]">
-                                <Square className="w-5 h-5" />
-                                <span>{property.area}m²</span>
+                            )}
+                            {property.bathrooms > 0 && (
+                              <div className="flex items-center gap-1 text-[#6B7280] text-sm">
+                                <Bath className="w-4 h-4" />
+                                <span>{property.bathrooms} baños</span>
                               </div>
+                            )}
+                            <div className="flex items-center gap-1 text-[#6B7280] text-sm">
+                              <Square className="w-4 h-4" />
+                              <span>{property.area}m²</span>
                             </div>
-                            
-                            {/* Fecha de publicación */}
-                            <div className="flex items-center gap-2 text-[#6B7280] text-sm">
-                              <Calendar className="w-4 h-4" />
-                              <span>Publicado: {formatDate(property.publishedDate)}</span>
-                            </div>
-                            
-                            {/* Botón de acción */}
-                            <div className="pt-4">
-                              <a 
-                                href="#contacto" 
-                                className="inline-block bg-[#f0782c] hover:bg-black text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center w-full sm:w-auto"
-                              >
-                                Consultar
-                              </a>
-                            </div>
+                          </div>
+                          
+                          {/* Fecha de publicación */}
+                          <div className="flex items-center gap-2 text-[#6B7280] text-xs mb-4">
+                            <Calendar className="w-3 h-3" />
+                            <span>Publicado: {formatDate(property.publishedDate)}</span>
+                          </div>
+                          
+                          {/* Botones de acción */}
+                          <div className="flex gap-3 mt-auto">
+                            <a 
+                              href="/catalogo" 
+                              className="flex-1 bg-[#1F2937] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
+                            >
+                              Ver Detalles
+                            </a>
+                            <a 
+                              href="#contacto" 
+                              className="flex-1 bg-[#f0782c] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
+                            >
+                              Consultar
+                            </a>
                           </div>
                         </div>
                       </div>
