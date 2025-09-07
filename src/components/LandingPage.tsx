@@ -30,9 +30,19 @@ const LandingPage: React.FC = () => {
       try {
         const response = await fetch(`${API_BASE}/properties`);
         const data = await response.json();
-        // Filtrar propiedades disponibles y tomar las primeras 3
-        const availableProperties = data.filter((p: Property) => p.status === 'disponible').slice(0, 3);
-        setFeaturedProperties(availableProperties);
+        
+        // Filtrar propiedades disponibles y eliminar duplicados
+        const availableProperties = data.filter((p: Property) => p.status === 'disponible');
+        
+        // Eliminar duplicados basándose en el ID
+        const uniqueProperties = availableProperties.filter((property: Property, index: number, self: Property[]) => 
+          index === self.findIndex((p: Property) => p.id === property.id)
+        );
+        
+        // Tomar hasta 3 propiedades únicas
+        const featuredProperties = uniqueProperties.slice(0, 3);
+        
+        setFeaturedProperties(featuredProperties);
       } catch (error) {
         console.error('Error fetching featured properties:', error);
         // Fallback a propiedades estáticas si hay error
