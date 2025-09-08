@@ -189,5 +189,7 @@ export const provinces = [
   'Santa Cruz',
   'Tierra del Fuego'
 ];
+
+
 export const propertyTypes = ['casa', 'departamento', 'terreno', 'oficina', 'local', 'quinta'];
 export const propertyStatuses = ['disponible', 'reservada', 'vendida']; 
