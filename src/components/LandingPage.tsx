@@ -497,26 +497,33 @@ Mensaje: ${formData.mensaje}`;
             {/* Contenido principal */}
             <div className="bg-white p-8 lg:p-12 rounded-xl shadow-lg border border-gray-100">
               <div className="text-center mb-8">
-                <h3 className="text-[#1F2937] text-2xl font-bold mb-4">El Legado de "El Viejo"</h3>
+                <h3 className="text-[#1F2937] text-2xl font-bold mb-4">El Legado de Erminio Nasuti</h3>
               </div>
               
               <div className="space-y-6">
                 <p className="text-lg text-[#6B7280] leading-relaxed">
-                  Hace más de <span className="text-[#f0782c] font-semibold">60 años</span>, nuestro fundador, a quien todos conocían cariñosamente como <span className="text-[#f0782c] font-semibold">"el viejo"</span>, 
-                  tuvo la visión de crear una inmobiliaria que se distinguiera por su <span className="text-[#1F2937] font-semibold">honestidad</span>, 
-                  <span className="text-[#1F2937] font-semibold"> profesionalismo</span> y <span className="text-[#1F2937] font-semibold">compromiso</span> con los clientes.
+                  La inmobiliaria Nasuti nació de la visión y el compromiso de un hombre con valores inquebrantables: 
+                  el <span className="text-[#f0782c] font-semibold">Sr. Erminio Nasuti</span>. Fundador de la inmobiliaria con mayor trayectoria y experiencia en Marcos Juárez y la región, 
+                  Erminio marcó un hito en el sector desde <span className="text-[#f0782c] font-semibold">1964</span>. Con un carácter decidido y un enfoque centrado en las 
+                  <span className="text-[#1F2937] font-semibold"> relaciones personales</span> por encima de cualquier negocio, se ganó el respeto y el prestigio de toda la comunidad.
                 </p>
                 
                 <p className="text-lg text-[#6B7280] leading-relaxed">
-                  Desde entonces, nuestra empresa ha funcionado <span className="text-[#f0782c] font-semibold">ininterrumpidamente</span>, 
-                  adaptándose a los cambios del mercado y manteniendo siempre los valores 
-                  que nos inculcó nuestro fundador: <span className="text-[#1F2937] font-semibold">transparencia</span>, <span className="text-[#1F2937] font-semibold">dedicación</span> y <span className="text-[#1F2937] font-semibold">excelencia</span> en el servicio.
+                  Su legado de <span className="text-[#1F2937] font-semibold">integridad</span> y <span className="text-[#1F2937] font-semibold">profesionalismo</span> continúa vivo en la ciudad y ha sido heredado de manera innata por su hijo, 
+                  <span className="text-[#f0782c] font-semibold"> Sergio Nasuti</span>, actual socio de la inmobiliaria. Sergio mantiene con orgullo la identidad que distingue a la empresa, 
+                  consolidando su reputación como un referente en el mercado.
                 </p>
                 
                 <p className="text-lg text-[#6B7280] leading-relaxed">
-                  Hoy, bajo la dirección de <span className="text-[#f0782c] font-semibold">Gastón y Sergio</span>, continuamos honrando esa herencia 
-                  y trabajando para mantener el <span className="text-[#1F2937] font-semibold">legado de confianza</span> que construyó "el viejo" 
-                  hace más de seis décadas.
+                  A lo largo de los años, gracias al esfuerzo y la dedicación de ambos, Inmobiliaria Nasuti ha concretado 
+                  <span className="text-[#f0782c] font-semibold"> más de 750 operaciones inmobiliarias</span>, alcanzando un nivel de cierre de ventas sin precedentes. 
+                  Cada transacción se realiza con la máxima profesionalidad, asegurando el cumplimiento de todas las formalidades legales correspondientes.
+                </p>
+                
+                <p className="text-lg text-[#6B7280] leading-relaxed">
+                  Con sólidos cimientos basados en el <span className="text-[#1F2937] font-semibold">profesionalismo</span> y la <span className="text-[#1F2937] font-semibold">integridad</span>, 
+                  Inmobiliaria Nasuti se proyecta hacia el futuro con el compromiso de concretar operaciones fructíferas y satisfactorias para sus clientes, 
+                  manteniendo siempre los valores que la han definido.
                 </p>
               </div>
             </div>
