@@ -52,14 +52,14 @@ app.get('/api/properties', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-             p.type, p.bedrooms, p.bathrooms, p.area, p.status,
+             p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
              p.published_date as "publishedDate",
              p.created_at, p.updated_at,
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
       GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-               p.type, p.bedrooms, p.bathrooms, p.area, p.status,
+               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
                p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
     `);
@@ -76,7 +76,7 @@ app.get('/api/properties/:id', async (req, res) => {
     const { id } = req.params;
     const propertyResult = await pool.query(`
       SELECT id, title, description, price, address, city, province, 
-             type, bedrooms, bathrooms, area, status,
+             type, bedrooms, bathrooms, area, patio, garage, status,
              published_date as "publishedDate",
              created_at, updated_at
       FROM properties WHERE id = $1
@@ -111,18 +111,20 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       bedrooms,
       bathrooms,
       area,
+      patio,
+      garage,
       status
     } = req.body;
 
     // Insertar la propiedad
     const propertyResult = await pool.query(`
-      INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, status,
+                type, bedrooms, bathrooms, area, patio, garage, status,
                 published_date as "publishedDate",
                 created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, status]);
+    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status]);
 
     const property = propertyResult.rows[0];
 
@@ -157,6 +159,8 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       bedrooms,
       bathrooms,
       area,
+      patio,
+      garage,
       status
     } = req.body;
 
@@ -165,13 +169,13 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       UPDATE properties 
       SET title = $1, description = $2, price = $3, address = $4, city = $5, 
           province = $6, type = $7, bedrooms = $8, bathrooms = $9, area = $10, 
-          status = $11, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $12
+          patio = $11, garage = $12, status = $13, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $14
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, status,
+                type, bedrooms, bathrooms, area, patio, garage, status,
                 published_date as "publishedDate",
                 created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, status, id]);
+    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status, id]);
 
     if (propertyResult.rows.length === 0) {
       return res.status(404).json({ error: 'Property not found' });

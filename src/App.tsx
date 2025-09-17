@@ -17,7 +17,9 @@ function App() {
     type: '',
     minPrice: 0,
     maxPrice: 0,
-    status: ''
+    status: '',
+    patio: '',
+    garage: ''
   });
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,6 +85,16 @@ function App() {
       filtered = filtered.filter(property => property.price <= filters.maxPrice);
     }
 
+    // Filtro por patio
+    if (filters.patio) {
+      filtered = filtered.filter(property => property.patio === filters.patio);
+    }
+
+    // Filtro por garage
+    if (filters.garage) {
+      filtered = filtered.filter(property => property.garage === filters.garage);
+    }
+
     setFilteredProperties(filtered);
   }, [properties, searchTerm, filters]);
 
@@ -104,7 +116,9 @@ function App() {
       type: '',
       minPrice: 0,
       maxPrice: 0,
-      status: ''
+      status: '',
+      patio: '',
+      garage: ''
     });
     setSearchTerm('');
   };

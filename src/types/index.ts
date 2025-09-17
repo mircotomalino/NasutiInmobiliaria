@@ -11,6 +11,8 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   area: number; // en m²
+  patio?: PatioType;
+  garage?: GarageType;
   publishedDate: string;
   imageUrl?: string; // Para compatibilidad con datos estáticos
   images?: string[]; // Para imágenes subidas desde el panel de gestión
@@ -20,6 +22,10 @@ export type PropertyType = 'casa' | 'departamento' | 'terreno' | 'oficina' | 'lo
 
 export type PropertyStatus = 'disponible' | 'reservada' | 'vendida';
 
+export type PatioType = 'No Tiene' | 'Chico' | 'Mediano' | 'Grande';
+
+export type GarageType = 'No Tiene' | '1 Vehiculo' | '2 Vehiculos';
+
 export interface FilterOptions {
   searchTerm: string;
   city: string;
@@ -27,6 +33,8 @@ export interface FilterOptions {
   minPrice: number;
   maxPrice: number;
   status: PropertyStatus | '';
+  patio: PatioType | '';
+  garage: GarageType | '';
 }
 
 export interface SortOption {

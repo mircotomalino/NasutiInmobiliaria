@@ -43,6 +43,18 @@ const initDatabase = async () => {
       )
     `);
 
+    // Agregar columnas patio y garage si no existen
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ADD COLUMN IF NOT EXISTS patio VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS garage VARCHAR(20)
+      `);
+      console.log('Added patio and garage columns if they did not exist');
+    } catch (error) {
+      console.log('Patio and garage columns may already exist:', error.message);
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);

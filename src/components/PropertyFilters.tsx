@@ -1,7 +1,7 @@
 import React from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
 import { FilterOptions } from '../types';
-import { propertyTypes, propertyStatuses, cities } from '../data/properties';
+import { propertyTypes, propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 
 interface PropertyFiltersProps {
   filters: FilterOptions;
@@ -29,6 +29,8 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
     filters.status !== '' || 
     filters.minPrice > 0 || 
     filters.maxPrice > 0 || 
+    filters.patio !== '' || 
+    filters.garage !== '' || 
     searchTerm.trim() !== '';
 
   return (
@@ -123,6 +125,40 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
               className="filter-input"
             />
           </div>
+        </div>
+
+        {/* Filtro por Patio */}
+        <div className="filter-group">
+          <label>Patio</label>
+          <select
+            value={filters.patio}
+            onChange={(e) => handleFilterChange('patio', e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Todos los patios</option>
+            {patioOptions.map((patio) => (
+              <option key={patio} value={patio}>
+                {patio}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Filtro por Garage */}
+        <div className="filter-group">
+          <label>Garage</label>
+          <select
+            value={filters.garage}
+            onChange={(e) => handleFilterChange('garage', e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Todos los garages</option>
+            {garageOptions.map((garage) => (
+              <option key={garage} value={garage}>
+                {garage}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
