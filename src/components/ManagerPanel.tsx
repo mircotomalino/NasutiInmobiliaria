@@ -15,22 +15,10 @@ import {
   Search
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
+import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
 
-interface Property {
+interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province'> {
   id?: number;
-  title: string;
-  description: string;
-  price: number;
-  address: string;
-  city: string;
-  type: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
-  patio?: string;
-  garage?: string;
-  status: string;
-  images?: string[];
 }
 
 const ManagerPanel: React.FC = () => {
@@ -153,8 +141,8 @@ const ManagerPanel: React.FC = () => {
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
-      patio: 'No Tiene',
-      garage: 'No Tiene',
+      patio: 'No Tiene' as PatioType,
+      garage: 'No Tiene' as GarageType,
       status: 'disponible'
     });
     setIsAdding(true);
@@ -281,7 +269,7 @@ const ManagerPanel: React.FC = () => {
                   <select
                     required
                     value={editingProperty?.type || 'casa'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, type: e.target.value} : null)}
+                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, type: e.target.value as PropType} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {propertyTypes.map(type => (
@@ -300,7 +288,7 @@ const ManagerPanel: React.FC = () => {
                   <select
                     required
                     value={editingProperty?.status || 'disponible'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, status: e.target.value} : null)}
+                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, status: e.target.value as PropertyStatus} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {propertyStatuses.map(status => (
@@ -394,7 +382,7 @@ const ManagerPanel: React.FC = () => {
                   </label>
                   <select
                     value={editingProperty?.patio || 'No Tiene'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, patio: e.target.value} : null)}
+                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, patio: e.target.value as PatioType} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {patioOptions.map((option) => (
@@ -412,7 +400,7 @@ const ManagerPanel: React.FC = () => {
                   </label>
                   <select
                     value={editingProperty?.garage || 'No Tiene'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, garage: e.target.value} : null)}
+                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, garage: e.target.value as GarageType} : null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {garageOptions.map((option) => (
@@ -532,7 +520,7 @@ const ManagerPanel: React.FC = () => {
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         property.status === 'disponible' ? 'bg-green-100 text-green-800' :
                         property.status === 'vendida' ? 'bg-red-100 text-red-800' :
-                        property.status === 'alquilada' ? 'bg-yellow-100 text-yellow-800' :
+                        property.status === 'reservada' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {property.status}
