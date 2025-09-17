@@ -13,7 +13,6 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({
     searchTerm: '',
-    province: '',
     city: '',
     type: '',
     minPrice: 0,
@@ -61,11 +60,6 @@ function App() {
       );
     }
 
-    // Filtro por provincia
-    if (filters.province) {
-      filtered = filtered.filter(property => property.province === filters.province);
-    }
-
     // Filtro por ciudad
     if (filters.city) {
       filtered = filtered.filter(property => property.city === filters.city);
@@ -106,7 +100,6 @@ function App() {
   const handleClearFilters = () => {
     setFilters({
       searchTerm: '',
-      province: '',
       city: '',
       type: '',
       minPrice: 0,
@@ -153,6 +146,7 @@ function App() {
           filters={filters}
           onFilterChange={handleFilterChange}
           onClearFilters={handleClearFilters}
+          searchTerm={searchTerm}
         />
 
         {/* Lista de propiedades */}

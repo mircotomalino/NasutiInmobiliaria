@@ -22,7 +22,6 @@ export type PropertyStatus = 'disponible' | 'reservada' | 'vendida';
 
 export interface FilterOptions {
   searchTerm: string;
-  province: string;
   city: string;
   type: PropertyType | '';
   minPrice: number;

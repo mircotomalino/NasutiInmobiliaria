@@ -1,18 +1,20 @@
 import React from 'react';
-import { Filter, X } from 'lucide-react';
+import { Filter, RotateCcw } from 'lucide-react';
 import { FilterOptions } from '../types';
-import { propertyTypes, propertyStatuses, provinces, cities } from '../data/properties';
+import { propertyTypes, propertyStatuses, cities } from '../data/properties';
 
 interface PropertyFiltersProps {
   filters: FilterOptions;
   onFilterChange: (filters: FilterOptions) => void;
   onClearFilters: () => void;
+  searchTerm: string;
 }
 
 const PropertyFilters: React.FC<PropertyFiltersProps> = ({
   filters,
   onFilterChange,
-  onClearFilters
+  onClearFilters,
+  searchTerm
 }) => {
   const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     onFilterChange({
@@ -21,12 +23,13 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
     });
   };
 
-  const hasActiveFilters = 
+  const hasAnyFiltersOrSearch = 
     filters.city !== '' || 
     filters.type !== '' || 
     filters.status !== '' || 
     filters.minPrice > 0 || 
-    filters.maxPrice > 0;
+    filters.maxPrice > 0 || 
+    searchTerm.trim() !== '';
 
   return (
     <div className="filters-container">
@@ -36,36 +39,20 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
           <h3>Filtros</h3>
         </div>
         
-        {hasActiveFilters && (
+        {hasAnyFiltersOrSearch && (
           <button
             onClick={onClearFilters}
-            className="clear-filters"
+            className="reset-all-button"
+            title="Resetear búsqueda y filtros"
           >
-            <X className="w-4 h-4" />
-            <span>Limpiar filtros</span>
+            <RotateCcw className="w-4 h-4" />
+            <span>Resetear Filtros</span>
           </button>
         )}
       </div>
 
       <div className="filters-grid">
         
-        {/* Filtro por Provincia */}
-        <div className="filter-group">
-          <label>Provincia</label>
-          <select
-            value={filters.province || ''}
-            onChange={(e) => handleFilterChange('province', e.target.value)}
-            className="filter-select"
-          >
-            <option value="">Todas las provincias</option>
-            {provinces.map((province) => (
-              <option key={province} value={province}>
-                {province}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* Filtro por Ciudad */}
         <div className="filter-group">
           <label>Ciudad</label>

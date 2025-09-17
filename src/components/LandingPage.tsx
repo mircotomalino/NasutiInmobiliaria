@@ -253,7 +253,20 @@ Mensaje: ${formData.mensaje}`;
               </div>
             ) : featuredProperties.length === 0 ? (
               <div className="flex justify-center items-center py-20">
-                <div className="text-xl text-gray-600">No hay propiedades disponibles en este momento</div>
+                <div className="text-center max-w-2xl mx-auto">
+                  <div className="text-2xl lg:text-3xl font-bold text-[#1F2937] mb-4">
+                    ¿Tienes propiedades que quieres vender?
+                  </div>
+                  <div className="text-lg text-[#6B7280] mb-6">
+                    Comunícate con nosotros así nos encargamos
+                  </div>
+                  <a 
+                    href="#contacto" 
+                    className="inline-block bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-lg"
+                  >
+                    Contactar Ahora
+                  </a>
+                </div>
               </div>
             ) : (
               <>
