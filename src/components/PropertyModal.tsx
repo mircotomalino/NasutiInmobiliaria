@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, Bed, Bath, Square, Calendar, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, MapPin, Bed, Bath, Square, Calendar, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
 import { Property, PropertyType } from '../types';
 
 interface PropertyModalProps {
@@ -223,6 +223,18 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                     <Square className="w-5 h-5" />
                     <span>{property.area} m²</span>
                   </div>
+                  {property.patio && property.patio !== 'No Tiene' && (
+                    <div className="modal-feature">
+                      <Trees className="w-5 h-5" />
+                      <span>Patio {property.patio}</span>
+                    </div>
+                  )}
+                  {property.garage && property.garage !== 'No Tiene' && (
+                    <div className="modal-feature">
+                      <Car className="w-5 h-5" />
+                      <span>Garage: {property.garage}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

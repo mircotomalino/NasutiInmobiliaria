@@ -10,7 +10,9 @@ import {
   Building,
   Store,
   Briefcase,
-  TreePine
+  TreePine,
+  Trees,
+  Car
 } from 'lucide-react';
 import { Property, PropertyType } from '../types';
 
@@ -131,6 +133,18 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
             <Square className="w-4 h-4" />
             <span>{property.area}m²</span>
           </div>
+          {property.patio && property.patio !== 'No Tiene' && (
+            <div className="property-feature">
+              <Trees className="w-4 h-4" />
+              <span>Patio {property.patio.toLowerCase()}</span>
+            </div>
+          )}
+          {property.garage && property.garage !== 'No Tiene' && (
+            <div className="property-feature">
+              <Car className="w-4 h-4" />
+              <span>{property.garage}</span>
+            </div>
+          )}
         </div>
 
         {/* Fecha de publicación */}
