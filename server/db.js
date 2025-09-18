@@ -55,6 +55,17 @@ const initDatabase = async () => {
       console.log('Patio and garage columns may already exist:', error.message);
     }
 
+    // Hacer la columna province opcional (nullable)
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ALTER COLUMN province DROP NOT NULL
+      `);
+      console.log('Made province column nullable');
+    } catch (error) {
+      console.log('Province column may already be nullable:', error.message);
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);

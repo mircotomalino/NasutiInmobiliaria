@@ -106,7 +106,7 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       price,
       address,
       city,
-      province,
+      province = 'Córdoba', // Valor por defecto
       type,
       bedrooms,
       bathrooms,
@@ -154,7 +154,7 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       price,
       address,
       city,
-      province,
+      province = 'Córdoba', // Valor por defecto
       type,
       bedrooms,
       bathrooms,
