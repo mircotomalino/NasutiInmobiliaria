@@ -44,15 +44,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
 
 
 
-  // Función para formatear el precio
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
 
 
   return (
@@ -85,14 +76,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
       {/* Contenido de la tarjeta */}
       <div className="property-content">
         
-        {/* Título y precio */}
+        {/* Título */}
         <div>
           <h3 className="property-title">
             {property.title}
           </h3>
-          <div className="property-price">
-            {formatPrice(property.price)}
-          </div>
         </div>
 
         {/* Descripción */}
