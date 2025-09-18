@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { 
   MapPin, 
   Bed, 
@@ -85,6 +86,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
 
         {/* Descripción */}
         <p className="property-description">
+
           {property.description}
         </p>
 
@@ -126,14 +128,24 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           )}
         </div>
 
-        {/* Botón Ver más */}
-        <button
-          onClick={() => onViewDetails(property)}
-          className="view-details-btn"
-        >
-          <Eye className="w-4 h-4" />
-          <span>Ver más detalles</span>
-        </button>
+        {/* Botones de acción */}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => onViewDetails(property)}
+            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm flex items-center justify-center gap-2"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Ver Detalles</span>
+          </button>
+          
+          <Link
+            to={`/propiedad/${property.id}`}
+            className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm flex items-center justify-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            <span>Ver Propiedad</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

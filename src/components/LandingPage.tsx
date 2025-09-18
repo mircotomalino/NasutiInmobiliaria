@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { sampleProperties } from '../data/properties';
 import { 
   MapPin, 
@@ -368,16 +369,22 @@ Mensaje: ${formData.mensaje}`;
                           </div>
                           
                           {/* Botones de acción */}
-                          <div className="flex gap-3 mt-auto">
+                          <div className="flex gap-2 mt-auto">
                             <button 
                               onClick={() => handleViewDetails(property)}
-                              className="flex-1 bg-[#1F2937] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
+                              className="flex-1 bg-[#1F2937] hover:bg-black text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
                             >
                               Ver Detalles
                             </button>
+                            <Link
+                              to={`/propiedad/${property.id}`}
+                              className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
+                            >
+                              Ver Propiedad
+                            </Link>
                             <a 
                               href="#contacto" 
-                              className="flex-1 bg-[#f0782c] hover:bg-black text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-center text-sm"
+                              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
                             >
                               Consultar
                             </a>
