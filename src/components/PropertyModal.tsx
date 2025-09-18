@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, Bed, Bath, Square, Calendar, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
+import { X, MapPin, Bed, Bath, Square, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
 import { Property, PropertyType } from '../types';
 
 interface PropertyModalProps {
@@ -45,14 +45,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
     }).format(price);
   };
 
-  // Función para formatear la fecha
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-AR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
 
   // Funciones para manejar el carrusel de imágenes
   const nextImage = () => {
@@ -242,10 +234,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
               <div className="modal-section">
                 <h4>Información Adicional</h4>
                 <div className="modal-features">
-                  <div className="modal-feature">
-                    <Calendar className="w-4 h-4" />
-                    <span>Publicado: {formatDate(property.publishedDate)}</span>
-                  </div>
                   <div className="modal-feature">
                     <span>ID: {property.id}</span>
                   </div>
