@@ -23,10 +23,21 @@ interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl
 
 const ManagerPanel: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  
+  // Estados para filtros del manager
+  const [managerFilters, setManagerFilters] = useState({
+    search: '',
+    minPrice: 0,
+    maxPrice: 0,
+    bedrooms: '',
+    type: '',
+    status: ''
+  });
 
   const propertyTypes = [
     { value: 'casa', label: 'Casa', icon: <Home className="w-4 h-4" /> },
@@ -45,11 +56,56 @@ const ManagerPanel: React.FC = () => {
     fetchProperties();
   }, []);
 
+  // Efecto para aplicar filtros del manager
+  useEffect(() => {
+    let filtered = [...properties];
+
+    // Filtro por búsqueda (nombre/título)
+    if (managerFilters.search.trim()) {
+      const searchTerm = managerFilters.search.toLowerCase();
+      filtered = filtered.filter(property =>
+        property.title.toLowerCase().includes(searchTerm) ||
+        property.address.toLowerCase().includes(searchTerm) ||
+        property.city.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filtro por precio mínimo
+    if (managerFilters.minPrice > 0) {
+      filtered = filtered.filter(property => property.price >= managerFilters.minPrice);
+    }
+
+    // Filtro por precio máximo
+    if (managerFilters.maxPrice > 0) {
+      filtered = filtered.filter(property => property.price <= managerFilters.maxPrice);
+    }
+
+    // Filtro por habitaciones
+    if (managerFilters.bedrooms) {
+      filtered = filtered.filter(property => 
+        property.bedrooms === parseInt(managerFilters.bedrooms)
+      );
+    }
+
+    // Filtro por tipo
+    if (managerFilters.type) {
+      filtered = filtered.filter(property => property.type === managerFilters.type);
+    }
+
+    // Filtro por estado/disponibilidad
+    if (managerFilters.status) {
+      filtered = filtered.filter(property => property.status === managerFilters.status);
+    }
+
+    setFilteredProperties(filtered);
+  }, [properties, managerFilters]);
+
   const fetchProperties = async () => {
     try {
       const response = await fetch(`${API_BASE}/properties`);
       const data = await response.json();
       setProperties(data);
+      setFilteredProperties(data);
     } catch (error) {
       console.error('Error fetching properties:', error);
     } finally {
@@ -128,6 +184,25 @@ const ManagerPanel: React.FC = () => {
   const handleEdit = (property: Property) => {
     setEditingProperty(property);
     setIsAdding(false);
+  };
+
+  // Funciones para manejar filtros del manager
+  const handleFilterChange = (key: string, value: string | number) => {
+    setManagerFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setManagerFilters({
+      search: '',
+      minPrice: 0,
+      maxPrice: 0,
+      bedrooms: '',
+      type: '',
+      status: ''
+    });
   };
 
   const handleAdd = () => {
@@ -212,6 +287,128 @@ const ManagerPanel: React.FC = () => {
               <Plus className="w-5 h-5" />
               Agregar Propiedad
             </button>
+          </div>
+        )}
+
+        {/* Filtros del Manager */}
+        {!isAdding && !editingProperty && (
+          <div className="mb-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Filtrar Propiedades
+              </h3>
+              <button
+                onClick={handleClearFilters}
+                className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                <X className="w-4 h-4" />
+                Limpiar filtros
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Buscador */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Buscar por nombre/dirección
+                </label>
+                <input
+                  type="text"
+                  placeholder="Buscar propiedades..."
+                  value={managerFilters.search}
+                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Filtro por precio */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rango de Precio (USD)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Mín"
+                    value={managerFilters.minPrice || ''}
+                    onChange={(e) => handleFilterChange('minPrice', Number(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Máx"
+                    value={managerFilters.maxPrice || ''}
+                    onChange={(e) => handleFilterChange('maxPrice', Number(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Filtro por habitaciones */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Habitaciones
+                </label>
+                <select
+                  value={managerFilters.bedrooms}
+                  onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Todas</option>
+                  <option value="1">1 habitación</option>
+                  <option value="2">2 habitaciones</option>
+                  <option value="3">3 habitaciones</option>
+                  <option value="4">4 habitaciones</option>
+                  <option value="5">5+ habitaciones</option>
+                </select>
+              </div>
+
+              {/* Filtro por tipo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de Propiedad
+                </label>
+                <select
+                  value={managerFilters.type}
+                  onChange={(e) => handleFilterChange('type', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Todos los tipos</option>
+                  {propertyTypes.map(type => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Filtro por disponibilidad */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Disponibilidad
+                </label>
+                <select
+                  value={managerFilters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Todos los estados</option>
+                  {propertyStatuses.map(status => (
+                    <option key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Contador de resultados */}
+              <div className="flex items-end">
+                <div className="text-sm text-gray-600">
+                  Mostrando {filteredProperties.length} de {properties.length} propiedades
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -496,7 +693,7 @@ const ManagerPanel: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {properties.map((property) => (
+                {filteredProperties.map((property) => (
                   <tr key={property.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
