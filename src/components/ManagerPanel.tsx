@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Plus,
   Edit,
@@ -12,7 +13,8 @@ import {
   TreePine,
   Square,
   ArrowLeft,
-  Search
+  Search,
+  ExternalLink
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
@@ -697,9 +699,12 @@ const ManagerPanel: React.FC = () => {
                   <tr key={property.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <Link
+                          to={`/propiedad/${property.id}`}
+                          className="text-sm font-medium text-blue-600 hover:text-blue-900 hover:underline"
+                        >
                           {property.title}
-                        </div>
+                        </Link>
                         <div className="text-sm text-gray-500">
                           {property.address}, {property.city}
                         </div>
@@ -725,15 +730,24 @@ const ManagerPanel: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
+                        <Link
+                          to={`/propiedad/${property.id}`}
+                          className="text-green-600 hover:text-green-900"
+                          title="Ver página de la propiedad"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
                         <button
                           onClick={() => handleEdit(property)}
                           className="text-blue-600 hover:text-blue-900"
+                          title="Editar propiedad"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => property.id && handleDelete(property.id)}
                           className="text-red-600 hover:text-red-900"
+                          title="Eliminar propiedad"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
