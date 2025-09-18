@@ -4,7 +4,6 @@ import {
   Bed, 
   Bath, 
   Square, 
-  Calendar,
   Eye,
   Home,
   Building,
@@ -55,14 +54,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
     }).format(price);
   };
 
-  // Función para formatear la fecha
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-AR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   return (
     <div className="property-card">
@@ -145,12 +136,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
               <span>{property.garage}</span>
             </div>
           )}
-        </div>
-
-        {/* Fecha de publicación */}
-        <div className="property-date">
-          <Calendar className="w-3 h-3" />
-          <span>Publicado: {formatDate(property.publishedDate)}</span>
         </div>
 
         {/* Botón Ver más */}
