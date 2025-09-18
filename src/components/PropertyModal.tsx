@@ -35,15 +35,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
 
 
 
-  // Función para formatear el precio
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
 
 
   // Funciones para manejar el carrusel de imágenes
@@ -151,14 +142,11 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
             {/* Columna izquierda */}
             <div>
               
-              {/* Título y precio */}
+              {/* Título */}
               <div className="modal-section">
                 <h3 className="modal-section h4">
                   {property.title}
                 </h3>
-                <p className="property-price">
-                  {formatPrice(property.price)}
-                </p>
               </div>
 
               {/* Tipo y estado */}
