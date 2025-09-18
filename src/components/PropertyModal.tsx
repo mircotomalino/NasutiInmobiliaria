@@ -233,9 +233,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                 <button className="modal-btn modal-btn-primary">
                   Contactar
                 </button>
-                <button className="modal-btn modal-btn-secondary">
-                  Agendar Visita
-                </button>
               </div>
             </div>
           </div>
