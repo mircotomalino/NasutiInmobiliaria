@@ -5,12 +5,16 @@ Componente React para selección de ubicaciones geográficas con mapa interactiv
 ## 🚀 Características
 
 - ✅ **Mapa interactivo** con React-Leaflet
-- ✅ **Búsqueda de direcciones** con autocomplete usando Nominatim
+- ✅ **Búsqueda de direcciones** con autocomplete usando Nominatim o Mapbox
+- ✅ **Detección automática** de proveedor de geocoding
+- ✅ **Fallback inteligente** de Mapbox a Nominatim
 - ✅ **Pin-drop** para seleccionar ubicaciones
+- ✅ **Geocodificación inversa** (coordenadas → dirección)
 - ✅ **Coordenadas manuales** como fallback
 - ✅ **Geolocalización** del usuario actual
 - ✅ **Ciudades predefinidas** de Argentina
 - ✅ **Vista previa** de coordenadas seleccionadas
+- ✅ **Indicadores visuales** del proveedor activo
 - ✅ **Responsive** y accesible
 
 ## 📦 Instalación
@@ -190,7 +194,14 @@ El MapPicker ya está integrado en el panel de administración (`/managerLogin`)
 
 ## 🌐 APIs Utilizadas
 
-### Nominatim (OpenStreetMap)
+### Mapbox (Premium - Opcional)
+- **URL**: `https://api.mapbox.com/geocoding/v5/mapbox.places`
+- **Propósito**: Búsqueda de direcciones de alta precisión
+- **Configuración**: Requiere `VITE_MAPBOX_TOKEN` en variables de entorno
+- **Ventajas**: Mayor precisión, más rápido, 100k requests/mes gratis
+- **Fallback**: Automático a Nominatim si no está configurado
+
+### Nominatim (OpenStreetMap - Gratuito)
 - **URL**: `https://nominatim.openstreetmap.org/search`
 - **Propósito**: Búsqueda de direcciones con geocoding
 - **Parámetros**:
@@ -199,11 +210,17 @@ El MapPicker ya está integrado en el panel de administración (`/managerLogin`)
   - `limit=5`: Máximo 5 resultados
   - `countrycodes=ar`: Solo Argentina
   - `addressdetails=1`: Detalles de dirección
+- **Limitaciones**: 1 request/segundo, precisión moderada
 
 ### Geolocalización del Navegador
 - **API**: `navigator.geolocation.getCurrentPosition()`
 - **Propósito**: Obtener ubicación actual del usuario
 - **Permisos**: Requiere permisos de ubicación del navegador
+
+### Geocodificación Inversa
+- **Mapbox**: `https://api.mapbox.com/geocoding/v5/mapbox.places/{lng},{lat}.json`
+- **Nominatim**: `https://nominatim.openstreetmap.org/reverse`
+- **Propósito**: Convertir coordenadas a direcciones legibles
 
 ## 🎯 Casos de Uso
 

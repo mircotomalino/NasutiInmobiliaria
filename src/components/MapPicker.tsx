@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Search, Navigation, X, Edit3 } from 'lucide-react';
+import { MapPin, Search, Navigation, X, Edit3, Zap, Globe } from 'lucide-react';
+import { searchAddress, reverseGeocode, getGeocodingInfo } from '../services/geocoding';
 
 // Fix para iconos de Leaflet con Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -26,6 +27,16 @@ interface SearchResult {
   lat: string;
   lon: string;
   place_id: number;
+  importance?: number;
+  address?: {
+    house_number?: string;
+    road?: string;
+    suburb?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postcode?: string;
+  };
 }
 
 // Componente para manejar eventos del mapa
@@ -69,6 +80,8 @@ const MapPicker: React.FC<MapPickerProps> = ({
   const [showManualInput, setShowManualInput] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number]>([-31.4201, -64.1888]); // Córdoba por defecto
   const [currentMarker, setCurrentMarker] = useState<[number, number] | null>(null);
+  const [geocodingProvider, setGeocodingProvider] = useState<'mapbox' | 'nominatim'>('nominatim');
+  const [isPremiumMode, setIsPremiumMode] = useState(false);
   
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -90,8 +103,8 @@ const MapPicker: React.FC<MapPickerProps> = ({
     }
   }, [latitude, longitude]);
 
-  // Función para buscar direcciones usando Nominatim (OpenStreetMap)
-  const searchAddress = async (query: string) => {
+  // Función para buscar direcciones usando el servicio de geocoding
+  const performAddressSearch = async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
@@ -99,14 +112,20 @@ const MapPicker: React.FC<MapPickerProps> = ({
 
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ar&addressdetails=1`
-      );
-      const data = await response.json();
-      setSearchResults(data);
+      const { results, provider, fallback } = await searchAddress(query);
+      setSearchResults(results);
+      setGeocodingProvider(provider);
+      setIsPremiumMode(provider === 'mapbox');
+      
+      // Mostrar información del proveedor en consola
+      if (fallback) {
+        console.log('⚠️ Usando fallback a Nominatim');
+      }
     } catch (error) {
       console.error('Error searching address:', error);
       setSearchResults([]);
+      // Mostrar error al usuario
+      alert('Error al buscar la dirección. Verifica tu conexión a internet.');
     } finally {
       setIsSearching(false);
     }
@@ -120,7 +139,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
 
     searchTimeoutRef.current = setTimeout(() => {
       if (searchQuery.length > 2) {
-        searchAddress(searchQuery);
+        performAddressSearch(searchQuery);
       } else {
         setSearchResults([]);
       }
@@ -153,11 +172,21 @@ const MapPicker: React.FC<MapPickerProps> = ({
   };
 
   // Manejar click en el mapa
-  const handleMapClick = (lat: number, lng: number) => {
+  const handleMapClick = async (lat: number, lng: number) => {
     setCurrentMarker([lat, lng]);
     setManualLat(lat.toFixed(8));
     setManualLng(lng.toFixed(8));
     onCoordinatesChange(lat, lng);
+
+    // Intentar obtener la dirección de las coordenadas
+    try {
+      const { address } = await reverseGeocode(lat, lng);
+      if (onAddressChange && address) {
+        onAddressChange(address);
+      }
+    } catch (error) {
+      console.warn('No se pudo obtener la dirección de las coordenadas:', error);
+    }
   };
 
   // Manejar cambio de coordenadas manuales
@@ -245,9 +274,24 @@ const MapPicker: React.FC<MapPickerProps> = ({
               <div className="w-80 border-r border-gray-200 flex flex-col">
                 {/* Búsqueda de direcciones */}
                 <div className="p-4 border-b border-gray-200">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Buscar Dirección
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Buscar Dirección
+                    </label>
+                    <div className="flex items-center gap-1 text-xs">
+                      {isPremiumMode ? (
+                        <>
+                          <Zap className="w-3 h-3 text-yellow-500" />
+                          <span className="text-yellow-600 font-medium">Mapbox</span>
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="w-3 h-3 text-blue-500" />
+                          <span className="text-blue-600">Nominatim</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
