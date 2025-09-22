@@ -66,6 +66,46 @@ const initDatabase = async () => {
       console.log('Province column may already be nullable:', error.message);
     }
 
+    // Agregar columnas de geolocalización si no existen
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 8),
+        ADD COLUMN IF NOT EXISTS longitude DECIMAL(11, 8)
+      `);
+      console.log('Added latitude and longitude columns if they did not exist');
+    } catch (error) {
+      console.log('Geolocation columns may already exist:', error.message);
+    }
+
+    // Crear índices para coordenadas si no existen
+    try {
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_properties_latitude ON properties(latitude);
+        CREATE INDEX IF NOT EXISTS idx_properties_longitude ON properties(longitude);
+        CREATE INDEX IF NOT EXISTS idx_properties_coordinates ON properties(latitude, longitude)
+      `);
+      console.log('Created geolocation indexes if they did not exist');
+    } catch (error) {
+      console.log('Geolocation indexes may already exist:', error.message);
+    }
+
+    // Agregar restricciones de validación para coordenadas
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ADD CONSTRAINT IF NOT EXISTS check_latitude_range 
+        CHECK (latitude IS NULL OR (latitude >= -90 AND latitude <= 90));
+        
+        ALTER TABLE properties 
+        ADD CONSTRAINT IF NOT EXISTS check_longitude_range 
+        CHECK (longitude IS NULL OR (longitude >= -180 AND longitude <= 180))
+      `);
+      console.log('Added coordinate validation constraints if they did not exist');
+    } catch (error) {
+      console.log('Coordinate validation constraints may already exist:', error.message);
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);

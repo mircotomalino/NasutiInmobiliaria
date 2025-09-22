@@ -13,6 +13,8 @@ export interface Property {
   area: number; // en m²
   patio?: PatioType;
   garage?: GarageType;
+  latitude?: number; // Coordenada de latitud (decimal)
+  longitude?: number; // Coordenada de longitud (decimal)
   publishedDate: string;
   imageUrl?: string; // Para compatibilidad con datos estáticos
   images?: string[]; // Para imágenes subidas desde el panel de gestión

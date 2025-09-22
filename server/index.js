@@ -53,6 +53,7 @@ app.get('/api/properties', async (req, res) => {
     const result = await pool.query(`
       SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
              p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+             p.latitude, p.longitude,
              p.published_date as "publishedDate",
              p.created_at, p.updated_at,
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
@@ -60,7 +61,7 @@ app.get('/api/properties', async (req, res) => {
       LEFT JOIN property_images pi ON p.id = pi.property_id
       GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
                p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
-               p.published_date, p.created_at, p.updated_at
+               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
     `);
     res.json(result.rows);
@@ -77,6 +78,7 @@ app.get('/api/properties/:id', async (req, res) => {
     const propertyResult = await pool.query(`
       SELECT id, title, description, price, address, city, province, 
              type, bedrooms, bathrooms, area, patio, garage, status,
+             latitude, longitude,
              published_date as "publishedDate",
              created_at, updated_at
       FROM properties WHERE id = $1
@@ -113,18 +115,20 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       area,
       patio,
       garage,
+      latitude,
+      longitude,
       status
     } = req.body;
 
     // Insertar la propiedad
     const propertyResult = await pool.query(`
-      INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, status,
+                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status,
                 published_date as "publishedDate",
                 created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status]);
+    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status]);
 
     const property = propertyResult.rows[0];
 
@@ -161,6 +165,8 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       area,
       patio,
       garage,
+      latitude,
+      longitude,
       status
     } = req.body;
 
@@ -169,13 +175,13 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       UPDATE properties 
       SET title = $1, description = $2, price = $3, address = $4, city = $5, 
           province = $6, type = $7, bedrooms = $8, bathrooms = $9, area = $10, 
-          patio = $11, garage = $12, status = $13, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $14
+          patio = $11, garage = $12, latitude = $13, longitude = $14, status = $15, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $16
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, status,
+                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status,
                 published_date as "publishedDate",
                 created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, status, id]);
+    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, id]);
 
     if (propertyResult.rows.length === 0) {
       return res.status(404).json({ error: 'Property not found' });
@@ -227,6 +233,79 @@ app.delete('/api/properties/:id/images/:imageId', async (req, res) => {
     res.json({ message: 'Image deleted successfully' });
   } catch (error) {
     console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint para consultas geográficas
+app.get('/api/properties/nearby', async (req, res) => {
+  try {
+    const { lat, lng, radius = 10000 } = req.query; // radius en metros por defecto
+    
+    if (!lat || !lng) {
+      return res.status(400).json({ error: 'Latitude and longitude are required' });
+    }
+
+    // Usar la función calculate_distance si está disponible, sino usar distancia aproximada
+    const result = await pool.query(`
+      SELECT p.*, 
+             array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images,
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'calculate_distance') 
+               THEN calculate_distance($1::DECIMAL, $2::DECIMAL, p.latitude, p.longitude)
+               ELSE 6371000 * acos(
+                 cos(radians($1)) * cos(radians(p.latitude)) * 
+                 cos(radians(p.longitude) - radians($2)) + 
+                 sin(radians($1)) * sin(radians(p.latitude))
+               )
+             END as distance
+      FROM properties p
+      LEFT JOIN property_images pi ON p.id = pi.property_id
+      WHERE p.latitude IS NOT NULL AND p.longitude IS NOT NULL
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
+      HAVING CASE 
+        WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'calculate_distance') 
+        THEN calculate_distance($1::DECIMAL, $2::DECIMAL, p.latitude, p.longitude)
+        ELSE 6371000 * acos(
+          cos(radians($1)) * cos(radians(p.latitude)) * 
+          cos(radians(p.longitude) - radians($2)) + 
+          sin(radians($1)) * sin(radians(p.latitude))
+        )
+      END <= $3
+      ORDER BY distance ASC
+    `, [lat, lng, radius]);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching nearby properties:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint para obtener propiedades con coordenadas
+app.get('/api/properties/with-coordinates', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT p.*, 
+             array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images,
+             CASE 
+               WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL 
+               THEN true 
+               ELSE false 
+             END as has_coordinates
+      FROM properties p
+      LEFT JOIN property_images pi ON p.id = pi.property_id
+      WHERE p.latitude IS NOT NULL AND p.longitude IS NOT NULL
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
+      ORDER BY p.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching properties with coordinates:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
