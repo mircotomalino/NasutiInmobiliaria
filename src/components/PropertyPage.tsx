@@ -17,6 +17,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Property, PropertyType } from '../types';
+import PropertyMap from './PropertyMap';
 
 const PropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -246,13 +247,42 @@ const PropertyPage: React.FC = () => {
                 {/* Ubicación */}
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">Ubicación</h3>
-                  <div className="flex items-start gap-3 text-gray-700">
+                  <div className="flex items-start gap-3 text-gray-700 mb-4">
                     <MapPin className="w-5 h-5 mt-1 text-[#f0782c]" />
                     <div>
                       <p className="font-medium">{property.address}</p>
                       <p>{property.city}, {property.province}</p>
                     </div>
                   </div>
+                  
+                  {/* Mapa de la propiedad */}
+                  {property.latitude && property.longitude && (
+                    <PropertyMap
+                      latitude={property.latitude}
+                      longitude={property.longitude}
+                      address={property.address}
+                      title={property.title}
+                      className="mt-4"
+                    />
+                  )}
+                  
+                  {/* Mensaje si no hay coordenadas */}
+                  {(!property.latitude || !property.longitude) && (
+                    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-yellow-600" />
+                        <div>
+                          <p className="text-sm text-yellow-800 font-medium">
+                            Ubicación exacta no disponible
+                          </p>
+                          <p className="text-xs text-yellow-700 mt-1">
+                            Esta propiedad no tiene coordenadas específicas configuradas. 
+                            Contacta con nosotros para obtener indicaciones precisas.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
