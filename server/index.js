@@ -45,6 +45,96 @@ const upload = multer({
 // Inicializar base de datos
 initDatabase();
 
+// Funciones de validación para coordenadas
+const validateCoordinates = (latitude, longitude) => {
+  const errors = [];
+  
+  // Validar latitud
+  if (latitude !== undefined && latitude !== null && latitude !== '') {
+    const lat = parseFloat(latitude);
+    if (isNaN(lat)) {
+      errors.push('Latitude must be a valid number');
+    } else if (lat < -90 || lat > 90) {
+      errors.push('Latitude must be between -90 and 90 degrees');
+    }
+  }
+  
+  // Validar longitud
+  if (longitude !== undefined && longitude !== null && longitude !== '') {
+    const lng = parseFloat(longitude);
+    if (isNaN(lng)) {
+      errors.push('Longitude must be a valid number');
+    } else if (lng < -180 || lng > 180) {
+      errors.push('Longitude must be between -180 and 180 degrees');
+    }
+  }
+  
+  // Si se proporciona una coordenada, ambas deben estar presentes
+  if ((latitude !== undefined && latitude !== null && latitude !== '') !== 
+      (longitude !== undefined && longitude !== null && longitude !== '')) {
+    errors.push('Both latitude and longitude must be provided together');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    latitude: latitude !== undefined && latitude !== null && latitude !== '' ? parseFloat(latitude) : null,
+    longitude: longitude !== undefined && longitude !== null && longitude !== '' ? parseFloat(longitude) : null
+  };
+};
+
+// Función para validar datos de propiedad
+const validatePropertyData = (data) => {
+  const errors = [];
+  
+  // Campos requeridos
+  const requiredFields = ['title', 'description', 'price', 'address', 'city', 'type'];
+  requiredFields.forEach(field => {
+    if (!data[field] || (typeof data[field] === 'string' && data[field].trim() === '')) {
+      errors.push(`${field} is required`);
+    }
+  });
+  
+  // Validar precio
+  if (data.price !== undefined) {
+    const price = parseFloat(data.price);
+    if (isNaN(price) || price < 0) {
+      errors.push('Price must be a valid positive number');
+    }
+  }
+  
+  // Validar números enteros
+  const integerFields = ['bedrooms', 'bathrooms', 'area'];
+  integerFields.forEach(field => {
+    if (data[field] !== undefined && data[field] !== null && data[field] !== '') {
+      const value = parseInt(data[field]);
+      if (isNaN(value) || value < 0) {
+        errors.push(`${field} must be a valid positive integer`);
+      }
+    }
+  });
+  
+  // Validar coordenadas
+  const coordValidation = validateCoordinates(data.latitude, data.longitude);
+  if (!coordValidation.isValid) {
+    errors.push(...coordValidation.errors);
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    validatedData: {
+      ...data,
+      latitude: coordValidation.latitude,
+      longitude: coordValidation.longitude,
+      price: data.price ? parseFloat(data.price) : null,
+      bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
+      bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
+      area: data.area ? parseInt(data.area) : null
+    }
+  };
+};
+
 // Rutas API
 
 // Obtener todas las propiedades
@@ -102,13 +192,26 @@ app.get('/api/properties/:id', async (req, res) => {
 // Crear una nueva propiedad
 app.post('/api/properties', upload.array('images', 10), async (req, res) => {
   try {
+    // Validar datos de entrada
+    const validation = validatePropertyData({
+      ...req.body,
+      province: req.body.province || 'Córdoba' // Valor por defecto
+    });
+
+    if (!validation.isValid) {
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: validation.errors 
+      });
+    }
+
     const {
       title,
       description,
       price,
       address,
       city,
-      province = 'Córdoba', // Valor por defecto
+      province,
       type,
       bedrooms,
       bathrooms,
@@ -118,7 +221,8 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       latitude,
       longitude,
       status
-    } = req.body;
+    } = validation.validatedData;
+
 
     // Insertar la propiedad
     const propertyResult = await pool.query(`
@@ -141,9 +245,21 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       `);
     }
 
+    // Obtener imágenes para la respuesta
+    const imagesResult = await pool.query('SELECT * FROM property_images WHERE property_id = $1', [property.id]);
+    property.images = imagesResult.rows.map(img => img.image_url);
+
     res.status(201).json(property);
   } catch (error) {
     console.error('Error creating property:', error);
+    
+    // Manejar errores específicos de base de datos
+    if (error.code === '23505') { // Unique constraint violation
+      return res.status(400).json({ error: 'Property with this data already exists' });
+    } else if (error.code === '23514') { // Check constraint violation
+      return res.status(400).json({ error: 'Invalid data: constraint violation', details: error.message });
+    }
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -152,13 +268,33 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
 app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Validar que el ID sea un número válido
+    const propertyId = parseInt(id);
+    if (isNaN(propertyId)) {
+      return res.status(400).json({ error: 'Invalid property ID' });
+    }
+
+    // Validar datos de entrada
+    const validation = validatePropertyData({
+      ...req.body,
+      province: req.body.province || 'Córdoba' // Valor por defecto
+    });
+
+    if (!validation.isValid) {
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: validation.errors 
+      });
+    }
+
     const {
       title,
       description,
       price,
       address,
       city,
-      province = 'Córdoba', // Valor por defecto
+      province,
       type,
       bedrooms,
       bathrooms,
@@ -168,7 +304,13 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
       latitude,
       longitude,
       status
-    } = req.body;
+    } = validation.validatedData;
+
+    // Verificar que la propiedad existe
+    const existingProperty = await pool.query('SELECT id FROM properties WHERE id = $1', [propertyId]);
+    if (existingProperty.rows.length === 0) {
+      return res.status(404).json({ error: 'Property not found' });
+    }
 
     // Actualizar la propiedad
     const propertyResult = await pool.query(`
@@ -181,24 +323,34 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
                 type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status,
                 published_date as "publishedDate",
                 created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, id]);
+    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, propertyId]);
 
-    if (propertyResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Property not found' });
-    }
+    const property = propertyResult.rows[0];
 
     // Si se subieron nuevas imágenes, agregarlas
     if (req.files && req.files.length > 0) {
-      const imageValues = req.files.map(file => `(${id}, '/uploads/${file.filename}')`).join(', ');
+      const imageValues = req.files.map(file => `(${propertyId}, '/uploads/${file.filename}')`).join(', ');
       await pool.query(`
         INSERT INTO property_images (property_id, image_url)
         VALUES ${imageValues}
       `);
     }
 
-    res.json(propertyResult.rows[0]);
+    // Obtener todas las imágenes para la respuesta
+    const imagesResult = await pool.query('SELECT * FROM property_images WHERE property_id = $1', [propertyId]);
+    property.images = imagesResult.rows.map(img => img.image_url);
+
+    res.json(property);
   } catch (error) {
     console.error('Error updating property:', error);
+    
+    // Manejar errores específicos de base de datos
+    if (error.code === '23505') { // Unique constraint violation
+      return res.status(400).json({ error: 'Property with this data already exists' });
+    } else if (error.code === '23514') { // Check constraint violation
+      return res.status(400).json({ error: 'Invalid data: constraint violation', details: error.message });
+    }
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -246,34 +398,17 @@ app.get('/api/properties/nearby', async (req, res) => {
       return res.status(400).json({ error: 'Latitude and longitude are required' });
     }
 
-    // Usar la función calculate_distance si está disponible, sino usar distancia aproximada
+    // Consulta simplificada usando la función calculate_distance
     const result = await pool.query(`
-      SELECT p.*, 
-             array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images,
-             CASE 
-               WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'calculate_distance') 
-               THEN calculate_distance($1::DECIMAL, $2::DECIMAL, p.latitude, p.longitude)
-               ELSE 6371000 * acos(
-                 cos(radians($1)) * cos(radians(p.latitude)) * 
-                 cos(radians(p.longitude) - radians($2)) + 
-                 sin(radians($1)) * sin(radians(p.latitude))
-               )
-             END as distance
-      FROM properties p
-      LEFT JOIN property_images pi ON p.id = pi.property_id
-      WHERE p.latitude IS NOT NULL AND p.longitude IS NOT NULL
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
-               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
-      HAVING CASE 
-        WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'calculate_distance') 
-        THEN calculate_distance($1::DECIMAL, $2::DECIMAL, p.latitude, p.longitude)
-        ELSE 6371000 * acos(
-          cos(radians($1)) * cos(radians(p.latitude)) * 
-          cos(radians(p.longitude) - radians($2)) + 
-          sin(radians($1)) * sin(radians(p.latitude))
-        )
-      END <= $3
+      SELECT id, title, description, price, address, city, province, 
+             type, bedrooms, bathrooms, area, patio, garage, status,
+             latitude, longitude,
+             published_date as "publishedDate",
+             created_at, updated_at,
+             calculate_distance($1::DECIMAL, $2::DECIMAL, latitude, longitude) as distance
+      FROM properties
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+        AND calculate_distance($1::DECIMAL, $2::DECIMAL, latitude, longitude) <= $3
       ORDER BY distance ASC
     `, [lat, lng, radius]);
 
@@ -288,20 +423,14 @@ app.get('/api/properties/nearby', async (req, res) => {
 app.get('/api/properties/with-coordinates', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.*, 
-             array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images,
-             CASE 
-               WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL 
-               THEN true 
-               ELSE false 
-             END as has_coordinates
-      FROM properties p
-      LEFT JOIN property_images pi ON p.id = pi.property_id
-      WHERE p.latitude IS NOT NULL AND p.longitude IS NOT NULL
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
-               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
-      ORDER BY p.created_at DESC
+      SELECT id, title, description, price, address, city, province, 
+             type, bedrooms, bathrooms, area, patio, garage, status,
+             latitude, longitude,
+             published_date as "publishedDate",
+             created_at, updated_at
+      FROM properties
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+      ORDER BY created_at DESC
     `);
     res.json(result.rows);
   } catch (error) {
