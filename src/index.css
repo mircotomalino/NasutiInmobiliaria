@@ -5,6 +5,24 @@
   box-sizing: border-box;
 }
 
+/* Estilos para Leaflet */
+@import 'leaflet/dist/leaflet.css';
+
+/* Estilos para el MapPicker */
+.map-picker .leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+.map-picker .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.map-picker .leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
