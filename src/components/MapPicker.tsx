@@ -267,8 +267,8 @@ const MapPicker: React.FC<MapPickerProps> = ({
 
       {/* Modal del mapa */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl shadow-2xl w-[95vw] h-[95vh] max-w-6xl max-h-[800px] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full h-full max-w-7xl max-h-[90vh] flex flex-col">
             {/* Header del modal */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -283,9 +283,9 @@ const MapPicker: React.FC<MapPickerProps> = ({
             </div>
 
             {/* Contenido del modal */}
-            <div className="flex-1 flex">
+            <div className="flex-1 flex flex-col lg:flex-row">
               {/* Panel lateral */}
-              <div className="w-80 border-r border-gray-200 flex flex-col">
+              <div className="w-full lg:w-80 border-r-0 lg:border-r border-gray-200 flex flex-col max-h-96 lg:max-h-none overflow-y-auto">
                 {/* Búsqueda de direcciones */}
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center justify-between mb-2">
@@ -459,7 +459,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
               </div>
 
               {/* Mapa */}
-              <div className="flex-1 relative">
+              <div className="flex-1 relative min-h-64 lg:min-h-0">
                 <MapContainer
                   center={mapCenter}
                   zoom={13}
@@ -517,8 +517,8 @@ const MapPicker: React.FC<MapPickerProps> = ({
             </div>
 
             {/* Footer del modal */}
-            <div className="flex items-center justify-between p-4 border-t border-gray-200">
-              <div className="text-sm text-gray-600">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border-t border-gray-200 gap-3">
+              <div className="text-sm text-gray-600 flex-1">
                 {currentMarker ? (
                   <span className="text-green-600 font-medium">
                     ✅ Ubicación seleccionada: {currentMarker[0].toFixed(6)}, {currentMarker[1].toFixed(6)}
@@ -529,11 +529,11 @@ const MapPicker: React.FC<MapPickerProps> = ({
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 w-full lg:w-auto">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                  className="flex-1 lg:flex-none px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                 >
                   Cancelar
                 </button>
@@ -549,7 +549,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
                     }
                   }}
                   disabled={!currentMarker}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+                  className={`flex-1 lg:flex-none px-4 py-2 rounded-lg transition-colors duration-200 ${
                     currentMarker 
                       ? 'bg-[#f0782c] text-white hover:bg-[#e06a1f]' 
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
