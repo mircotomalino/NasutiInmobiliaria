@@ -1,12 +1,12 @@
+/* Estilos para Leaflet - debe ir primero */
+@import 'leaflet/dist/leaflet.css';
+
 /* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
-/* Estilos para Leaflet */
-@import 'leaflet/dist/leaflet.css';
 
 /* Estilos para el MapPicker */
 .map-picker .leaflet-container {

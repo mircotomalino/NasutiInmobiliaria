@@ -48,6 +48,8 @@ const MapEvents: React.FC<{
   const map = useMapEvents({
     click: (e) => {
       const { lat, lng } = e.latlng;
+      // Centrar el mapa en la ubicación clickeada
+      map.setView([lat, lng], map.getZoom());
       onMapClick(lat, lng);
     },
   });
@@ -82,6 +84,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
   const [currentMarker, setCurrentMarker] = useState<[number, number] | null>(null);
   const [geocodingProvider, setGeocodingProvider] = useState<'mapbox' | 'nominatim'>('nominatim');
   const [isPremiumMode, setIsPremiumMode] = useState(false);
+  const [clickedLocation, setClickedLocation] = useState<[number, number] | null>(null);
   
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -98,6 +101,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
     if (latitude && longitude) {
       setMapCenter([latitude, longitude]);
       setCurrentMarker([latitude, longitude]);
+      setClickedLocation([latitude, longitude]);
       setManualLat(latitude.toString());
       setManualLng(longitude.toString());
     }
@@ -159,6 +163,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
     
     setMapCenter([lat, lng]);
     setCurrentMarker([lat, lng]);
+    setClickedLocation([lat, lng]);
     setManualLat(lat.toString());
     setManualLng(lng.toString());
     onCoordinatesChange(lat, lng);
@@ -173,6 +178,8 @@ const MapPicker: React.FC<MapPickerProps> = ({
 
   // Manejar click en el mapa
   const handleMapClick = async (lat: number, lng: number) => {
+    // Marcar la ubicación clickeada
+    setClickedLocation([lat, lng]);
     setCurrentMarker([lat, lng]);
     setManualLat(lat.toFixed(8));
     setManualLng(lng.toFixed(8));
@@ -197,6 +204,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
     if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
       setMapCenter([lat, lng]);
       setCurrentMarker([lat, lng]);
+      setClickedLocation([lat, lng]);
       onCoordinatesChange(lat, lng);
     }
   };
@@ -204,6 +212,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
   // Limpiar coordenadas
   const handleClearCoordinates = () => {
     setCurrentMarker(null);
+    setClickedLocation(null);
     setManualLat('');
     setManualLng('');
     onCoordinatesChange(null, null);
@@ -218,6 +227,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
           const lng = position.coords.longitude;
           setMapCenter([lat, lng]);
           setCurrentMarker([lat, lng]);
+          setClickedLocation([lat, lng]);
           setManualLat(lat.toFixed(8));
           setManualLng(lng.toFixed(8));
           onCoordinatesChange(lat, lng);
@@ -437,6 +447,13 @@ const MapPicker: React.FC<MapPickerProps> = ({
                         <div><strong>Dirección:</strong> {address}</div>
                       )}
                     </div>
+                    {clickedLocation && (
+                      <div className="mt-3 pt-2 border-t border-gray-200">
+                        <div className="text-xs text-blue-600 font-medium">
+                          📍 Click realizado en: {clickedLocation[0].toFixed(6)}, {clickedLocation[1].toFixed(6)}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -476,6 +493,20 @@ const MapPicker: React.FC<MapPickerProps> = ({
                             <div className="text-xs text-gray-500">
                               Haz click en "Confirmar Ubicación" para guardar
                             </div>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )}
+                  
+                  {/* Indicador de click temporal */}
+                  {clickedLocation && (
+                    <Marker position={clickedLocation}>
+                      <Popup>
+                        <div className="text-sm text-center">
+                          <div className="font-semibold text-blue-600 mb-1">📍 Click aquí</div>
+                          <div className="text-xs text-gray-600">
+                            {clickedLocation[0].toFixed(6)}, {clickedLocation[1].toFixed(6)}
                           </div>
                         </div>
                       </Popup>
