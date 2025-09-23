@@ -12,8 +12,8 @@ L.Icon.Default.mergeOptions({
 });
 
 interface PropertyMapProps {
-  latitude: number;
-  longitude: number;
+  latitude: number | string;
+  longitude: number | string;
   address: string;
   title: string;
   className?: string;
@@ -27,7 +27,12 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   className = ''
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [mapCenter] = useState<[number, number]>([latitude, longitude]);
+  
+  // Convertir coordenadas a números si vienen como strings
+  const lat = typeof latitude === 'string' ? parseFloat(latitude) : latitude;
+  const lng = typeof longitude === 'string' ? parseFloat(longitude) : longitude;
+  
+  const [mapCenter] = useState<[number, number]>([lat, lng]);
 
   // Lazy load del componente de mapa
   useEffect(() => {
@@ -41,7 +46,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   // Función para abrir Google Maps
   const openGoogleMaps = () => {
-    const query = encodeURIComponent(`${address}, ${latitude}, ${longitude}`);
+    const query = encodeURIComponent(`${address}, ${lat}, ${lng}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
     window.open(url, '_blank');
   };
@@ -49,7 +54,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   // Función para abrir Apple Maps (detectar dispositivo)
   const openAppleMaps = () => {
     const query = encodeURIComponent(`${address}`);
-    const url = `http://maps.apple.com/?q=${query}&ll=${latitude},${longitude}`;
+    const url = `http://maps.apple.com/?q=${query}&ll=${lat},${lng}`;
     window.open(url, '_blank');
   };
 
@@ -68,7 +73,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   // Función para copiar coordenadas
   const copyCoordinates = () => {
-    const coords = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+    const coords = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     navigator.clipboard.writeText(coords);
     
     // Crear notificación temporal
@@ -138,7 +143,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           
-          <Marker position={[latitude, longitude]}>
+          <Marker position={[lat, lng]}>
             <Popup>
               <div className="p-2">
                 <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
@@ -170,7 +175,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             <p className="font-medium text-gray-900">{title}</p>
             <p className="text-gray-600 text-xs">{address}</p>
             <p className="text-gray-500 text-xs mt-1">
-              {latitude.toFixed(6)}, {longitude.toFixed(6)}
+              {lat.toFixed(6)}, {lng.toFixed(6)}
             </p>
           </div>
         </div>
@@ -195,7 +200,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div>
             <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Coordenadas:</strong> {latitude.toFixed(6)}, {longitude.toFixed(6)}</p>
+            <p><strong>Coordenadas:</strong> {lat.toFixed(6)}, {lng.toFixed(6)}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-500">
