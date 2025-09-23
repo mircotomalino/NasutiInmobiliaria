@@ -238,17 +238,21 @@ const MapPicker: React.FC<MapPickerProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors duration-200"
+        className={`w-full flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors duration-200 ${
+          latitude && longitude 
+            ? 'border-green-300 bg-green-50 hover:bg-green-100' 
+            : 'border-gray-300 bg-white hover:bg-gray-50'
+        }`}
       >
-        <MapPin className="w-5 h-5 text-[#f0782c]" />
+        <MapPin className={`w-5 h-5 ${latitude && longitude ? 'text-green-600' : 'text-[#f0782c]'}`} />
         {latitude && longitude ? (
-          <span className="text-sm text-gray-700">
-            {latitude.toFixed(6)}, {longitude.toFixed(6)}
+          <span className="text-sm text-green-700 font-medium">
+            ✅ {latitude.toFixed(6)}, {longitude.toFixed(6)}
           </span>
         ) : (
           <span className="text-sm text-gray-500">Seleccionar ubicación en mapa</span>
         )}
-        <Edit3 className="w-4 h-4 text-gray-400" />
+        <Edit3 className={`w-4 h-4 ${latitude && longitude ? 'text-green-500' : 'text-gray-400'}`} />
       </button>
 
       {/* Modal del mapa */}
@@ -460,9 +464,19 @@ const MapPicker: React.FC<MapPickerProps> = ({
                     <Marker position={currentMarker}>
                       <Popup>
                         <div className="text-sm">
-                          <div><strong>Ubicación seleccionada</strong></div>
-                          <div>Lat: {currentMarker[0].toFixed(6)}</div>
-                          <div>Lng: {currentMarker[1].toFixed(6)}</div>
+                          <div className="font-semibold text-green-600 mb-2">✅ Ubicación seleccionada</div>
+                          <div className="space-y-1">
+                            <div><strong>Latitud:</strong> {currentMarker[0].toFixed(6)}</div>
+                            <div><strong>Longitud:</strong> {currentMarker[1].toFixed(6)}</div>
+                            {address && (
+                              <div><strong>Dirección:</strong> {address}</div>
+                            )}
+                          </div>
+                          <div className="mt-3 pt-2 border-t border-gray-200">
+                            <div className="text-xs text-gray-500">
+                              Haz click en "Confirmar Ubicación" para guardar
+                            </div>
+                          </div>
                         </div>
                       </Popup>
                     </Marker>
@@ -472,21 +486,47 @@ const MapPicker: React.FC<MapPickerProps> = ({
             </div>
 
             {/* Footer del modal */}
-            <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-2 bg-[#f0782c] text-white rounded-lg hover:bg-[#e06a1f] transition-colors duration-200"
-              >
-                Confirmar Ubicación
-              </button>
+            <div className="flex items-center justify-between p-4 border-t border-gray-200">
+              <div className="text-sm text-gray-600">
+                {currentMarker ? (
+                  <span className="text-green-600 font-medium">
+                    ✅ Ubicación seleccionada: {currentMarker[0].toFixed(6)}, {currentMarker[1].toFixed(6)}
+                  </span>
+                ) : (
+                  <span className="text-gray-500">
+                    Haz click en el mapa o busca una dirección para seleccionar la ubicación
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (currentMarker) {
+                      // Confirmar la ubicación seleccionada
+                      onCoordinatesChange(currentMarker[0], currentMarker[1]);
+                      setIsOpen(false);
+                    } else {
+                      alert('Por favor selecciona una ubicación en el mapa antes de confirmar');
+                    }
+                  }}
+                  disabled={!currentMarker}
+                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    currentMarker 
+                      ? 'bg-[#f0782c] text-white hover:bg-[#e06a1f]' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {currentMarker ? 'Confirmar Ubicación' : 'Selecciona una ubicación'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
