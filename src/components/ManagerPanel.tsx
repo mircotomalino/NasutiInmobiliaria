@@ -127,7 +127,12 @@ const ManagerPanel: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!editingProperty) return;
+    if (!editingProperty) {
+      console.error('No hay propiedad para editar');
+      return;
+    }
+
+    console.log('🚀 Iniciando creación/actualización de propiedad:', editingProperty);
 
     const formData = new FormData();
     
@@ -135,12 +140,14 @@ const ManagerPanel: React.FC = () => {
     Object.entries(editingProperty).forEach(([key, value]) => {
       if (value !== undefined && key !== 'id' && key !== 'images') {
         formData.append(key, value.toString());
+        console.log(`📝 Agregando campo: ${key} = ${value}`);
       }
     });
 
     // Agregar archivos
     selectedFiles.forEach(file => {
       formData.append('images', file);
+      console.log(`📁 Agregando archivo: ${file.name}`);
     });
 
     try {
@@ -150,19 +157,28 @@ const ManagerPanel: React.FC = () => {
       
       const method = editingProperty.id ? 'PUT' : 'POST';
       
+      console.log(`🌐 Enviando ${method} a: ${url}`);
+      
       const response = await fetch(url, {
         method,
         body: formData
       });
 
+      console.log(`📡 Respuesta del servidor: ${response.status} ${response.statusText}`);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Propiedad creada/actualizada exitosamente:', result);
         await fetchProperties();
         handleCancel();
       } else {
-        console.error('Error saving property');
+        const errorText = await response.text();
+        console.error('❌ Error del servidor:', response.status, errorText);
+        alert(`Error al guardar la propiedad: ${response.status} - ${errorText}`);
       }
     } catch (error) {
-      console.error('Error saving property:', error);
+      console.error('💥 Error de red:', error);
+      alert(`Error de conexión: ${error}`);
     }
   };
 
