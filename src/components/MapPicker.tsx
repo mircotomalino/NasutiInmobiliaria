@@ -185,6 +185,9 @@ const MapPicker: React.FC<MapPickerProps> = ({
     setManualLng(lng.toFixed(8));
     onCoordinatesChange(lat, lng);
 
+    // Mostrar feedback visual
+    console.log('📍 Click registrado en:', lat.toFixed(6), lng.toFixed(6));
+
     // Intentar obtener la dirección de las coordenadas
     try {
       const { address } = await reverseGeocode(lat, lng);
@@ -268,7 +271,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
       {/* Modal del mapa */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full h-full max-w-7xl max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-xl shadow-2xl w-full h-full max-w-7xl max-h-[85vh] flex flex-col">
             {/* Header del modal */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -283,7 +286,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
             </div>
 
             {/* Contenido del modal */}
-            <div className="flex-1 flex flex-col lg:flex-row">
+            <div className="flex-1 flex flex-col lg:flex-row min-h-0">
               {/* Panel lateral */}
               <div className="w-full lg:w-80 border-r-0 lg:border-r border-gray-200 flex flex-col max-h-96 lg:max-h-none overflow-y-auto">
                 {/* Búsqueda de direcciones */}
@@ -459,7 +462,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
               </div>
 
               {/* Mapa */}
-              <div className="flex-1 relative min-h-64 lg:min-h-0">
+              <div className="flex-1 relative min-h-64 lg:min-h-0 max-h-96 lg:max-h-none overflow-hidden">
                 <MapContainer
                   center={mapCenter}
                   zoom={13}
@@ -517,7 +520,7 @@ const MapPicker: React.FC<MapPickerProps> = ({
             </div>
 
             {/* Footer del modal */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border-t border-gray-200 gap-3">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border-t border-gray-200 gap-3 bg-white sticky bottom-0 z-10">
               <div className="text-sm text-gray-600 flex-1">
                 {currentMarker ? (
                   <span className="text-green-600 font-medium">
