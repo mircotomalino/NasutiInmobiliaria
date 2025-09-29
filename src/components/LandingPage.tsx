@@ -246,7 +246,7 @@ Mensaje: ${formData.mensaje}`;
 
         {/* Sección Propiedades Destacadas */}
         <section className="py-20 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">Propiedades Destacadas</h2>
               <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4"></div>
@@ -295,7 +295,7 @@ Mensaje: ${formData.mensaje}`;
                           <img
                             src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
                             alt={property.title}
-                            className="w-full h-48 object-cover rounded-lg shadow-md"
+                            className="w-full h-56 object-cover rounded-lg shadow-md"
                           />
                           {/* Badges */}
                           <div className="absolute top-4 left-4 flex flex-col gap-2">

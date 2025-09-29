@@ -232,15 +232,6 @@ Link de la propiedad: ${propertyUrl}`;
                 </div>
               </div>
 
-              {/* Información adicional */}
-              <div className="modal-section">
-                <h4>Información Adicional</h4>
-                <div className="modal-features">
-                  <div className="modal-feature">
-                    <span>ID: {property.id}</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Botones de acción */}
               <div className="modal-actions">
