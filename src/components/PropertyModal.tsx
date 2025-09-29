@@ -11,6 +11,20 @@ interface PropertyModalProps {
 const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
+  // Número de WhatsApp de Nasuti Inmobiliaria
+  const OWNER_PHONE = "5493513459377";
+  
+  // Función para manejar el contacto por WhatsApp
+  const handleWhatsAppContact = () => {
+    const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
+    const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
+
+Link de la propiedad: ${propertyUrl}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+  
   if (!property || !isOpen) return null;
 
   // Función para obtener el ícono según el tipo de propiedad
@@ -230,7 +244,10 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
 
               {/* Botones de acción */}
               <div className="modal-actions">
-                <button className="modal-btn modal-btn-primary">
+                <button 
+                  onClick={handleWhatsAppContact}
+                  className="modal-btn modal-btn-primary"
+                >
                   Contactar
                 </button>
               </div>

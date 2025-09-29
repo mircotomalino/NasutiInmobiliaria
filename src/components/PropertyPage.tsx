@@ -27,6 +27,22 @@ const PropertyPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const API_BASE = 'http://localhost:3001/api';
+  
+  // Número de WhatsApp de Nasuti Inmobiliaria
+  const OWNER_PHONE = "5493513459377";
+
+  // Función para manejar el contacto por WhatsApp
+  const handleWhatsAppContact = () => {
+    if (property) {
+      const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
+      const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
+
+Link de la propiedad: ${propertyUrl}`;
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -348,12 +364,12 @@ const PropertyPage: React.FC = () => {
                   <p className="mb-4 text-orange-100">
                     Contáctanos para más información, precios y para coordinar una visita.
                   </p>
-                  <a
-                    href="/#contacto"
+                  <button
+                    onClick={handleWhatsAppContact}
                     className="inline-block w-full bg-white text-[#f0782c] font-semibold py-3 px-6 rounded-lg text-center hover:bg-gray-100 transition-colors"
                   >
                     Contactar Ahora
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>

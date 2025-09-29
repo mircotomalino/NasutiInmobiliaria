@@ -20,7 +20,18 @@ import PropertyModal from './PropertyModal';
 
 const LandingPage: React.FC = () => {
   // Número de WhatsApp del propietario (configurable)
-  const OWNER_PHONE = "5491112345678"; // Reemplazar con el número real
+  const OWNER_PHONE = "5493513459377"; // Número de WhatsApp de Nasuti Inmobiliaria
+  
+  // Función para manejar el contacto por WhatsApp desde las tarjetas de propiedades
+  const handlePropertyWhatsAppContact = (property: Property) => {
+    const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
+    const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
+
+Link de la propiedad: ${propertyUrl}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
   
   // Estado para el carrusel
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -35,7 +46,6 @@ const LandingPage: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    telefono: '',
     asunto: '',
     mensaje: ''
   });
@@ -105,7 +115,6 @@ const LandingPage: React.FC = () => {
     // Construir el mensaje para WhatsApp
     const message = `Hola, soy ${formData.nombre}.
 Mi email es ${formData.email}.
-Mi teléfono es ${formData.telefono}.
 Asunto: ${formData.asunto || 'Consulta general'}
 Mensaje: ${formData.mensaje}`;
 
@@ -122,7 +131,6 @@ Mensaje: ${formData.mensaje}`;
     setFormData({
       nombre: '',
       email: '',
-      telefono: '',
       asunto: '',
       mensaje: ''
     });
@@ -382,12 +390,12 @@ Mensaje: ${formData.mensaje}`;
                             >
                               Ver Propiedad
                             </Link>
-                            <a 
-                              href="#contacto" 
+                            <button 
+                              onClick={() => handlePropertyWhatsAppContact(property)}
                               className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
                             >
                               Consultar
-                            </a>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -678,19 +686,6 @@ Mensaje: ${formData.mensaje}`;
                     </div>
                   </div>
                   
-                  <div>
-                    <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                    <input
-                      type="tel"
-                      id="telefono"
-                      name="telefono"
-                      value={formData.telefono}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
-                      placeholder="+54 11 1234-5678"
-                      required
-                    />
-                  </div>
                   
                   <div>
                     <label htmlFor="asunto" className="block text-sm font-medium text-gray-700 mb-2">Asunto</label>

@@ -87,7 +87,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
         {/* Descripción */}
         <p className="property-description">
 
-          {property.description}
+
+
+ la           {property.description}
         </p>
 
         {/* Ubicación */}
