@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
-// import MapPicker from './MapPicker'; // Temporalmente deshabilitado
+import SimpleMapPicker from './SimpleMapPicker';
 
 interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude'> {
   id?: number;
@@ -584,22 +584,28 @@ const ManagerPanel: React.FC = () => {
           Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
         </div>
         {editingProperty && (
-          <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
-            <div className="text-sm text-gray-600 mb-2">
-              Mapa interactivo (opcional)
-            </div>
-            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-gray-500 mb-2">🗺️</div>
-                <div className="text-sm text-gray-600">
-                  Mapa deshabilitado temporalmente
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  Las coordenadas se mantienen: {editingProperty.latitude}, {editingProperty.longitude}
-                </div>
-              </div>
-            </div>
-          </div>
+          <SimpleMapPicker
+            key={`map-${editingProperty.id}-${editingProperty.latitude}-${editingProperty.longitude}`}
+            latitude={editingProperty.latitude ? parseFloat(editingProperty.latitude.toString()) : null}
+            longitude={editingProperty.longitude ? parseFloat(editingProperty.longitude.toString()) : null}
+            onCoordinatesChange={(lat, lng) => {
+              console.log('📍 Coordenadas cambiadas:', lat, lng);
+              setEditingProperty(prev => prev ? {
+                ...prev,
+                latitude: lat,
+                longitude: lng
+              } : null);
+            }}
+            address={editingProperty.address || ''}
+            onAddressChange={(address) => {
+              console.log('🏠 Dirección cambiada:', address);
+              setEditingProperty(prev => prev ? {
+                ...prev,
+                address: address
+              } : null);
+            }}
+            className="w-full"
+          />
         )}
       </div>
 
