@@ -23,6 +23,7 @@ const SimpleMapPicker: React.FC<SimpleMapPickerProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [manualLat, setManualLat] = useState('');
   const [manualLng, setManualLng] = useState('');
+  const [googleMapsInput, setGoogleMapsInput] = useState('');
   const [currentLat, setCurrentLat] = useState<number | null>(null);
   const [currentLng, setCurrentLng] = useState<number | null>(null);
 
@@ -41,8 +42,61 @@ const SimpleMapPicker: React.FC<SimpleMapPickerProps> = ({
     }
   }, [latitude, longitude]);
 
+  // Función para parsear coordenadas de Google Maps
+  const parseGoogleMapsCoordinates = (input: string): { lat: number; lng: number } | null => {
+    if (!input.trim()) return null;
+    
+    // Limpiar el input
+    const cleaned = input.trim().replace(/[^\d\.,\-\s]/g, '');
+    
+    // Intentar diferentes formatos de Google Maps
+    const patterns = [
+      // Formato: "lat, lng" o "lat,lng"
+      /^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/,
+      // Formato: "lat lng" (espacio)
+      /^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)$/,
+      // Formato con coma decimal: "31,4201, -64,1888"
+      /^(-?\d+),(\d+)\s*,\s*(-?\d+),(\d+)$/,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = cleaned.match(pattern);
+      if (match) {
+        let lat: number, lng: number;
+        
+        if (pattern === patterns[2]) {
+          // Formato con coma decimal
+          lat = parseFloat(`${match[1]}.${match[2]}`);
+          lng = parseFloat(`${match[3]}.${match[4]}`);
+        } else {
+          // Formato estándar
+          lat = parseFloat(match[1]);
+          lng = parseFloat(match[2]);
+        }
+        
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          return { lat, lng };
+        }
+      }
+    }
+    
+    return null;
+  };
+
   // Manejar cambio de coordenadas manuales
   const handleManualCoordinatesChange = () => {
+    // Intentar parsear como coordenadas combinadas primero
+    const combinedInput = `${manualLat} ${manualLng}`.trim();
+    const parsed = parseGoogleMapsCoordinates(combinedInput);
+    
+    if (parsed) {
+      setCurrentLat(parsed.lat);
+      setCurrentLng(parsed.lng);
+      onCoordinatesChange(parsed.lat, parsed.lng);
+      return;
+    }
+    
+    // Si no funciona, intentar por separado
     const lat = parseFloat(manualLat);
     const lng = parseFloat(manualLng);
     
@@ -51,7 +105,23 @@ const SimpleMapPicker: React.FC<SimpleMapPickerProps> = ({
       setCurrentLng(lng);
       onCoordinatesChange(lat, lng);
     } else {
-      alert('Por favor ingresa coordenadas válidas (Latitud: -90 a 90, Longitud: -180 a 180)');
+      alert('Por favor ingresa coordenadas válidas (Latitud: -90 a 90, Longitud: -180 a 180)\n\nFormatos aceptados:\n• 31.4201, -64.1888\n• 31.4201 -64.1888\n• 31,4201, -64,1888');
+    }
+  };
+
+  // Manejar input de Google Maps
+  const handleGoogleMapsInput = () => {
+    const parsed = parseGoogleMapsCoordinates(googleMapsInput);
+    
+    if (parsed) {
+      setCurrentLat(parsed.lat);
+      setCurrentLng(parsed.lng);
+      setManualLat(parsed.lat.toString());
+      setManualLng(parsed.lng.toString());
+      onCoordinatesChange(parsed.lat, parsed.lng);
+      setGoogleMapsInput('');
+    } else {
+      alert('Formato de coordenadas no reconocido.\n\nFormatos aceptados:\n• 31.4201, -64.1888\n• 31.4201 -64.1888\n• 31,4201, -64,1888\n\nPega las coordenadas directamente desde Google Maps.');
     }
   };
 
@@ -163,6 +233,32 @@ const SimpleMapPicker: React.FC<SimpleMapPickerProps> = ({
                       </div>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Input de Google Maps */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  📍 Pegar desde Google Maps
+                </label>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={googleMapsInput}
+                    onChange={(e) => setGoogleMapsInput(e.target.value)}
+                    placeholder="Pega las coordenadas desde Google Maps (ej: 31.4201, -64.1888)"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleGoogleMapsInput}
+                    className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
+                  >
+                    Aplicar desde Google Maps
+                  </button>
+                </div>
+                <div className="mt-2 text-xs text-gray-500">
+                  Formatos aceptados: <code>31.4201, -64.1888</code> o <code>31.4201 -64.1888</code>
                 </div>
               </div>
 
