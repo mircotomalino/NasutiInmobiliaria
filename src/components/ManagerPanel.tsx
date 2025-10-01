@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
-import MapPicker from './MapPicker';
+// import MapPicker from './MapPicker'; // Temporalmente deshabilitado
 
 interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude'> {
   id?: number;
@@ -203,8 +203,52 @@ const ManagerPanel: React.FC = () => {
   };
 
   const handleEdit = (property: Property) => {
-    setEditingProperty(property);
+    console.log('🔧 Iniciando edición de propiedad:', property);
+    
+    // Limpiar estado primero
+    setEditingProperty(null);
     setIsAdding(false);
+    
+    // Pequeño delay para asegurar que el estado se limpie
+    setTimeout(() => {
+      try {
+        // Crear una copia limpia de la propiedad para editar
+        const propertyToEdit: Property = {
+          id: property.id,
+          title: property.title || '',
+          description: property.description || '',
+          price: typeof property.price === 'string' ? parseFloat(property.price) : (property.price || 0),
+          address: property.address || '',
+          city: property.city || '',
+          type: property.type || 'casa',
+          bedrooms: property.bedrooms || 0,
+          bathrooms: property.bathrooms || 0,
+          area: property.area || 0,
+          patio: property.patio || 'No Tiene',
+          garage: property.garage || 'No Tiene',
+          status: property.status || 'disponible',
+          images: property.images || [],
+          latitude: property.latitude ? parseFloat(property.latitude.toString()) : null,
+          longitude: property.longitude ? parseFloat(property.longitude.toString()) : null
+        };
+
+        console.log('✅ Propiedad preparada para editar:', propertyToEdit);
+
+        setEditingProperty(propertyToEdit);
+        setIsAdding(false);
+
+        console.log('✅ Estado actualizado, haciendo scroll...');
+
+        // Scroll hacia arriba para mostrar el formulario
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          console.log('✅ Scroll completado');
+        }, 200);
+      } catch (error) {
+        console.error('❌ Error al editar propiedad:', error);
+        alert('Error al cargar la propiedad para editar. Por favor, inténtalo de nuevo.');
+      }
+    }, 50);
   };
 
   // Funciones para manejar filtros del manager
@@ -434,7 +478,7 @@ const ManagerPanel: React.FC = () => {
         )}
 
         {/* Formulario */}
-        {(isAdding || editingProperty) && (
+        {(isAdding || editingProperty) && editingProperty && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">
@@ -531,34 +575,33 @@ const ManagerPanel: React.FC = () => {
                   />
                 </div>
 
-                {/* Ubicación en Mapa */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ubicación en Mapa (Opcional)
-                  </label>
-                  <div className="text-xs text-gray-500 mb-2">
-                    Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
-                  </div>
-                  <MapPicker
-                    latitude={editingProperty?.latitude || null}
-                    longitude={editingProperty?.longitude || null}
-                    onCoordinatesChange={(lat, lng) => {
-                      setEditingProperty(prev => prev ? {
-                        ...prev,
-                        latitude: lat,
-                        longitude: lng
-                      } : null);
-                    }}
-                    address={editingProperty?.address}
-                    onAddressChange={(address) => {
-                      setEditingProperty(prev => prev ? {
-                        ...prev,
-                        address: address
-                      } : null);
-                    }}
-                    className="w-full"
-                  />
+      {/* Ubicación en Mapa */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Ubicación en Mapa (Opcional)
+        </label>
+        <div className="text-xs text-gray-500 mb-2">
+          Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
+        </div>
+        {editingProperty && (
+          <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+            <div className="text-sm text-gray-600 mb-2">
+              Mapa interactivo (opcional)
+            </div>
+            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-gray-500 mb-2">🗺️</div>
+                <div className="text-sm text-gray-600">
+                  Mapa deshabilitado temporalmente
                 </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Las coordenadas se mantienen: {editingProperty.latitude}, {editingProperty.longitude}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
                 {/* Ciudad */}
                 <div>
@@ -754,7 +797,7 @@ const ManagerPanel: React.FC = () => {
                           {property.title}
                         </Link>
                         <div className="text-sm text-gray-500">
-                          {property.address}, {property.city}
+                          {property.city}
                         </div>
                       </div>
                     </td>
