@@ -7,31 +7,17 @@ import {
   Bath, 
   Square, 
   Calendar,
-  Home,
-  Building,
-  Store,
-  Briefcase,
-  TreePine,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { PropertyType, Property } from '../types';
+import { Property } from '../types';
 import PropertyModal from './PropertyModal';
+import { handlePropertyWhatsAppContact } from '../services/whatsapp';
+import { getPropertyTypeIcon } from '../utils/propertyUtils';
 
 const LandingPage: React.FC = () => {
   // Número de WhatsApp del propietario (configurable)
   const OWNER_PHONE = "5493513459377"; // Número de WhatsApp de Nasuti Inmobiliaria
-  
-  // Función para manejar el contacto por WhatsApp desde las tarjetas de propiedades
-  const handlePropertyWhatsAppContact = (property: Property) => {
-    const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
-    const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
-
-Link de la propiedad: ${propertyUrl}`;
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
   
   // Estado para el carrusel
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -136,25 +122,6 @@ Mensaje: ${formData.mensaje}`;
     });
   };
   
-  // Función para obtener el ícono según el tipo de propiedad
-  const getPropertyTypeIcon = (type: PropertyType) => {
-    switch (type) {
-      case 'casa':
-        return <Home className="w-4 h-4" />;
-      case 'departamento':
-        return <Building className="w-4 h-4" />;
-      case 'oficina':
-        return <Briefcase className="w-4 h-4" />;
-      case 'local':
-        return <Store className="w-4 h-4" />;
-      case 'quinta':
-        return <TreePine className="w-4 h-4" />;
-      case 'terreno':
-        return <Square className="w-4 h-4" />;
-      default:
-        return <Home className="w-4 h-4" />;
-    }
-  };
 
   // Función para formatear el precio
   const formatPrice = (price: number) => {
@@ -238,7 +205,7 @@ Mensaje: ${formData.mensaje}`;
               </div>
               
               <div className="relative">
-                <img src="/img/portadaNasuti.png" alt="Inmobiliaria Durio" className="w-full h-auto rounded-lg shadow-lg" />
+                <img src="/img/fotosInstitusionales/inmobiliariaFrenteAmplia.jpg" alt="Inmobiliaria Durio" className="w-full h-96 lg:h-[500px] object-cover rounded-lg shadow-lg" />
               </div>
             </div>
           </div>
@@ -465,23 +432,37 @@ Mensaje: ${formData.mensaje}`;
               </p>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="mb-6">
-                  <img src="/img/GastonPerfil.jpeg" alt="Gastón - Socio" className="w-48 h-48 rounded-full mx-auto shadow-lg" />
+                  <img src="/img/fotosInstitusionales/GastonDurio.jpg" alt="Gastón - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
                 </div>
-                <h3 className="text-2xl font-semibold text-[#1F2937] mb-2">Gastón</h3>
-                <p className="text-[#6B7280]">Socio y Gerente</p>
+                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Gastón</h3>
+                <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
               </div>
               
               <div className="text-center">
                 <div className="mb-6">
-                  <div className="w-48 h-48 rounded-full mx-auto shadow-lg bg-[#6B7280] flex items-center justify-center text-white text-4xl font-bold">
-                    S
-                  </div>
+                  <img src="/img/fotosInstitusionales/SerigioNasuti.jpg" alt="Sergio - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
                 </div>
-                <h3 className="text-2xl font-semibold text-[#1F2937] mb-2">Sergio</h3>
-                <p className="text-[#6B7280]">Socio y Gerente</p>
+                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Sergio</h3>
+                <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="mb-6">
+                  <img src="/img/fotosInstitusionales/camilaBuzzi.jpg" alt="Camila - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Camila</h3>
+                <p className="text-[#6B7280] text-sm">Equipo</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="mb-6">
+                  <img src="/img/fotosInstitusionales/AliciaNasuti.jpg" alt="Alicia - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Alicia</h3>
+                <p className="text-[#6B7280] text-sm">Equipo</p>
               </div>
             </div>
           </div>
@@ -523,36 +504,46 @@ Mensaje: ${formData.mensaje}`;
             </div>
             
             {/* Contenido principal */}
-            <div className="bg-white p-8 lg:p-12 rounded-xl shadow-lg border border-gray-100">
+            <div className="relative bg-white p-28 lg:p-32 rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Fondo con imagen */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+                style={{
+                  backgroundImage: 'url(/img/fotosInstitusionales/GastonYSergio1.jpg)'
+                }}
+              ></div>
+              {/* Contenido con z-index para estar encima */}
+              <div className="relative z-10">
               <div className="text-center mb-8">
                 <h3 className="text-[#1F2937] text-2xl font-bold mb-4">El Legado de Erminio Nasuti</h3>
               </div>
               
               <div className="space-y-6">
-                <p className="text-lg text-[#6B7280] leading-relaxed">
+                <p className="text-base text-[#374151] leading-relaxed">
                   La inmobiliaria Nasuti nació de la visión y el compromiso de un hombre con valores inquebrantables: 
                   el <span className="text-[#f0782c] font-semibold">Sr. Erminio Nasuti</span>. Fundador de la inmobiliaria con mayor trayectoria y experiencia en Marcos Juárez y la región, 
                   Erminio marcó un hito en el sector desde <span className="text-[#f0782c] font-semibold">1964</span>. Con un carácter decidido y un enfoque centrado en las 
                   <span className="text-[#1F2937] font-semibold"> relaciones personales</span> por encima de cualquier negocio, se ganó el respeto y el prestigio de toda la comunidad.
                 </p>
                 
-                <p className="text-lg text-[#6B7280] leading-relaxed">
+                <p className="text-base text-[#374151] leading-relaxed">
                   Su legado de <span className="text-[#1F2937] font-semibold">integridad</span> y <span className="text-[#1F2937] font-semibold">profesionalismo</span> continúa vivo en la ciudad y ha sido heredado de manera innata por su hijo, 
                   <span className="text-[#f0782c] font-semibold"> Sergio Nasuti</span>, actual socio de la inmobiliaria. Sergio mantiene con orgullo la identidad que distingue a la empresa, 
                   consolidando su reputación como un referente en el mercado.
                 </p>
                 
-                <p className="text-lg text-[#6B7280] leading-relaxed">
+                <p className="text-base text-[#374151] leading-relaxed">
                   A lo largo de los años, gracias al esfuerzo y la dedicación de ambos, Inmobiliaria Nasuti ha concretado 
                   <span className="text-[#f0782c] font-semibold"> más de 750 operaciones inmobiliarias</span>, alcanzando un nivel de cierre de ventas sin precedentes. 
                   Cada transacción se realiza con la máxima profesionalidad, asegurando el cumplimiento de todas las formalidades legales correspondientes.
                 </p>
                 
-                <p className="text-lg text-[#6B7280] leading-relaxed">
+                <p className="text-base text-[#374151] leading-relaxed">
                   Con sólidos cimientos basados en el <span className="text-[#1F2937] font-semibold">profesionalismo</span> y la <span className="text-[#1F2937] font-semibold">integridad</span>, 
                   Inmobiliaria Nasuti se proyecta hacia el futuro con el compromiso de concretar operaciones fructíferas y satisfactorias para sus clientes, 
                   manteniendo siempre los valores que la han definido.
                 </p>
+              </div>
               </div>
             </div>
           </div>
@@ -584,8 +575,7 @@ Mensaje: ${formData.mensaje}`;
                       </div>
                       <div>
                         <h4 className="font-semibold text-lg">Oficina Principal</h4>
-                        <p className="text-gray-300">Av. San Martín 1234, Centro</p>
-                        <p className="text-gray-300">Buenos Aires, Argentina</p>
+                        <p className="text-gray-300">25 de Mayo nro. 347, esquina 1ro. de Mayo</p>
                       </div>
                     </div>
                     
@@ -597,8 +587,7 @@ Mensaje: ${formData.mensaje}`;
                       </div>
                       <div>
                         <h4 className="font-semibold text-lg">Teléfono</h4>
-                        <p className="text-gray-300">+54 11 1234-5678</p>
-                        <p className="text-gray-300">+54 11 9876-5432</p>
+                        <p className="text-gray-300">+54 9 3472 52-1436</p>
                       </div>
                     </div>
                     
@@ -610,8 +599,7 @@ Mensaje: ${formData.mensaje}`;
                       </div>
                       <div>
                         <h4 className="font-semibold text-lg">Email</h4>
-                        <p className="text-gray-300">info@nasutiinmobiliaria.com</p>
-                        <p className="text-gray-300">ventas@nasutiinmobiliaria.com</p>
+                        <p className="text-gray-300">inmnasuti@gmail.com</p>
                       </div>
                     </div>
                     
@@ -623,8 +611,8 @@ Mensaje: ${formData.mensaje}`;
                       </div>
                       <div>
                         <h4 className="font-semibold text-lg">Horarios de Atención</h4>
-                        <p className="text-gray-300">Lunes a Viernes: 9:00 - 18:00</p>
-                        <p className="text-gray-300">Sábados: 9:00 - 13:00</p>
+                        <p className="text-gray-300">Lunes a Viernes de 8:30 hs a 12:30 hs</p>
+                        <p className="text-gray-300">y de 14 hs a 17 hs</p>
                       </div>
                     </div>
                   </div>
@@ -634,19 +622,9 @@ Mensaje: ${formData.mensaje}`;
                 <div>
                   <h3 className="text-xl font-bold mb-4 text-[#f0782c]">Síguenos</h3>
                   <div className="flex space-x-4">
-                    <a href="#" className="w-12 h-12 bg-[#f0782c] rounded-full flex items-center justify-center hover:bg-[#e65a1a] transition-colors duration-200">
+                    <a href="https://www.instagram.com/nasuti_inm/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-[#f0782c] rounded-full flex items-center justify-center hover:bg-[#e65a1a] transition-colors duration-200">
                       <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                      </svg>
-                    </a>
-                    <a href="#" className="w-12 h-12 bg-[#f0782c] rounded-full flex items-center justify-center hover:bg-[#e65a1a] transition-colors duration-200">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
-                      </svg>
-                    </a>
-                    <a href="#" className="w-12 h-12 bg-[#f0782c] rounded-full flex items-center justify-center hover:bg-[#e65a1a] transition-colors duration-200">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
                     </a>
                   </div>

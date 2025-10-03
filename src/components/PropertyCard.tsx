@@ -7,14 +7,11 @@ import {
   Square, 
   Eye,
   Home,
-  Building,
-  Store,
-  Briefcase,
-  TreePine,
   Trees,
   Car
 } from 'lucide-react';
-import { Property, PropertyType } from '../types';
+import { Property } from '../types';
+import { getPropertyTypeIconSmall } from '../utils/propertyUtils';
 
 interface PropertyCardProps {
   property: Property;
@@ -23,25 +20,6 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) => {
   
-  // Función para obtener el ícono según el tipo de propiedad
-  const getPropertyTypeIcon = (type: PropertyType) => {
-    switch (type) {
-      case 'casa':
-        return <Home className="w-4 h-4" />;
-      case 'departamento':
-        return <Building className="w-4 h-4" />;
-      case 'oficina':
-        return <Briefcase className="w-4 h-4" />;
-      case 'local':
-        return <Store className="w-4 h-4" />;
-      case 'quinta':
-        return <TreePine className="w-4 h-4" />;
-      case 'terreno':
-        return <Square className="w-4 h-4" />;
-      default:
-        return <Home className="w-4 h-4" />;
-    }
-  };
 
 
 
@@ -61,7 +39,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
         {/* Badges */}
         <div className="property-badges">
           <div className="property-type-badge">
-            {getPropertyTypeIcon(property.type)}
+            {getPropertyTypeIconSmall(property.type)}
             <span className="capitalize">{property.type}</span>
           </div>
           
@@ -91,6 +69,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
             ${property.price.toLocaleString()}
           </span>
         </div>
+
+
+
+        
+        
 
         {/* Ubicación */}
         <div className="property-location mb-3 flex-shrink-0">

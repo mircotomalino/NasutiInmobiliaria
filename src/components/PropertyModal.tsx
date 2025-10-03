@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, MapPin, Bed, Bath, Square, Home, Building, Store, Briefcase, TreePine, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
-import { Property, PropertyType } from '../types';
+import { X, MapPin, Bed, Bath, Square, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
+import { Property } from '../types';
+import { handlePropertyWhatsAppContact } from '../services/whatsapp';
+import { getPropertyTypeIcon } from '../utils/propertyUtils';
 
 interface PropertyModalProps {
   property: Property | null;
@@ -11,41 +13,9 @@ interface PropertyModalProps {
 const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Número de WhatsApp de Nasuti Inmobiliaria
-  const OWNER_PHONE = "5493513459377";
-  
-  // Función para manejar el contacto por WhatsApp
-  const handleWhatsAppContact = () => {
-    const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
-    const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
-
-Link de la propiedad: ${propertyUrl}`;
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
   
   if (!property || !isOpen) return null;
 
-  // Función para obtener el ícono según el tipo de propiedad
-  const getPropertyTypeIcon = (type: PropertyType) => {
-    switch (type) {
-      case 'casa':
-        return <Home className="w-5 h-5" />;
-      case 'departamento':
-        return <Building className="w-5 h-5" />;
-      case 'oficina':
-        return <Briefcase className="w-5 h-5" />;
-      case 'local':
-        return <Store className="w-5 h-5" />;
-      case 'quinta':
-        return <TreePine className="w-5 h-5" />;
-      case 'terreno':
-        return <Square className="w-5 h-5" />;
-      default:
-        return <Home className="w-5 h-5" />;
-    }
-  };
 
 
 
@@ -235,8 +205,8 @@ Link de la propiedad: ${propertyUrl}`;
 
               {/* Botones de acción */}
               <div className="modal-actions">
-                <button 
-                  onClick={handleWhatsAppContact}
+                <button
+                  onClick={() => handlePropertyWhatsAppContact(property)}
                   className="modal-btn modal-btn-primary"
                 >
                   Contactar

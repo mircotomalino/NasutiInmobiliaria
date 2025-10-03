@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Property, PropertyType } from '../types';
 import PropertyMap from './PropertyMap';
+import { handlePropertyWhatsAppContact } from '../services/whatsapp';
+import { getPropertyTypeIcon } from '../utils/propertyUtils';
 
 const PropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,22 +29,6 @@ const PropertyPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const API_BASE = 'http://localhost:3001/api';
-  
-  // Número de WhatsApp de Nasuti Inmobiliaria
-  const OWNER_PHONE = "5493513459377";
-
-  // Función para manejar el contacto por WhatsApp
-  const handleWhatsAppContact = () => {
-    if (property) {
-      const propertyUrl = `${window.location.origin}/propiedad/${property.id}`;
-      const message = `Hola como estas? estoy interesado en esta propiedad "${property.title}" podrias brindarme mas informacion?
-
-Link de la propiedad: ${propertyUrl}`;
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
-      window.open(whatsappUrl, '_blank');
-    }
-  };
 
   useEffect(() => {
     if (id) {
@@ -66,25 +52,6 @@ Link de la propiedad: ${propertyUrl}`;
     }
   };
 
-  // Función para obtener el ícono según el tipo de propiedad
-  const getPropertyTypeIcon = (type: PropertyType) => {
-    switch (type) {
-      case 'casa':
-        return <Home className="w-5 h-5" />;
-      case 'departamento':
-        return <Building className="w-5 h-5" />;
-      case 'oficina':
-        return <Briefcase className="w-5 h-5" />;
-      case 'local':
-        return <Store className="w-5 h-5" />;
-      case 'quinta':
-        return <TreePine className="w-5 h-5" />;
-      case 'terreno':
-        return <Square className="w-5 h-5" />;
-      default:
-        return <Home className="w-5 h-5" />;
-    }
-  };
 
   // Funciones para manejar el carrusel de imágenes
   const nextImage = () => {
@@ -365,7 +332,7 @@ Link de la propiedad: ${propertyUrl}`;
                     Contáctanos para más información, precios y para coordinar una visita.
                   </p>
                   <button
-                    onClick={handleWhatsAppContact}
+                    onClick={() => property && handlePropertyWhatsAppContact(property)}
                     className="inline-block w-full bg-white text-[#f0782c] font-semibold py-3 px-6 rounded-lg text-center hover:bg-gray-100 transition-colors"
                   >
                     Contactar Ahora
