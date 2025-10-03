@@ -55,12 +55,12 @@ const GEOCODING_CONFIG = {
 
 // Detectar si Mapbox está disponible
 export const isMapboxAvailable = (): boolean => {
-  return !!import.meta.env.VITE_MAPBOX_TOKEN;
+  return !!(import.meta as any).env?.VITE_MAPBOX_TOKEN;
 };
 
 // Obtener el token de Mapbox
 export const getMapboxToken = (): string | null => {
-  return import.meta.env.VITE_MAPBOX_TOKEN || null;
+  return (import.meta as any).env?.VITE_MAPBOX_TOKEN || null;
 };
 
 // Búsqueda con Nominatim (OpenStreetMap)

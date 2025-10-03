@@ -1,5 +1,4 @@
 // Utilidades para propiedades
-import React from 'react';
 import { 
   Home, 
   Building, 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Edit3, X, Navigation } from 'lucide-react';
+import { MapPin, Edit3, X } from 'lucide-react';
 
 // Tipos para el componente
 interface SimpleMapPickerProps {
@@ -17,7 +17,6 @@ const SimpleMapPicker: React.FC<SimpleMapPickerProps> = ({
   longitude,
   onCoordinatesChange,
   address,
-  onAddressChange,
   className = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);

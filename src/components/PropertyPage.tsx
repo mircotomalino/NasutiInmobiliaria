@@ -6,17 +6,12 @@ import {
   Bed, 
   Bath, 
   Square, 
-  Home,
-  Building,
-  Store,
-  Briefcase,
-  TreePine,
   Trees,
   Car,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { Property, PropertyType } from '../types';
+import { Property } from '../types';
 import PropertyMap from './PropertyMap';
 import { handlePropertyWhatsAppContact } from '../services/whatsapp';
 import { getPropertyTypeIcon } from '../utils/propertyUtils';
