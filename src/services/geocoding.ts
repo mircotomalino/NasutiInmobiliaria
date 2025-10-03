@@ -41,10 +41,10 @@ const GEOCODING_CONFIG = {
     baseUrl: 'https://nominatim.openstreetmap.org/search',
     params: {
       format: 'json',
-      limit: 5,
+      limit: '5',
       countrycodes: 'ar', // Solo Argentina
-      addressdetails: 1,
-      dedupe: 1
+      addressdetails: '1',
+      dedupe: '1'
     }
   },
   mapbox: {
