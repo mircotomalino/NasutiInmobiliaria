@@ -79,38 +79,36 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           </div>
         </div>
 
-        {/* Características principales - Doble fila sin scroll */}
-        <div className="property-features mb-4 flex-1 min-h-0">
-          <div className="grid grid-cols-2 gap-2 text-xs w-full">
-            {property.bedrooms > 0 && (
-              <div className="property-feature flex items-center gap-1 text-gray-600">
-                <Bed className="w-3 h-3" />
-                <span>{property.bedrooms} hab.</span>
-              </div>
-            )}
-            {property.bathrooms > 0 && (
-              <div className="property-feature flex items-center gap-1 text-gray-600">
-                <Bath className="w-3 h-3" />
-                <span>{property.bathrooms} baños</span>
-              </div>
-            )}
+        {/* Características principales - Grid directo */}
+        <div className="property-features mb-4 flex-1 min-h-0 grid grid-cols-2 gap-2 text-xs">
+          {property.bedrooms > 0 && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
-              <Square className="w-3 h-3" />
-              <span>{property.area}m²</span>
+              <Bed className="w-3 h-3" />
+              <span>{property.bedrooms} hab.</span>
             </div>
-            {property.patio && property.patio !== 'No Tiene' && (
-              <div className="property-feature flex items-center gap-1 text-gray-600">
-                <Trees className="w-3 h-3" />
-                <span>Patio {property.patio.toLowerCase()}</span>
-              </div>
-            )}
-            {property.garage && property.garage !== 'No Tiene' && (
-              <div className="property-feature flex items-center gap-1 text-gray-600">
-                <Car className="w-3 h-3" />
-                <span>{property.garage}</span>
-              </div>
-            )}
+          )}
+          {property.bathrooms > 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Bath className="w-3 h-3" />
+              <span>{property.bathrooms} baños</span>
+            </div>
+          )}
+          <div className="property-feature flex items-center gap-1 text-gray-600">
+            <Square className="w-3 h-3" />
+            <span>{property.area}m²</span>
           </div>
+          {property.patio && property.patio !== 'No Tiene' && (
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Trees className="w-3 h-3" />
+              <span>Patio {property.patio.toLowerCase()}</span>
+            </div>
+          )}
+          {property.garage && property.garage !== 'No Tiene' && (
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Car className="w-3 h-3" />
+              <span>{property.garage}</span>
+            </div>
+          )}
         </div>
 
         {/* Botones de acción - SIEMPRE VISIBLES */}
