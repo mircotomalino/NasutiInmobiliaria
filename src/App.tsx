@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
 import PropertyModal from './components/PropertyModal';
-import { Property, FilterOptions } from './types';
+import { Property, FilterOptions, PropertyType, PropertyStatus, PatioType, GarageType } from './types';
 
 function App() {
+  // Hook para manejar parámetros de URL
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   // Estados principales
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -42,6 +46,23 @@ function App() {
 
     fetchProperties();
   }, []);
+
+  // Cargar filtros desde URL al montar el componente
+  useEffect(() => {
+    const urlFilters: FilterOptions = {
+      searchTerm: searchParams.get('search') || '',
+      city: searchParams.get('city') || '',
+      type: (searchParams.get('type') as PropertyType) || '',
+      minPrice: parseInt(searchParams.get('minPrice') || '0') || 0,
+      maxPrice: parseInt(searchParams.get('maxPrice') || '0') || 0,
+      status: (searchParams.get('status') as PropertyStatus) || '',
+      patio: (searchParams.get('patio') as PatioType) || '',
+      garage: (searchParams.get('garage') as GarageType) || ''
+    };
+    
+    setFilters(urlFilters);
+    setSearchTerm(urlFilters.searchTerm);
+  }, [searchParams]);
 
 
 
@@ -99,14 +120,31 @@ function App() {
 
   // (Se removió el input de búsqueda del Header en /catalogo)
 
+  // Función para actualizar URL con filtros
+  const updateURLWithFilters = (newFilters: FilterOptions) => {
+    const params = new URLSearchParams();
+    
+    if (newFilters.searchTerm) params.set('search', newFilters.searchTerm);
+    if (newFilters.city) params.set('city', newFilters.city);
+    if (newFilters.type) params.set('type', newFilters.type);
+    if (newFilters.minPrice > 0) params.set('minPrice', newFilters.minPrice.toString());
+    if (newFilters.maxPrice > 0) params.set('maxPrice', newFilters.maxPrice.toString());
+    if (newFilters.status) params.set('status', newFilters.status);
+    if (newFilters.patio) params.set('patio', newFilters.patio);
+    if (newFilters.garage) params.set('garage', newFilters.garage);
+    
+    setSearchParams(params);
+  };
+
   // Función para manejar cambios en los filtros
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters);
+    updateURLWithFilters(newFilters);
   };
 
   // Función para limpiar filtros
   const handleClearFilters = () => {
-    setFilters({
+    const clearedFilters: FilterOptions = {
       searchTerm: '',
       city: '',
       type: '',
@@ -115,8 +153,10 @@ function App() {
       status: '',
       patio: '',
       garage: ''
-    });
+    };
+    setFilters(clearedFilters);
     setSearchTerm('');
+    setSearchParams(new URLSearchParams()); // Limpiar URL
   };
 
   // Función para ver detalles de una propiedad
