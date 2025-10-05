@@ -93,32 +93,19 @@ const PropertyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header con navegación */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Volver
-            </button>
-            
-            <div className="flex items-center gap-4">
-              <img 
-                src="/img/LogonNasuti.png" 
-                alt="Logo Nasuti Inmobiliaria" 
-                className="h-8"
-              />
-              <span className="font-semibold text-gray-900">Nasuti Inmobiliaria</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Botón de navegación */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Volver
+        </button>
+      </div>
 
       {/* Contenido principal */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           
           {/* Carrusel de imágenes */}
