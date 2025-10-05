@@ -63,6 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           </h3>
         </div>
 
+
         {/* Precio oculto en cards del listado */}
 
 
@@ -80,7 +81,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
 
         {/* Características principales - Doble fila sin scroll */}
         <div className="property-features mb-4 flex-1 min-h-0">
-          <div className="grid grid-cols-2 gap-1 text-xs">
+          <div className="grid grid-cols-2 gap-2 text-xs w-full">
             {property.bedrooms > 0 && (
               <div className="property-feature flex items-center gap-1 text-gray-600">
                 <Bed className="w-3 h-3" />
