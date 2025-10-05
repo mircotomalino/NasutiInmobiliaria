@@ -63,12 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           </h3>
         </div>
 
-        {/* Precio */}
-        <div className="mb-3 flex-shrink-0">
-          <span className="text-xl font-bold text-[#f0782c]">
-            ${property.price.toLocaleString()}
-          </span>
-        </div>
+        {/* Precio oculto en cards del listado */}
 
 
 
