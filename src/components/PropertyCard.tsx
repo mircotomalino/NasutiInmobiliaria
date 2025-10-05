@@ -78,34 +78,34 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           </div>
         </div>
 
-        {/* Características principales - Contenedor con scroll si es necesario */}
-        <div className="property-features mb-4 flex-1 overflow-y-auto min-h-0">
-          <div className="flex flex-wrap gap-2">
+        {/* Características principales - Doble fila sin scroll */}
+        <div className="property-features mb-4 flex-1 min-h-0">
+          <div className="grid grid-cols-2 gap-1 text-xs">
             {property.bedrooms > 0 && (
-              <div className="property-feature flex items-center gap-1 text-sm text-gray-600">
-                <Bed className="w-4 h-4" />
+              <div className="property-feature flex items-center gap-1 text-gray-600">
+                <Bed className="w-3 h-3" />
                 <span>{property.bedrooms} hab.</span>
               </div>
             )}
             {property.bathrooms > 0 && (
-              <div className="property-feature flex items-center gap-1 text-sm text-gray-600">
-                <Bath className="w-4 h-4" />
+              <div className="property-feature flex items-center gap-1 text-gray-600">
+                <Bath className="w-3 h-3" />
                 <span>{property.bathrooms} baños</span>
               </div>
             )}
-            <div className="property-feature flex items-center gap-1 text-sm text-gray-600">
-              <Square className="w-4 h-4" />
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Square className="w-3 h-3" />
               <span>{property.area}m²</span>
             </div>
             {property.patio && property.patio !== 'No Tiene' && (
-              <div className="property-feature flex items-center gap-1 text-sm text-gray-600">
-                <Trees className="w-4 h-4" />
+              <div className="property-feature flex items-center gap-1 text-gray-600">
+                <Trees className="w-3 h-3" />
                 <span>Patio {property.patio.toLowerCase()}</span>
               </div>
             )}
             {property.garage && property.garage !== 'No Tiene' && (
-              <div className="property-feature flex items-center gap-1 text-sm text-gray-600">
-                <Car className="w-4 h-4" />
+              <div className="property-feature flex items-center gap-1 text-gray-600">
+                <Car className="w-3 h-3" />
                 <span>{property.garage}</span>
               </div>
             )}
