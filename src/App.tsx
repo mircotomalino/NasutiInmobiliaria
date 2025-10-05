@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Header from './components/Header';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
 import PropertyModal from './components/PropertyModal';
@@ -98,10 +97,7 @@ function App() {
     setFilteredProperties(filtered);
   }, [properties, searchTerm, filters]);
 
-  // Función para manejar cambios en la búsqueda
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-  };
+  // (Se removió el input de búsqueda del Header en /catalogo)
 
   // Función para manejar cambios en los filtros
   const handleFilterChange = (newFilters: FilterOptions) => {
@@ -145,13 +141,6 @@ function App() {
 
   return (
     <div>
-      
-      {/* Header */}
-      <Header
-        searchTerm={searchTerm}
-        onSearchChange={handleSearchChange}
-      />
-
       {/* Contenido principal */}
       <main>
         

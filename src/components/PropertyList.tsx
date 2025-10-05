@@ -14,6 +14,9 @@ const PropertyList: React.FC<PropertyListProps> = ({
   filters,
   onViewDetails
 }) => {
+  // Tolerar valores no-array para evitar errores de renderizado cuando la API
+  // devuelve un objeto de error u otro tipo inesperado
+  const safeProperties = Array.isArray(properties) ? properties : [];
   const [currentPage, setCurrentPage] = useState(1);
   const [propertiesPerPage] = useState(6);
 
@@ -25,8 +28,8 @@ const PropertyList: React.FC<PropertyListProps> = ({
   // Calcular propiedades para la página actual
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
-  const currentProperties = properties.slice(indexOfFirstProperty, indexOfLastProperty);
-  const totalPages = Math.ceil(properties.length / propertiesPerPage);
+  const currentProperties = safeProperties.slice(indexOfFirstProperty, indexOfLastProperty);
+  const totalPages = Math.ceil(safeProperties.length / propertiesPerPage);
 
   // Función para cambiar de página
   const handlePageChange = (pageNumber: number) => {
@@ -48,7 +51,7 @@ const PropertyList: React.FC<PropertyListProps> = ({
     }
   };
 
-  if (properties.length === 0) {
+  if (safeProperties.length === 0) {
     return (
       <div className="empty-state">
         <div className="empty-state-icon">
@@ -70,7 +73,7 @@ const PropertyList: React.FC<PropertyListProps> = ({
       {/* Información de resultados */}
       <div className="results-info">
         <span>
-          Mostrando {indexOfFirstProperty + 1}-{Math.min(indexOfLastProperty, properties.length)} de {properties.length} propiedades
+          Mostrando {safeProperties.length === 0 ? 0 : indexOfFirstProperty + 1}-{Math.min(indexOfLastProperty, safeProperties.length)} de {safeProperties.length} propiedades
         </span>
         
         {totalPages > 1 && (

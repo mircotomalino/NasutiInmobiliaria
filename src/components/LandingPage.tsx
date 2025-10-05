@@ -159,26 +159,7 @@ Mensaje: ${formData.mensaje}`;
     <div>
       {/* Esta será la landing page que actualmente está en index.html */}
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              {/* Logo y nombre */}
-              <div className="logo-container">
-                <img src="/img/LogonNasuti.png" alt="Nasuti Inmobiliaria Logo" className="h-12 w-auto" />
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">Nasuti Inmobiliaria</h1>
-              </div>
-              
-              {/* Navegación desktop */}
-              <nav className="hidden md:flex space-x-8">
-                <a href="#inicio" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Inicio</a>
-                <a href="/catalogo" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Propiedades</a>
-                <a href="#quienes-somos" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Quiénes Somos</a>
-                <a href="#contacto" className="text-gray-600 hover:text-[#f0782c] transition-colors duration-200">Contacto</a>
-              </nav>
-            </div>
-          </div>
-        </header>
+        {/* Header removido: ahora lo provee SiteNavbar dentro del Layout */}
 
         {/* Sección Hero */}
         <section id="inicio" className="py-20 bg-white">
@@ -525,6 +506,8 @@ Mensaje: ${formData.mensaje}`;
                   Erminio marcó un hito en el sector desde <span className="text-[#f0782c] font-semibold">1964</span>. Con un carácter decidido y un enfoque centrado en las 
                   <span className="text-[#1F2937] font-semibold"> relaciones personales</span> por encima de cualquier negocio, se ganó el respeto y el prestigio de toda la comunidad.
                 </p>
+
+               
                 
                 <p className="text-base text-[#374151] leading-relaxed">
                   Su legado de <span className="text-[#1F2937] font-semibold">integridad</span> y <span className="text-[#1F2937] font-semibold">profesionalismo</span> continúa vivo en la ciudad y ha sido heredado de manera innata por su hijo, 
