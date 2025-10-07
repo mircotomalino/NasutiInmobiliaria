@@ -204,7 +204,7 @@ const PropertyPage: React.FC = () => {
                 {/* Descripción */}
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">Descripción</h3>
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-gray-700 leading-relaxed break-words overflow-wrap-anywhere">
                     {property.description}
                   </p>
                 </div>
