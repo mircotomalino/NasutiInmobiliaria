@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
-import PropertyModal from './components/PropertyModal';
 import { Property, FilterOptions, PropertyType, PropertyStatus, PatioType, GarageType } from './types';
 
 function App() {
@@ -24,8 +23,6 @@ function App() {
     patio: '',
     garage: ''
   });
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const API_BASE = 'http://localhost:3001/api';
 
@@ -159,17 +156,6 @@ function App() {
     setSearchParams(new URLSearchParams()); // Limpiar URL
   };
 
-  // Función para ver detalles de una propiedad
-  const handleViewDetails = (property: Property) => {
-    setSelectedProperty(property);
-    setIsModalOpen(true);
-  };
-
-  // Función para cerrar el modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedProperty(null);
-  };
 
   if (loading) {
     return (
@@ -196,16 +182,8 @@ function App() {
         <PropertyList
           properties={filteredProperties}
           filters={filters}
-          onViewDetails={handleViewDetails}
         />
       </main>
-
-      {/* Modal de detalles */}
-      <PropertyModal
-        property={selectedProperty}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 }

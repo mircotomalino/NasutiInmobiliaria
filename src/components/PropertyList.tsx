@@ -6,13 +6,11 @@ import PropertyCard from './PropertyCard';
 interface PropertyListProps {
   properties: Property[];
   filters: FilterOptions;
-  onViewDetails: (property: Property) => void;
 }
 
 const PropertyList: React.FC<PropertyListProps> = ({
   properties,
-  filters,
-  onViewDetails
+  filters
 }) => {
   // Tolerar valores no-array para evitar errores de renderizado cuando la API
   // devuelve un objeto de error u otro tipo inesperado
@@ -89,7 +87,6 @@ const PropertyList: React.FC<PropertyListProps> = ({
           <PropertyCard
             key={property.id}
             property={property}
-            onViewDetails={onViewDetails}
           />
         ))}
       </div>

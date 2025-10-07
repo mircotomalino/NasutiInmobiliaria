@@ -5,7 +5,6 @@ import {
   Bed, 
   Bath, 
   Square, 
-  Eye,
   Home,
   Trees,
   Car
@@ -15,10 +14,9 @@ import { getPropertyTypeIconSmall } from '../utils/propertyUtils';
 
 interface PropertyCardProps {
   property: Property;
-  onViewDetails: (property: Property) => void;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   
 
 
@@ -62,14 +60,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
             {property.title}
           </h3>
         </div>
-
-
         {/* Precio oculto en cards del listado */}
-
-
-
-        
-        
 
         {/* Ubicación */}
         <div className="property-location mb-3 flex-shrink-0">
@@ -111,19 +102,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
           )}
         </div>
 
-        {/* Botones de acción - SIEMPRE VISIBLES */}
-        <div className="flex gap-2 flex-shrink-0 mt-2">
-          <button
-            onClick={() => onViewDetails(property)}
-            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-sm flex items-center justify-center gap-1"
-          >
-            <Eye className="w-4 h-4" />
-            <span>Ver Detalles</span>
-          </button>
-          
+        {/* Botón de acción - SIEMPRE VISIBLE */}
+        <div className="flex-shrink-0 mt-2">
           <Link
             to={`/propiedad/${property.id}`}
-            className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-sm flex items-center justify-center gap-1"
+            className="w-full bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-sm flex items-center justify-center gap-1"
           >
             <Home className="w-4 h-4" />
             <span>Ver Propiedad</span>
