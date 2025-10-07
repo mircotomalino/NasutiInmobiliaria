@@ -11,7 +11,6 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Property } from '../types';
-import PropertyModal from './PropertyModal';
 import { handlePropertyWhatsAppContact } from '../services/whatsapp';
 import { getPropertyTypeIcon } from '../utils/propertyUtils';
 
@@ -24,9 +23,6 @@ const LandingPage: React.FC = () => {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // Estados para el modal
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Estados para el formulario de contacto
   const [formData, setFormData] = useState({
@@ -75,16 +71,6 @@ const LandingPage: React.FC = () => {
     fetchFeaturedProperties();
   }, []);
   
-  // Funciones para manejar el modal
-  const handleViewDetails = (property: Property) => {
-    setSelectedProperty(property);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedProperty(null);
-  };
 
   // Funciones para manejar el formulario de contacto
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -313,13 +299,7 @@ Mensaje: ${formData.mensaje}`;
                           </div>
                           
                           {/* Botones de acción */}
-                          <div className="flex gap-2 mt-auto">
-                            <button 
-                              onClick={() => handleViewDetails(property)}
-                              className="flex-1 bg-[#1F2937] hover:bg-black text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
-                            >
-                              Ver Detalles
-                            </button>
+                          <div className="flex gap-2 mt-auto justify-center">
                             <Link
                               to={`/propiedad/${property.id}`}
                               className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
@@ -695,12 +675,6 @@ Mensaje: ${formData.mensaje}`;
         </footer>
       </div>
       
-      {/* Modal de detalles de propiedad */}
-      <PropertyModal
-        property={selectedProperty}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 };
