@@ -123,15 +123,6 @@ Mensaje: ${formData.mensaje}`;
   };
   
 
-  // Función para formatear el precio
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
 
   // Función para formatear la fecha
   const formatDate = (dateString: string) => {
@@ -271,16 +262,13 @@ Mensaje: ${formData.mensaje}`;
                         {/* Información de la propiedad */}
                         <div className="flex-1 flex flex-col">
                           <div className="mb-4">
-                            <h3 className="text-xl lg:text-2xl font-bold text-[#1F2937] mb-2 overflow-hidden" style={{
+                            <h3 className="text-xl lg:text-2xl font-bold text-[#1F2937] mb-4 overflow-hidden" style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical'
                             }}>
                               {property.title}
                             </h3>
-                            <div className="text-xl lg:text-2xl font-bold text-[#f0782c] mb-3">
-                              {formatPrice(property.price)}
-                            </div>
                           </div>
                           
                           {/* Descripción limitada */}
