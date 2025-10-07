@@ -105,7 +105,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <MapPin className="w-5 h-5 text-[#f0782c]" />
-          <h3 className="text-lg font-semibold text-gray-900">Ubicación</h3>
         </div>
         
         {/* Botones de acción */}
