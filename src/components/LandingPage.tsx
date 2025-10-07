@@ -258,7 +258,7 @@ Mensaje: ${formData.mensaje}`;
                           </div>
                           
                           {/* Descripción limitada */}
-                          <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-1 overflow-hidden" style={{
+                          <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-1 overflow-hidden break-words overflow-wrap-anywhere" style={{
                             display: '-webkit-box',
                             WebkitLineClamp: 3,
                             WebkitBoxOrient: 'vertical'
