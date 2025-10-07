@@ -238,7 +238,7 @@ const PropertyPage: React.FC = () => {
                         <MapPin className="w-5 h-5 text-yellow-600" />
                         <div>
                           <p className="text-sm text-yellow-800 font-medium">
-                            Ubicación exacta no disponible
+                            Coordenadas no disponibles
                           </p>
                           <p className="text-xs text-yellow-700 mt-1">
                             Esta propiedad no tiene coordenadas específicas configuradas. 
