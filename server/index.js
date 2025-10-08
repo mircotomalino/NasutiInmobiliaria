@@ -372,6 +372,18 @@ app.delete('/api/properties/:id', async (req, res) => {
   }
 });
 
+// Obtener imágenes de una propiedad con sus IDs
+app.get('/api/properties/:id/images', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT id, image_url as url FROM property_images WHERE property_id = $1 ORDER BY id', [id]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching property images:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Eliminar una imagen específica
 app.delete('/api/properties/:id/images/:imageId', async (req, res) => {
   try {

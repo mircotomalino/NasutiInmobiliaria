@@ -12,9 +12,9 @@ import {
   Briefcase,
   TreePine,
   Square,
-  ArrowLeft,
   Search,
-  ExternalLink
+  ExternalLink,
+  ImagePlus
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
@@ -33,6 +33,8 @@ const ManagerPanel: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<Array<{id?: number, url: string}>>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   
   // Estados para filtros del manager
   const [managerFilters, setManagerFilters] = useState({
@@ -120,8 +122,59 @@ const ManagerPanel: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
+      const newFiles = Array.from(e.target.files);
+      
+      // Agregar nuevos archivos a los existentes (no reemplazar)
+      setSelectedFiles(prev => [...prev, ...newFiles]);
+      
+      // Generar URLs de previsualización para los nuevos archivos
+      const newUrls = newFiles.map(file => URL.createObjectURL(file));
+      setPreviewUrls(prev => [...prev, ...newUrls]);
+      
+      // Limpiar el input para permitir seleccionar el mismo archivo nuevamente
+      e.target.value = '';
     }
+  };
+
+  // Función para eliminar una imagen existente
+  const handleDeleteExistingImage = async (imageId: number | undefined, imageUrl: string) => {
+    if (!imageId || !editingProperty?.id) {
+      // Si no hay ID, solo removemos de la vista (para imágenes nuevas que aún no se han guardado)
+      setExistingImages(prev => prev.filter(img => img.url !== imageUrl));
+      return;
+    }
+
+    if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/properties/${editingProperty.id}/images/${imageId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Remover la imagen de la lista de imágenes existentes
+        setExistingImages(prev => prev.filter(img => img.id !== imageId));
+        alert('Imagen eliminada exitosamente');
+      } else {
+        console.error('Error deleting image');
+        alert('Error al eliminar la imagen');
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Error de conexión al eliminar la imagen');
+    }
+  };
+
+  // Función para remover una imagen nueva antes de subirla
+  const handleRemoveNewImage = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => {
+      // Liberar el objeto URL
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,17 +191,31 @@ const ManagerPanel: React.FC = () => {
     
     // Agregar datos de la propiedad
     Object.entries(editingProperty).forEach(([key, value]) => {
-      if (value !== undefined && key !== 'id' && key !== 'images') {
+      // Excluir solo: id e images
+      if (key === 'id' || key === 'images') {
+        return;
+      }
+      
+      // Para valores null o undefined, enviar string vacío
+      if (value === null || value === undefined) {
+        formData.append(key, '');
+        console.log(`📝 Agregando campo vacío: ${key} = ""`);
+      } else {
         formData.append(key, value.toString());
         console.log(`📝 Agregando campo: ${key} = ${value}`);
       }
     });
 
     // Agregar archivos
-    selectedFiles.forEach(file => {
-      formData.append('images', file);
-      console.log(`📁 Agregando archivo: ${file.name}`);
-    });
+    if (selectedFiles.length > 0) {
+      console.log(`📸 Agregando ${selectedFiles.length} nueva(s) imagen(es)`);
+      selectedFiles.forEach(file => {
+        formData.append('images', file);
+        console.log(`📁 Agregando archivo: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+      });
+    } else {
+      console.log('ℹ️ No hay nuevas imágenes para agregar');
+    }
 
     try {
       const url = editingProperty.id 
@@ -169,8 +236,19 @@ const ManagerPanel: React.FC = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('✅ Propiedad creada/actualizada exitosamente:', result);
+        
+        // Limpiar las URLs de previsualización
+        previewUrls.forEach(url => URL.revokeObjectURL(url));
+        
+        // Recargar la lista de propiedades
         await fetchProperties();
+        
+        // Cerrar el formulario de edición/creación
         handleCancel();
+        
+        // Mostrar mensaje de éxito
+        const mensaje = isAdding ? '✅ Propiedad creada exitosamente' : '✅ Propiedad actualizada exitosamente';
+        alert(mensaje);
       } else {
         const errorText = await response.text();
         console.error('❌ Error del servidor:', response.status, errorText);
@@ -202,15 +280,18 @@ const ManagerPanel: React.FC = () => {
     }
   };
 
-  const handleEdit = (property: Property) => {
+  const handleEdit = async (property: Property) => {
     console.log('🔧 Iniciando edición de propiedad:', property);
     
     // Limpiar estado primero
     setEditingProperty(null);
     setIsAdding(false);
+    setSelectedFiles([]);
+    setPreviewUrls([]);
+    setExistingImages([]);
     
     // Pequeño delay para asegurar que el estado se limpie
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
         // Crear una copia limpia de la propiedad para editar
         const propertyToEdit: Property = {
@@ -233,6 +314,28 @@ const ManagerPanel: React.FC = () => {
         };
 
         console.log('✅ Propiedad preparada para editar:', propertyToEdit);
+
+        // Cargar imágenes existentes con sus IDs desde el servidor
+        if (property.id) {
+          try {
+            const imageResponse = await fetch(`${API_BASE}/properties/${property.id}/images`);
+            
+            if (imageResponse.ok) {
+              const imagesData = await imageResponse.json();
+              setExistingImages(imagesData);
+              console.log('📸 Imágenes cargadas:', imagesData);
+            } else {
+              // Fallback: usar las URLs sin IDs
+              const images = property.images?.map((url: string) => ({ url })) || [];
+              setExistingImages(images);
+            }
+          } catch (error) {
+            console.error('Error loading images:', error);
+            // Usar las imágenes de la propiedad actual como fallback
+            const images = property.images?.map((url: string) => ({ url })) || [];
+            setExistingImages(images);
+          }
+        }
 
         setEditingProperty(propertyToEdit);
         setIsAdding(false);
@@ -287,12 +390,19 @@ const ManagerPanel: React.FC = () => {
     });
     setIsAdding(true);
     setSelectedFiles([]);
+    setPreviewUrls([]);
+    setExistingImages([]);
   };
 
   const handleCancel = () => {
     setEditingProperty(null);
     setIsAdding(false);
     setSelectedFiles([]);
+    setPreviewUrls([]);
+    setExistingImages([]);
+    
+    // Liberar URLs de previsualización
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
   };
 
   const formatPrice = (price: number) => {
@@ -315,33 +425,6 @@ const ManagerPanel: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Panel de Gestión</h1>
-              <p className="text-gray-600 mt-2">Administra las propiedades del catálogo</p>
-            </div>
-            <div className="mt-4 sm:mt-0 flex gap-3">
-              <a
-                href="/"
-                className="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Ir al Inicio
-              </a>
-              <a
-                href="/catalogo"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Ver Catálogo
-              </a>
-            </div>
-          </div>
-        </div>
-
         {/* Botón Agregar */}
         {!isAdding && !editingProperty && (
           <div className="mb-6">
@@ -722,24 +805,93 @@ const ManagerPanel: React.FC = () => {
                 />
               </div>
 
-              {/* Subida de imágenes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Imágenes
+              {/* Gestión de imágenes */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Imágenes de la Propiedad
                 </label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {selectedFiles.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-600">
-                      {selectedFiles.length} archivo(s) seleccionado(s)
-                    </p>
+                
+                {/* Imágenes existentes */}
+                {existingImages.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Imágenes actuales</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {existingImages.map((image, index) => (
+                        <div key={`existing-${index}`} className="relative group">
+                          <img
+                            src={`http://localhost:3001${image.url}`}
+                            alt={`Imagen ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteExistingImage(image.id, image.url)}
+                            className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                            title="Eliminar imagen"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                )}
+
+                {/* Nuevas imágenes a subir */}
+                {previewUrls.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Nuevas imágenes a agregar</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {previewUrls.map((url, index) => (
+                        <div key={`new-${index}`} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Nueva imagen ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border-2 border-blue-300"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveNewImage(index)}
+                            className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                            title="Quitar imagen"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                          <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                            Nueva
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Botón para agregar más imágenes */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    <div className="flex flex-col items-center gap-2">
+                      <ImagePlus className="w-12 h-12 text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700">
+                        Agregar imágenes
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        Haz clic aquí o arrastra archivos
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+                {existingImages.length === 0 && previewUrls.length === 0 && (
+                  <p className="mt-2 text-sm text-gray-500">
+                    No hay imágenes cargadas. Agrega al menos una imagen para mostrar la propiedad.
+                  </p>
                 )}
               </div>
 
