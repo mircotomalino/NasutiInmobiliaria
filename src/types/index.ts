@@ -15,6 +15,7 @@ export interface Property {
   garage?: GarageType;
   latitude?: number; // Coordenada de latitud (decimal)
   longitude?: number; // Coordenada de longitud (decimal)
+  featured?: boolean; // Si está destacada en el carrusel (máximo 3)
   publishedDate: string;
   imageUrl?: string; // Para compatibilidad con datos estáticos
   images?: string[]; // Para imágenes subidas desde el panel de gestión

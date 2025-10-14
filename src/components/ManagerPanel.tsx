@@ -14,16 +14,18 @@ import {
   Square,
   Search,
   ExternalLink,
-  ImagePlus
+  ImagePlus,
+  Star
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
 import SimpleMapPicker from './SimpleMapPicker';
 
-interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude'> {
+interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude' | 'featured'> {
   id?: number;
   latitude?: number | null;
   longitude?: number | null;
+  featured?: boolean;
 }
 
 const ManagerPanel: React.FC = () => {
@@ -277,6 +279,30 @@ const ManagerPanel: React.FC = () => {
       }
     } catch (error) {
       console.error('Error deleting property:', error);
+    }
+  };
+
+  const handleToggleFeatured = async (id: number) => {
+    try {
+      const response = await fetch(`${API_BASE}/properties/${id}/featured`, {
+        method: 'PATCH'
+      });
+
+      if (response.ok) {
+        await fetchProperties();
+      } else {
+        const errorData = await response.json();
+        if (errorData.error && errorData.featuredProperties) {
+          // Mostrar mensaje con las propiedades destacadas actuales
+          const propertyNames = errorData.featuredProperties.map((p: any) => `• ${p.title}`).join('\n');
+          alert(`${errorData.error}:\n\n${propertyNames}\n\nDebes quitar una estrella antes de agregar otra.`);
+        } else {
+          alert('Error al actualizar el estado destacado de la propiedad');
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling featured status:', error);
+      alert('Error al actualizar el estado destacado de la propiedad');
     }
   };
 
@@ -562,7 +588,7 @@ const ManagerPanel: React.FC = () => {
 
         {/* Formulario */}
         {(isAdding || editingProperty) && editingProperty && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8 relative z-20">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">
                 {isAdding ? 'Agregar Nueva Propiedad' : 'Editar Propiedad'}
@@ -615,7 +641,7 @@ const ManagerPanel: React.FC = () => {
                     required
                     value={editingProperty?.type || 'casa'}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, type: e.target.value as PropType} : null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {propertyTypes.map(type => (
                       <option key={type.value} value={type.value}>
@@ -634,7 +660,7 @@ const ManagerPanel: React.FC = () => {
                     required
                     value={editingProperty?.status || 'disponible'}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, status: e.target.value as PropertyStatus} : null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {propertyStatuses.map(status => (
                       <option key={status} value={status}>
@@ -658,40 +684,6 @@ const ManagerPanel: React.FC = () => {
                   />
                 </div>
 
-      {/* Ubicación en Mapa */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Ubicación en Mapa (Opcional)
-        </label>
-        <div className="text-xs text-gray-500 mb-2">
-          Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
-        </div>
-        {editingProperty && (
-          <SimpleMapPicker
-            key={`map-${editingProperty.id}-${editingProperty.latitude}-${editingProperty.longitude}`}
-            latitude={editingProperty.latitude ? parseFloat(editingProperty.latitude.toString()) : null}
-            longitude={editingProperty.longitude ? parseFloat(editingProperty.longitude.toString()) : null}
-            onCoordinatesChange={(lat, lng) => {
-              console.log('📍 Coordenadas cambiadas:', lat, lng);
-              setEditingProperty(prev => prev ? {
-                ...prev,
-                latitude: lat,
-                longitude: lng
-              } : null);
-            }}
-            address={editingProperty.address || ''}
-            onAddressChange={(address) => {
-              console.log('🏠 Dirección cambiada:', address);
-              setEditingProperty(prev => prev ? {
-                ...prev,
-                address: address
-              } : null);
-            }}
-            className="w-full"
-          />
-        )}
-      </div>
-
                 {/* Ciudad */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -701,7 +693,7 @@ const ManagerPanel: React.FC = () => {
                     required
                     value={editingProperty?.city || ''}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, city: e.target.value} : null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     <option value="">Seleccionar ciudad</option>
                     {cities.map((city) => (
@@ -762,7 +754,7 @@ const ManagerPanel: React.FC = () => {
                   <select
                     value={editingProperty?.patio || 'No Tiene'}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, patio: e.target.value as PatioType} : null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {patioOptions.map((option) => (
                       <option key={option} value={option}>
@@ -780,7 +772,7 @@ const ManagerPanel: React.FC = () => {
                   <select
                     value={editingProperty?.garage || 'No Tiene'}
                     onChange={(e) => setEditingProperty(prev => prev ? {...prev, garage: e.target.value as GarageType} : null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {garageOptions.map((option) => (
                       <option key={option} value={option}>
@@ -789,6 +781,40 @@ const ManagerPanel: React.FC = () => {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Ubicación en Mapa - Ancho completo */}
+              <div className="w-full">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ubicación en Mapa (Opcional)
+                </label>
+                <div className="text-xs text-gray-500 mb-2">
+                  Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
+                </div>
+                {editingProperty && (
+                  <SimpleMapPicker
+                    key={`map-${editingProperty.id}-${editingProperty.latitude}-${editingProperty.longitude}`}
+                    latitude={editingProperty.latitude ? parseFloat(editingProperty.latitude.toString()) : null}
+                    longitude={editingProperty.longitude ? parseFloat(editingProperty.longitude.toString()) : null}
+                    onCoordinatesChange={(lat, lng) => {
+                      console.log('📍 Coordenadas cambiadas:', lat, lng);
+                      setEditingProperty(prev => prev ? {
+                        ...prev,
+                        latitude: lat,
+                        longitude: lng
+                      } : null);
+                    }}
+                    address={editingProperty.address || ''}
+                    onAddressChange={(address) => {
+                      console.log('🏠 Dirección cambiada:', address);
+                      setEditingProperty(prev => prev ? {
+                        ...prev,
+                        address: address
+                      } : null);
+                    }}
+                    className="w-full"
+                  />
+                )}
               </div>
 
               {/* Descripción */}
@@ -979,6 +1005,13 @@ const ManagerPanel: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
+                        <button
+                          onClick={() => property.id && handleToggleFeatured(property.id)}
+                          className={`${property.featured ? 'text-yellow-500' : 'text-gray-400'} hover:text-yellow-600 transition-colors`}
+                          title={property.featured ? 'Quitar de destacados' : 'Destacar en carrusel (máx. 3)'}
+                        >
+                          <Star className={`w-5 h-5 ${property.featured ? 'fill-yellow-500' : ''}`} />
+                        </button>
                         <Link
                           to={`/propiedad/${property.id}`}
                           className="text-green-600 hover:text-green-900"

@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 const SiteNavbar: React.FC = () => {
   const { pathname, hash } = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isInicio = pathname === '/';
   const isCatalogo = pathname.startsWith('/catalogo') || pathname.startsWith('/propiedad');
@@ -14,15 +16,26 @@ const SiteNavbar: React.FC = () => {
 
   const classes = (active: boolean) => `${linkBase} ${active ? activeMods : ''}`;
 
+  // Función para cerrar el menú al hacer clic en un enlace
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo y nombre */}
-          <div className="logo-container">
+          {/* Logo y nombre - Clickeable */}
+          <NavLink 
+            to="/" 
+            className="logo-container cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
             <img src="/img/LogonNasuti.png" alt="Nasuti Inmobiliaria Logo" className="h-12 w-auto" />
             <h1 className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">Nasuti Inmobiliaria</h1>
-          </div>
+          </NavLink>
 
           {/* Navegación desktop */}
           <nav className="hidden md:flex space-x-8">
@@ -42,7 +55,61 @@ const SiteNavbar: React.FC = () => {
             <a href="/#quienes-somos" className={classes(isQuienes)}>Quiénes Somos</a>
             <a href="/#contacto" className={classes(isContacto)}>Contacto</a>
           </nav>
+
+          {/* Botón hamburguesa móvil */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Abrir menú"
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6 text-gray-600" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
         </div>
+      </div>
+
+      {/* Menú móvil */}
+      <div
+        className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <nav className="px-4 pt-2 pb-4 space-y-3 bg-white border-t border-gray-100">
+          <NavLink
+            to="/"
+            className={`block py-2 px-4 rounded-lg ${classes(isInicio)}`}
+            onClick={() => {
+              handleLinkClick();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            Inicio
+          </NavLink>
+          <NavLink
+            to="/catalogo"
+            className={`block py-2 px-4 rounded-lg ${classes(isCatalogo)}`}
+            onClick={handleLinkClick}
+          >
+            Propiedades
+          </NavLink>
+          <a
+            href="/#quienes-somos"
+            className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
+            onClick={handleLinkClick}
+          >
+            Quiénes Somos
+          </a>
+          <a
+            href="/#contacto"
+            className={`block py-2 px-4 rounded-lg ${classes(isContacto)}`}
+            onClick={handleLinkClick}
+          >
+            Contacto
+          </a>
+        </nav>
       </div>
     </header>
   );

@@ -143,7 +143,7 @@ app.get('/api/properties', async (req, res) => {
     const result = await pool.query(`
       SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
              p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
-             p.latitude, p.longitude,
+             p.latitude, p.longitude, p.featured,
              p.published_date as "publishedDate",
              p.created_at, p.updated_at,
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
@@ -151,12 +151,95 @@ app.get('/api/properties', async (req, res) => {
       LEFT JOIN property_images pi ON p.id = pi.property_id
       GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
                p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
-               p.latitude, p.longitude, p.published_date, p.created_at, p.updated_at
+               p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
     `);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching properties:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint para obtener propiedades destacadas (máximo 3)
+// IMPORTANTE: Este endpoint debe estar ANTES de /api/properties/:id
+app.get('/api/properties/featured', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+             p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+             p.latitude, p.longitude, p.featured,
+             p.published_date as "publishedDate",
+             p.created_at, p.updated_at,
+             array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
+      FROM properties p
+      LEFT JOIN property_images pi ON p.id = pi.property_id
+      WHERE p.featured = TRUE
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+               p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
+      ORDER BY p.created_at ASC
+      LIMIT 3
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching featured properties:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint para toggle el estado featured de una propiedad
+// IMPORTANTE: Este endpoint debe estar ANTES de /api/properties/:id
+app.patch('/api/properties/:id/featured', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const propertyId = parseInt(id);
+    
+    if (isNaN(propertyId)) {
+      return res.status(400).json({ error: 'Invalid property ID' });
+    }
+
+    // Obtener el estado actual de la propiedad
+    const currentProperty = await pool.query(
+      'SELECT id, title, featured FROM properties WHERE id = $1',
+      [propertyId]
+    );
+
+    if (currentProperty.rows.length === 0) {
+      return res.status(404).json({ error: 'Property not found' });
+    }
+
+    const isFeatured = currentProperty.rows[0].featured;
+
+    // Si se quiere marcar como destacada (actualmente no lo está)
+    if (!isFeatured) {
+      // Verificar cuántas propiedades destacadas hay
+      const featuredCount = await pool.query(
+        'SELECT COUNT(*) as count FROM properties WHERE featured = TRUE'
+      );
+
+      if (parseInt(featuredCount.rows[0].count) >= 3) {
+        // Obtener las propiedades destacadas actuales
+        const featuredProperties = await pool.query(
+          'SELECT id, title FROM properties WHERE featured = TRUE ORDER BY created_at ASC'
+        );
+        
+        return res.status(400).json({ 
+          error: 'Ya tienes 3 propiedades destacadas',
+          featuredProperties: featuredProperties.rows
+        });
+      }
+    }
+
+    // Toggle el estado featured
+    const result = await pool.query(
+      'UPDATE properties SET featured = NOT featured WHERE id = $1 RETURNING id, title, featured',
+      [propertyId]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error toggling featured status:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -168,7 +251,7 @@ app.get('/api/properties/:id', async (req, res) => {
     const propertyResult = await pool.query(`
       SELECT id, title, description, price, address, city, province, 
              type, bedrooms, bathrooms, area, patio, garage, status,
-             latitude, longitude,
+             latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at
       FROM properties WHERE id = $1
@@ -229,7 +312,7 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status,
+                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
                 published_date as "publishedDate",
                 created_at, updated_at
     `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status]);
@@ -320,7 +403,7 @@ app.put('/api/properties/:id', upload.array('images', 10), async (req, res) => {
           patio = $11, garage = $12, latitude = $13, longitude = $14, status = $15, updated_at = CURRENT_TIMESTAMP
       WHERE id = $16
       RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status,
+                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
                 published_date as "publishedDate",
                 created_at, updated_at
     `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, propertyId]);
@@ -414,7 +497,7 @@ app.get('/api/properties/nearby', async (req, res) => {
     const result = await pool.query(`
       SELECT id, title, description, price, address, city, province, 
              type, bedrooms, bathrooms, area, patio, garage, status,
-             latitude, longitude,
+             latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at,
              calculate_distance($1::DECIMAL, $2::DECIMAL, latitude, longitude) as distance
@@ -437,7 +520,7 @@ app.get('/api/properties/with-coordinates', async (req, res) => {
     const result = await pool.query(`
       SELECT id, title, description, price, address, city, province, 
              type, bedrooms, bathrooms, area, patio, garage, status,
-             latitude, longitude,
+             latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at
       FROM properties

@@ -106,6 +106,27 @@ const initDatabase = async () => {
       console.log('Coordinate validation constraints may already exist:', error.message);
     }
 
+    // Agregar columna featured para propiedades destacadas en el carrusel
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT FALSE
+      `);
+      console.log('Added featured column if it did not exist');
+    } catch (error) {
+      console.log('Featured column may already exist:', error.message);
+    }
+
+    // Crear índice para featured
+    try {
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured)
+      `);
+      console.log('Created featured index if it did not exist');
+    } catch (error) {
+      console.log('Featured index may already exist:', error.message);
+    }
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);

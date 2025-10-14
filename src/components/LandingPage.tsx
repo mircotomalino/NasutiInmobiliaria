@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { sampleProperties } from '../data/properties';
 import { 
   MapPin, 
   Bed, 
   Bath, 
   Square, 
-  Calendar,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -38,31 +36,21 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchFeaturedProperties = async () => {
       try {
-        const response = await fetch(`${API_BASE}/properties`);
+        // Usar el nuevo endpoint específico para propiedades destacadas
+        const response = await fetch(`${API_BASE}/properties/featured`);
         const data = await response.json();
         
-        // Eliminar duplicados basándose en el ID
-        const uniqueProperties = data.filter((property: Property, index: number, self: Property[]) => 
-          index === self.findIndex((p: Property) => p.id === property.id)
-        );
-        
-        // Priorizar propiedades por estado: disponible > reservada > vendida > otros
-        const prioritizedProperties = uniqueProperties.sort((a: Property, b: Property) => {
-          const statusPriority = { 'disponible': 1, 'reservada': 2, 'vendida': 3 };
-          const aPriority = statusPriority[a.status as keyof typeof statusPriority] || 4;
-          const bPriority = statusPriority[b.status as keyof typeof statusPriority] || 4;
-          return aPriority - bPriority;
-        });
-        
-        // Tomar hasta 3 propiedades priorizadas
-        const featuredProperties = prioritizedProperties.slice(0, 3);
-        
-        setFeaturedProperties(featuredProperties);
+        // Asegurarse de que data sea un array
+        if (Array.isArray(data)) {
+          setFeaturedProperties(data);
+        } else {
+          console.error('Featured properties data is not an array:', data);
+          setFeaturedProperties([]);
+        }
       } catch (error) {
         console.error('Error fetching featured properties:', error);
-        // Fallback a propiedades estáticas si hay error
-        const fallbackProperties = sampleProperties.filter(p => p.status === 'disponible').slice(0, 3);
-        setFeaturedProperties(fallbackProperties);
+        // Fallback a array vacío si hay error
+        setFeaturedProperties([]);
       } finally {
         setLoading(false);
       }
@@ -109,15 +97,6 @@ Mensaje: ${formData.mensaje}`;
   };
   
 
-
-  // Función para formatear la fecha
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-AR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   // Funciones para el carrusel
   const nextSlide = () => {
@@ -171,7 +150,7 @@ Mensaje: ${formData.mensaje}`;
 
         {/* Sección Propiedades Destacadas */}
         <section className="py-20 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">Propiedades Destacadas</h2>
               <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4"></div>
@@ -214,21 +193,21 @@ Mensaje: ${formData.mensaje}`;
                 >
                   {featuredProperties.map((property) => (
                     <div key={property.id} className="w-full flex-shrink-0">
-                      <div className="bg-white p-6 lg:p-8 h-[600px] flex flex-col">
-                        {/* Imagen de la propiedad */}
-                        <div className="relative mb-6">
+                      <div className="bg-white rounded-lg lg:rounded-xl overflow-hidden shadow-xl">
+                        {/* Imagen de la propiedad - Responsive */}
+                        <div className="relative">
                           <img
                             src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
                             alt={property.title}
-                            className="w-full h-56 object-cover rounded-lg shadow-md"
+                            className="w-full h-64 sm:h-72 lg:h-96 object-cover"
                           />
-                          {/* Badges */}
-                          <div className="absolute top-4 left-4 flex flex-col gap-2">
-                            <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium text-[#1F2937]">
-                              {getPropertyTypeIcon(property.type)}
+                          {/* Badges - Responsive */}
+                          <div className="absolute top-3 left-3 lg:top-4 lg:left-4 flex flex-col gap-2">
+                            <div className="bg-white/90 backdrop-blur-sm px-2 py-1 lg:px-3 lg:py-1 rounded-full flex items-center gap-1 lg:gap-2 text-xs lg:text-sm font-medium text-[#1F2937]">
+                              <span className="w-4 h-4 lg:w-auto lg:h-auto">{getPropertyTypeIcon(property.type)}</span>
                               <span className="capitalize">{property.type}</span>
                             </div>
-                            <div className={`backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-white ${
+                            <div className={`backdrop-blur-sm px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-medium text-white ${
                               property.status === 'disponible' 
                                 ? 'bg-green-500/90' 
                                 : property.status === 'reservada'
@@ -245,10 +224,10 @@ Mensaje: ${formData.mensaje}`;
                           </div>
                         </div>
                         
-                        {/* Información de la propiedad */}
-                        <div className="flex-1 flex flex-col">
-                          <div className="mb-4">
-                            <h3 className="text-xl lg:text-2xl font-bold text-[#1F2937] mb-4 overflow-hidden" style={{
+                        {/* Información de la propiedad - Responsive */}
+                        <div className="p-4 sm:p-6 lg:p-8 px-12 sm:px-16 lg:px-20">
+                          <div className="mb-3 lg:mb-4">
+                            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#1F2937] mb-2 lg:mb-3 overflow-hidden text-center" style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical'
@@ -257,60 +236,60 @@ Mensaje: ${formData.mensaje}`;
                             </h3>
                           </div>
                           
-                          {/* Descripción limitada */}
-                          <p className="text-[#6B7280] text-sm leading-relaxed mb-4 flex-1 overflow-hidden break-words overflow-wrap-anywhere" style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical'
-                          }}>
-                            {property.description}
-                          </p>
-                          
-                          {/* Ubicación */}
-                          <div className="flex items-center gap-2 text-[#6B7280] mb-3">
-                            <MapPin className="w-4 h-4" />
-                            <span className="text-sm">{property.address}, {property.city}</span>
-                          </div>
-                          
-                          {/* Características */}
-                          <div className="flex flex-wrap gap-3 mb-4">
-                            {property.bedrooms > 0 && (
-                              <div className="flex items-center gap-1 text-[#6B7280] text-sm">
-                                <Bed className="w-4 h-4" />
-                                <span>{property.bedrooms} hab.</span>
-                              </div>
-                            )}
-                            {property.bathrooms > 0 && (
-                              <div className="flex items-center gap-1 text-[#6B7280] text-sm">
-                                <Bath className="w-4 h-4" />
-                                <span>{property.bathrooms} baños</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1 text-[#6B7280] text-sm">
-                              <Square className="w-4 h-4" />
-                              <span>{property.area}m²</span>
+                          {/* Ubicación destacada - Responsive */}
+                          <div className="flex items-start gap-2 mb-3 lg:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
+                            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#f0782c] flex-shrink-0 mt-0.5" />
+                            <div>
+                              <div className="font-semibold text-sm sm:text-base text-[#1F2937]">{property.address}</div>
+                              <div className="text-xs sm:text-sm text-gray-600">{property.city}</div>
                             </div>
                           </div>
                           
-                          {/* Fecha de publicación */}
-                          <div className="flex items-center gap-2 text-[#6B7280] text-xs mb-4">
-                            <Calendar className="w-3 h-3" />
-                            <span>Publicado: {formatDate(property.publishedDate)}</span>
+                          {/* Descripción limitada - Responsive */}
+                          <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 lg:mb-6 line-clamp-3">
+                            {property.description}
+                          </p>
+                          
+                          {/* Características en tarjetas - Responsive */}
+                          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 lg:mb-6">
+                            {property.bedrooms > 0 && (
+                              <div className="bg-blue-50 p-2 sm:p-3 rounded-lg text-center">
+                                <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mx-auto mb-1" />
+                                <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.bedrooms}</div>
+                                <div className="text-xs hidden sm:block text-gray-600">Habitaciones</div>
+                                <div className="text-xs sm:hidden text-gray-600">Hab</div>
+                              </div>
+                            )}
+                            {property.bathrooms > 0 && (
+                              <div className="bg-purple-50 p-2 sm:p-3 rounded-lg text-center">
+                                <Bath className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mx-auto mb-1" />
+                                <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.bathrooms}</div>
+                                <div className="text-xs text-gray-600">Baños</div>
+                              </div>
+                            )}
+                            <div className="bg-green-50 p-2 sm:p-3 rounded-lg text-center">
+                              <Square className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                              <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.area}</div>
+                              <div className="text-xs text-gray-600">m²</div>
+                            </div>
                           </div>
                           
-                          {/* Botones de acción */}
-                          <div className="flex gap-2 mt-auto justify-center">
+                          {/* Botones de acción - Responsive */}
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                             <Link
                               to={`/propiedad/${property.id}`}
-                              className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
+                              className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-200 text-center text-sm sm:text-base shadow-md hover:shadow-lg"
                             >
-                              Ver Propiedad
+                              Ver Detalles
                             </Link>
                             <button 
                               onClick={() => handlePropertyWhatsAppContact(property)}
-                              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-center text-xs"
+                              className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-200 text-center text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                             >
-                              Consultar
+                              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                              </svg>
+                              Contactar
                             </button>
                           </div>
                         </div>
@@ -320,34 +299,34 @@ Mensaje: ${formData.mensaje}`;
                 </div>
               </div>
               
-              {/* Controles del carrusel */}
+              {/* Controles del carrusel - Responsive */}
               {featuredProperties.length > 1 && (
                 <>
-                  {/* Botones de navegación */}
+                  {/* Botones de navegación - Responsive */}
                   <button
                     onClick={prevSlide}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-gray-800/30 backdrop-blur-sm hover:bg-[#f0782c] text-white p-2 sm:p-3 rounded-full shadow-xl transition-all duration-200 hover:scale-110 z-10"
                   >
-                    <ChevronLeft className="w-6 h-6 text-[#1F2937]" />
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                   
                   <button
                     onClick={nextSlide}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-gray-800/30 backdrop-blur-sm hover:bg-[#f0782c] text-white p-2 sm:p-3 rounded-full shadow-xl transition-all duration-200 hover:scale-110 z-10"
                   >
-                    <ChevronRight className="w-6 h-6 text-[#1F2937]" />
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                   
-                  {/* Indicadores */}
-                  <div className="flex justify-center mt-8 gap-2">
+                  {/* Indicadores - Responsive */}
+                  <div className="flex justify-center mt-6 sm:mt-8 gap-1.5 sm:gap-2">
                     {featuredProperties.map((_, slideIndex) => (
                       <button
                         key={slideIndex}
                         onClick={() => goToSlide(slideIndex)}
-                        className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                        className={`rounded-full transition-all duration-300 ${
                           slideIndex === currentSlide 
-                            ? 'bg-[#f0782c] scale-125' 
-                            : 'bg-gray-300 hover:bg-gray-400'
+                            ? 'w-6 sm:w-8 h-2.5 sm:h-3 bg-[#f0782c]' 
+                            : 'w-2.5 sm:w-3 h-2.5 sm:h-3 bg-gray-300 hover:bg-gray-400'
                         }`}
                       />
                     ))}
@@ -356,14 +335,15 @@ Mensaje: ${formData.mensaje}`;
               )}
             </div>
             
-            {/* Botón para ver todas las propiedades */}
-            <div className="text-center mt-12">
+            {/* Botón para ver todas las propiedades - Responsive */}
+            <div className="text-center mt-8 sm:mt-12">
               <a 
                 href="/catalogo" 
-                className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-black text-white font-semibold py-4 px-8 rounded-lg transition-colors duration-200"
+                className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-black text-white font-bold py-3 px-6 sm:py-4 sm:px-10 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
               >
-                Ver todas las propiedades
-                <ChevronRight className="w-5 h-5" />
+                <span className="hidden sm:inline">Ver todas las propiedades</span>
+                <span className="sm:hidden">Ver todas</span>
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
               </>
