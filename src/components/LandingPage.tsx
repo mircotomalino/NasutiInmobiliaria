@@ -25,7 +25,6 @@ const LandingPage: React.FC = () => {
   // Estados para el formulario de contacto
   const [formData, setFormData] = useState({
     nombre: '',
-    email: '',
     asunto: '',
     mensaje: ''
   });
@@ -74,7 +73,6 @@ const LandingPage: React.FC = () => {
     
     // Construir el mensaje para WhatsApp
     const message = `Hola, soy ${formData.nombre}.
-Mi email es ${formData.email}.
 Asunto: ${formData.asunto || 'Consulta general'}
 Mensaje: ${formData.mensaje}`;
 
@@ -90,7 +88,6 @@ Mensaje: ${formData.mensaje}`;
     // Limpiar el formulario después del envío
     setFormData({
       nombre: '',
-      email: '',
       asunto: '',
       mensaje: ''
     });
@@ -354,14 +351,14 @@ Mensaje: ${formData.mensaje}`;
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-[#1F2937] mb-4">Quiénes Somos</h2>
               <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
-                Conozca a los socios y gerentes que lideran nuestra empresa
+                Conozca a los integrantes de nuestra empresa
               </p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="mb-6">
-                  <img src="/img/fotosInstitusionales/GastonDurio.jpg" alt="Gastón - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                  <img src="/img/fotosInstitusionales/GastonDurio.jpg" alt="Gastón - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Gastón</h3>
                 <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
@@ -369,7 +366,7 @@ Mensaje: ${formData.mensaje}`;
               
               <div className="text-center">
                 <div className="mb-6">
-                  <img src="/img/fotosInstitusionales/SerigioNasuti.jpg" alt="Sergio - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                  <img src="/img/fotosInstitusionales/SerigioNasuti.jpg" alt="Sergio - Socio" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Sergio</h3>
                 <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
@@ -377,7 +374,7 @@ Mensaje: ${formData.mensaje}`;
               
               <div className="text-center">
                 <div className="mb-6">
-                  <img src="/img/fotosInstitusionales/camilaBuzzi.jpg" alt="Camila - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                  <img src="/img/fotosInstitusionales/camilaBuzzi.jpg" alt="Camila - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Camila</h3>
                 <p className="text-[#6B7280] text-sm">Equipo</p>
@@ -385,7 +382,7 @@ Mensaje: ${formData.mensaje}`;
               
               <div className="text-center">
                 <div className="mb-6">
-                  <img src="/img/fotosInstitusionales/AliciaNasuti.jpg" alt="Alicia - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-contain" />
+                  <img src="/img/fotosInstitusionales/AliciaNasuti.jpg" alt="Alicia - Equipo" className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Alicia</h3>
                 <p className="text-[#6B7280] text-sm">Equipo</p>
@@ -563,33 +560,18 @@ Mensaje: ${formData.mensaje}`;
               <div className="bg-white text-gray-800 p-8 rounded-xl shadow-lg">
                 <h3 className="text-2xl font-bold mb-6 text-[#1F2937]">Envíanos un Mensaje</h3>
                 <form className="space-y-6" onSubmit={handleFormSubmit}>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-                      <input
-                        type="text"
-                        id="nombre"
-                        name="nombre"
-                        value={formData.nombre}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
-                        placeholder="Tu nombre completo"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
-                        placeholder="tu@email.com"
-                        required
-                      />
-                    </div>
+                  <div>
+                    <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                    <input
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
+                      placeholder="Tu nombre completo"
+                      required
+                    />
                   </div>
                   
                   
