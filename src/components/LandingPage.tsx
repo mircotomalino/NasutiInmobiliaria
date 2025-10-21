@@ -153,10 +153,7 @@ Mensaje: ${formData.mensaje}`;
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">Propiedades Destacadas</h2>
-              <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4"></div>
-              <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
-                Descubre nuestras mejores propiedades disponibles
-              </p>
+              <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full"></div>
             </div>
 
             {/* Estado de carga */}
@@ -253,22 +250,22 @@ Mensaje: ${formData.mensaje}`;
                           {/* Características en tarjetas - Responsive */}
                           <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 lg:mb-6">
                             {property.bedrooms > 0 && (
-                              <div className="bg-blue-50 p-2 sm:p-3 rounded-lg text-center">
-                                <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mx-auto mb-1" />
+                              <div className="bg-gray-50 p-2 sm:p-3 rounded-lg text-center">
+                                <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 mx-auto mb-1" />
                                 <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.bedrooms}</div>
                                 <div className="text-xs hidden sm:block text-gray-600">Habitaciones</div>
                                 <div className="text-xs sm:hidden text-gray-600">Hab</div>
                               </div>
                             )}
                             {property.bathrooms > 0 && (
-                              <div className="bg-purple-50 p-2 sm:p-3 rounded-lg text-center">
-                                <Bath className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mx-auto mb-1" />
+                              <div className="bg-gray-50 p-2 sm:p-3 rounded-lg text-center">
+                                <Bath className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 mx-auto mb-1" />
                                 <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.bathrooms}</div>
                                 <div className="text-xs text-gray-600">Baños</div>
                               </div>
                             )}
-                            <div className="bg-green-50 p-2 sm:p-3 rounded-lg text-center">
-                              <Square className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                            <div className="bg-gray-50 p-2 sm:p-3 rounded-lg text-center">
+                              <Square className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 mx-auto mb-1" />
                               <div className="text-base sm:text-lg font-bold text-[#1F2937]">{property.area}</div>
                               <div className="text-xs text-gray-600">m²</div>
                             </div>
@@ -436,7 +433,7 @@ Mensaje: ${formData.mensaje}`;
             <div className="relative bg-white p-28 lg:p-32 rounded-xl shadow-lg border border-gray-100 overflow-hidden">
               {/* Fondo con imagen */}
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
                 style={{
                   backgroundImage: 'url(/img/fotosInstitusionales/GastonYSergio1.jpg)'
                 }}
