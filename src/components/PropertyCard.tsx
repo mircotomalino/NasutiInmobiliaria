@@ -96,8 +96,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           )}
           {property.garage && property.garage !== 'No Tiene' && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
-              <Car className="w-3 h-3" />
-              <span>{property.garage}</span>
+              <Car className="w-3 h-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">{property.garage}</span>
             </div>
           )}
         </div>

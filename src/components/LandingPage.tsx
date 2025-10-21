@@ -199,7 +199,7 @@ Mensaje: ${formData.mensaje}`;
                           <img
                             src={property.images && property.images.length > 0 ? property.images[0] : property.imageUrl || '/img/default-property.jpg'}
                             alt={property.title}
-                            className="w-full h-64 sm:h-72 lg:h-96 object-cover"
+                            className="w-full h-[19rem] object-cover"
                           />
                           {/* Badges - Responsive */}
                           <div className="absolute top-3 left-3 lg:top-4 lg:left-4 flex flex-col gap-2">
