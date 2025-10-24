@@ -70,8 +70,8 @@ const initDatabase = async () => {
     try {
       await pool.query(`
         ALTER TABLE properties 
-        ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 8),
-        ADD COLUMN IF NOT EXISTS longitude DECIMAL(11, 8)
+        ADD COLUMN IF NOT EXISTS latitude DECIMAL(12, 8),
+        ADD COLUMN IF NOT EXISTS longitude DECIMAL(13, 8)
       `);
       console.log('Added latitude and longitude columns if they did not exist');
     } catch (error) {

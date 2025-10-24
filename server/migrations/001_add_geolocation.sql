@@ -4,8 +4,8 @@
 
 -- Agregar columnas de latitud y longitud
 ALTER TABLE properties 
-ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 8),
-ADD COLUMN IF NOT EXISTS longitude DECIMAL(11, 8);
+ADD COLUMN IF NOT EXISTS latitude DECIMAL(12, 8),
+ADD COLUMN IF NOT EXISTS longitude DECIMAL(13, 8);
 
 -- Crear índices para optimizar consultas geográficas
 CREATE INDEX IF NOT EXISTS idx_properties_latitude ON properties(latitude);
@@ -14,10 +14,10 @@ CREATE INDEX IF NOT EXISTS idx_properties_coordinates ON properties(latitude, lo
 
 -- Crear función helper para calcular distancia (en metros)
 CREATE OR REPLACE FUNCTION calculate_distance(
-    lat1 DECIMAL(10,8), 
-    lng1 DECIMAL(11,8), 
-    lat2 DECIMAL(10,8), 
-    lng2 DECIMAL(11,8)
+    lat1 DECIMAL(12,8), 
+    lng1 DECIMAL(13,8), 
+    lat2 DECIMAL(12,8), 
+    lng2 DECIMAL(13,8)
 ) RETURNS DECIMAL AS $$
 DECLARE
     earth_radius DECIMAL := 6371000;
