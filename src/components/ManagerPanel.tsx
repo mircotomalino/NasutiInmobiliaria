@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Edit,
@@ -15,11 +15,13 @@ import {
   Search,
   ExternalLink,
   ImagePlus,
-  Star
+  Star,
+  LogOut
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
 import SmartAddressInput from './SmartAddressInput';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude' | 'featured'> {
   id?: number;
@@ -29,6 +31,8 @@ interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl
 }
 
 const ManagerPanel: React.FC = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -60,6 +64,12 @@ const ManagerPanel: React.FC = () => {
 
 
   const API_BASE = 'http://localhost:3001/api';
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   useEffect(() => {
     fetchProperties();
@@ -451,6 +461,21 @@ const ManagerPanel: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header con botón de logout */}
+        <div className="mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+            <p className="text-gray-600">Gestiona las propiedades de la inmobiliaria</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            Cerrar Sesión
+          </button>
+        </div>
+
         {/* Botón Agregar */}
         {!isAdding && !editingProperty && (
           <div className="mb-6">
