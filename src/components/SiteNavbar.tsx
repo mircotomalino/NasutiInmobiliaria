@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 const SiteNavbar: React.FC = () => {
   const { pathname, hash } = useLocation();
-  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isInicio = pathname === '/';
@@ -20,30 +19,6 @@ const SiteNavbar: React.FC = () => {
   // Función para cerrar el menú al hacer clic en un enlace
   const handleLinkClick = () => {
     setIsMenuOpen(false);
-  };
-
-  // Función para manejar navegación a secciones con scroll suave
-  const handleSectionClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    
-    if (pathname === '/') {
-      // Si ya estamos en la página principal, solo hacer scroll
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    } else {
-      // Si estamos en otra página, navegar primero y luego hacer scroll
-      navigate('/');
-      setTimeout(() => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    }
-    
-    handleLinkClick();
   };
 
   return (
@@ -77,20 +52,8 @@ const SiteNavbar: React.FC = () => {
             <NavLink to="/catalogo" className={classes(isCatalogo)}>
               Propiedades
             </NavLink>
-            <a 
-              href="/#quienes-somos" 
-              className={classes(isQuienes)}
-              onClick={(e) => handleSectionClick(e, 'quienes-somos')}
-            >
-              Quiénes Somos
-            </a>
-            <a 
-              href="/#contacto" 
-              className={classes(isContacto)}
-              onClick={(e) => handleSectionClick(e, 'contacto')}
-            >
-              Contacto
-            </a>
+            <a href="/#quienes-somos" className={classes(isQuienes)}>Quiénes Somos</a>
+            <a href="/#contacto" className={classes(isContacto)}>Contacto</a>
           </nav>
 
           {/* Botón hamburguesa móvil */}
@@ -135,14 +98,14 @@ const SiteNavbar: React.FC = () => {
           <a
             href="/#quienes-somos"
             className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
-            onClick={(e) => handleSectionClick(e, 'quienes-somos')}
+            onClick={handleLinkClick}
           >
             Quiénes Somos
           </a>
           <a
             href="/#contacto"
             className={`block py-2 px-4 rounded-lg ${classes(isContacto)}`}
-            onClick={(e) => handleSectionClick(e, 'contacto')}
+            onClick={handleLinkClick}
           >
             Contacto
           </a>

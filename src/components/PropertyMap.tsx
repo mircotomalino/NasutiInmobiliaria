@@ -101,31 +101,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   return (
     <div className={`property-map ${className}`}>
-      {/* Header del mapa */}
-      <div className="flex items-center justify-end mb-4">
-        
-        {/* Botones de acción */}
-        <div className="flex gap-2">
-          <button
-            onClick={copyCoordinates}
-            className="flex items-center gap-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-            title="Copiar coordenadas"
-          >
-            <span className="text-xs">📋</span>
-            Coordenadas
-          </button>
-          
-          <button
-            onClick={openMapsApp}
-            className="flex items-center gap-2 px-4 py-2 bg-[#f0782c] hover:bg-[#e06a1f] text-white rounded-lg font-medium transition-colors"
-          >
-            <Navigation className="w-4 h-4" />
-            Cómo llegar
-            <ExternalLink className="w-3 h-3" />
-          </button>
-        </div>
-      </div>
-
       {/* Mapa */}
       <div className="relative rounded-lg overflow-hidden shadow-lg">
         <MapContainer
@@ -191,20 +166,29 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         </button>
       </div>
 
-      {/* Información adicional */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div>
-            <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Coordenadas:</strong> {lat.toFixed(6)}, {lng.toFixed(6)}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-500">
-              Haz clic en "Cómo llegar" para abrir en tu app de mapas preferida
-            </p>
-          </div>
+      {/* Botones de acción - Movidos debajo del mapa */}
+      <div className="flex items-center justify-end mt-4">
+        <div className="flex gap-2">
+          <button
+            onClick={copyCoordinates}
+            className="flex items-center gap-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+            title="Copiar coordenadas"
+          >
+            <span className="text-xs">📋</span>
+            Coordenadas
+          </button>
+          
+          <button
+            onClick={openMapsApp}
+            className="flex items-center gap-2 px-4 py-2 bg-[#f0782c] hover:bg-[#e06a1f] text-white rounded-lg font-medium transition-colors"
+          >
+            <Navigation className="w-4 h-4" />
+            Cómo llegar
+            <ExternalLink className="w-3 h-3" />
+          </button>
         </div>
       </div>
+
     </div>
   );
 };

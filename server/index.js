@@ -306,33 +306,90 @@ app.post('/api/properties', upload.array('images', 10), async (req, res) => {
       status
     } = validation.validatedData;
 
+    // 🔍 LOGGING DETALLADO PARA DEBUGGING
+    console.log('🔍 DEBUGGING - Datos recibidos para crear propiedad:');
+    console.log('📝 title:', title, 'type:', typeof title);
+    console.log('📝 description:', description?.substring(0, 50) + '...', 'type:', typeof description);
+    console.log('💰 price:', price, 'type:', typeof price);
+    console.log('🏠 address:', address, 'type:', typeof address);
+    console.log('🏙️ city:', city, 'type:', typeof city);
+    console.log('🌍 province:', province, 'type:', typeof province);
+    console.log('🏘️ type:', type, 'type:', typeof type);
+    console.log('🛏️ bedrooms:', bedrooms, 'type:', typeof bedrooms);
+    console.log('🚿 bathrooms:', bathrooms, 'type:', typeof bathrooms);
+    console.log('📐 area:', area, 'type:', typeof area);
+    console.log('🌳 patio:', patio, 'type:', typeof patio);
+    console.log('🚗 garage:', garage, 'type:', typeof garage);
+    console.log('📍 latitude:', latitude, 'type:', typeof latitude);
+    console.log('📍 longitude:', longitude, 'type:', typeof longitude);
+    console.log('📊 status:', status, 'type:', typeof status);
 
-    // Insertar la propiedad
-    const propertyResult = await pool.query(`
-      INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-      RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
-                published_date as "publishedDate",
-                created_at, updated_at
-    `, [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status]);
-
-    const property = propertyResult.rows[0];
-
-    // Insertar las imágenes si se subieron
-    if (req.files && req.files.length > 0) {
-      const imageValues = req.files.map(file => `(${property.id}, '/uploads/${file.filename}')`).join(', ');
-      await pool.query(`
-        INSERT INTO property_images (property_id, image_url)
-        VALUES ${imageValues}
-      `);
+    // Validar tipos de datos críticos
+    if (bedrooms && (typeof bedrooms !== 'number' || bedrooms > 2147483647)) {
+      console.error('❌ ERROR: bedrooms fuera de rango:', bedrooms);
+    }
+    if (bathrooms && (typeof bathrooms !== 'number' || bathrooms > 2147483647)) {
+      console.error('❌ ERROR: bathrooms fuera de rango:', bathrooms);
+    }
+    if (area && (typeof area !== 'number' || area > 2147483647)) {
+      console.error('❌ ERROR: area fuera de rango:', area);
     }
 
-    // Obtener imágenes para la respuesta
-    const imagesResult = await pool.query('SELECT * FROM property_images WHERE property_id = $1', [property.id]);
-    property.images = imagesResult.rows.map(img => img.image_url);
+    // Insertar la propiedad
+    const queryParams = [title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status];
+    console.log('🔍 DEBUGGING - Parámetros de la query:');
+    queryParams.forEach((param, index) => {
+      console.log(`  $${index + 1}:`, param, `(type: ${typeof param})`);
+    });
 
-    res.status(201).json(property);
+    try {
+      const propertyResult = await pool.query(`
+        INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        RETURNING id, title, description, price, address, city, province, 
+                  type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
+                  published_date as "publishedDate",
+                  created_at, updated_at
+      `, queryParams);
+
+      const property = propertyResult.rows[0];
+
+      // Insertar las imágenes si se subieron
+      if (req.files && req.files.length > 0) {
+        const imageValues = req.files.map(file => `(${property.id}, '/uploads/${file.filename}')`).join(', ');
+        await pool.query(`
+          INSERT INTO property_images (property_id, image_url)
+          VALUES ${imageValues}
+        `);
+      }
+
+      // Obtener imágenes para la respuesta
+      const imagesResult = await pool.query('SELECT * FROM property_images WHERE property_id = $1', [property.id]);
+      property.images = imagesResult.rows.map(img => img.image_url);
+
+      res.status(201).json(property);
+    } catch (dbError) {
+      console.error('❌ ERROR ESPECÍFICO DE BASE DE DATOS:');
+      console.error('🔍 Error details:', dbError);
+      console.error('🔍 Error code:', dbError.code);
+      console.error('🔍 Error message:', dbError.message);
+      console.error('🔍 Error detail:', dbError.detail);
+      console.error('🔍 Error hint:', dbError.hint);
+      console.error('🔍 Error position:', dbError.position);
+      console.error('🔍 Error internalPosition:', dbError.internalPosition);
+      console.error('🔍 Error internalQuery:', dbError.internalQuery);
+      console.error('🔍 Error where:', dbError.where);
+      console.error('🔍 Error schema:', dbError.schema);
+      console.error('🔍 Error table:', dbError.table);
+      console.error('🔍 Error column:', dbError.column);
+      console.error('🔍 Error dataType:', dbError.dataType);
+      console.error('🔍 Error constraint:', dbError.constraint);
+      console.error('🔍 Error file:', dbError.file);
+      console.error('🔍 Error line:', dbError.line);
+      console.error('🔍 Error routine:', dbError.routine);
+      
+      res.status(500).json({ error: 'Internal server error', details: dbError.message });
+    }
   } catch (error) {
     console.error('Error creating property:', error);
     
