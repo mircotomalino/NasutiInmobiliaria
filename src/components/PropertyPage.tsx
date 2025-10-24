@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Property } from '../types';
 import PropertyMap from './PropertyMap';
+import PropertyMapEmbed from './PropertyMapEmbed';
 import { handlePropertyWhatsAppContact } from '../services/whatsapp';
 import { getPropertyTypeIcon } from '../utils/propertyUtils';
 
@@ -105,11 +106,11 @@ const PropertyPage: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           
           {/* Carrusel de imágenes */}
-          <div className="relative h-96 lg:h-[500px]">
+          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px]">
             {images.length > 0 ? (
               <>
                 <img
@@ -123,26 +124,26 @@ const PropertyPage: React.FC = () => {
                     {/* Botón anterior */}
                     <button
                       onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200"
+                      className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200"
                     >
-                      <ChevronLeft className="w-6 h-6 text-gray-800" />
+                      <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-gray-800" />
                     </button>
                     
                     {/* Botón siguiente */}
                     <button
                       onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200"
+                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200"
                     >
-                      <ChevronRight className="w-6 h-6 text-gray-800" />
+                      <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-gray-800" />
                     </button>
                     
                     {/* Indicadores */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1 sm:gap-2">
                       {images.map((_, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
-                          className={`w-3 h-3 rounded-full transition-all ${
+                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
                             index === currentImageIndex 
                               ? 'bg-white' 
                               : 'bg-white/50 hover:bg-white/75'
@@ -152,7 +153,7 @@ const PropertyPage: React.FC = () => {
                     </div>
                     
                     {/* Contador */}
-                    <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-black/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
                       {currentImageIndex + 1} / {images.length}
                     </div>
                   </>
@@ -168,15 +169,15 @@ const PropertyPage: React.FC = () => {
           </div>
 
           {/* Información de la propiedad */}
-          <div className="p-6 lg:p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             
             {/* Título y badges */}
             <div className="mb-6">
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                 {property.title}
               </h1>
               
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                   {getPropertyTypeIcon(property.type)}
                   <span className="capitalize">{property.type}</span>
@@ -197,13 +198,13 @@ const PropertyPage: React.FC = () => {
             </div>
 
             {/* Grid de información */}
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               
               {/* Columna izquierda */}
               <div>
                 {/* Descripción */}
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Descripción</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Descripción</h3>
                   <p className="text-gray-700 leading-relaxed break-words overflow-wrap-anywhere">
                     {property.description}
                   </p>
@@ -211,7 +212,7 @@ const PropertyPage: React.FC = () => {
 
                 {/* Ubicación */}
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Ubicación</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Ubicación</h3>
                   <div className="flex items-start gap-3 text-gray-700 mb-4">
                     <MapPin className="w-5 h-5 mt-1 text-[#f0782c]" />
                     <div>
@@ -221,7 +222,7 @@ const PropertyPage: React.FC = () => {
                   </div>
                   
                   {/* Mapa de la propiedad */}
-                  {property.latitude && property.longitude && (
+                  {property.latitude && property.longitude ? (
                     <PropertyMap
                       latitude={property.latitude}
                       longitude={property.longitude}
@@ -229,34 +230,29 @@ const PropertyPage: React.FC = () => {
                       title={property.title}
                       className="mt-4"
                     />
-                  )}
-                  
-                  {/* Mensaje si no hay coordenadas */}
-                  {(!property.latitude || !property.longitude) && (
-                    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-yellow-600" />
-                        <div>
-                          <p className="text-sm text-yellow-800 font-medium">
-                            Coordenadas no disponibles
-                          </p>
-                          <p className="text-xs text-yellow-700 mt-1">
-                            Esta propiedad no tiene coordenadas específicas configuradas. 
-                            Contacta con nosotros para obtener indicaciones precisas.
-                          </p>
-                        </div>
-                      </div>
+                  ) : (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3">Ubicación en el mapa</h4>
+                      <PropertyMapEmbed
+                        address={`${property.address}, ${property.city}, ${property.province}`}
+                        height="300px"
+                        zoom={15}
+                        className="rounded-lg overflow-hidden shadow-md"
+                      />
+                      <p className="text-sm text-gray-600 mt-2">
+                        Mapa aproximado basado en la dirección. Para coordenadas exactas, contacta con nosotros.
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Columna derecha */}
-              <div>
+              <div className="flex flex-col">
                 {/* Características */}
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Características</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Características</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {property.bedrooms > 0 && (
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <Bed className="w-5 h-5 text-[#f0782c]" />
@@ -308,8 +304,8 @@ const PropertyPage: React.FC = () => {
                 </div>
 
                 {/* Botón de contacto */}
-                <div className="bg-gradient-to-r from-[#f0782c] to-[#e06a1f] p-6 rounded-xl text-white">
-                  <h3 className="text-xl font-semibold mb-3">¿Te interesa esta propiedad?</h3>
+                <div className="bg-gradient-to-r from-[#f0782c] to-[#e06a1f] p-4 sm:p-6 rounded-xl text-white mt-auto mb-4">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-3">¿Te interesa esta propiedad?</h3>
                   <p className="mb-4 text-orange-100">
                     Contáctanos para más información, precios y para coordinar una visita.
                   </p>
@@ -326,7 +322,7 @@ const PropertyPage: React.FC = () => {
         </div>
 
         {/* Botón para compartir */}
-        <div className="mt-8 text-center">
+        <div className="mt-6 sm:mt-8 text-center">
           <button
             onClick={() => {
               if (navigator.share) {
@@ -340,7 +336,7 @@ const PropertyPage: React.FC = () => {
                 alert('Link copiado al portapapeles');
               }
             }}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
           >
             Compartir Propiedad
           </button>
