@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
-import SimpleMapPicker from './SimpleMapPicker';
 
 interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude' | 'featured'> {
   id?: number;
@@ -789,32 +788,48 @@ const ManagerPanel: React.FC = () => {
                   Ubicación en Mapa (Opcional)
                 </label>
                 <div className="text-xs text-gray-500 mb-2">
-                  Selecciona la ubicación exacta en el mapa para mejorar la búsqueda geográfica
+                  Las coordenadas se pueden agregar manualmente en los campos de latitud y longitud
                 </div>
-                {editingProperty && (
-                  <SimpleMapPicker
-                    key={`map-${editingProperty.id}-${editingProperty.latitude}-${editingProperty.longitude}`}
-                    latitude={editingProperty.latitude ? parseFloat(editingProperty.latitude.toString()) : null}
-                    longitude={editingProperty.longitude ? parseFloat(editingProperty.longitude.toString()) : null}
-                    onCoordinatesChange={(lat, lng) => {
-                      console.log('📍 Coordenadas cambiadas:', lat, lng);
-                      setEditingProperty(prev => prev ? {
-                        ...prev,
-                        latitude: lat,
-                        longitude: lng
-                      } : null);
-                    }}
-                    address={editingProperty.address || ''}
-                    onAddressChange={(address) => {
-                      console.log('🏠 Dirección cambiada:', address);
-                      setEditingProperty(prev => prev ? {
-                        ...prev,
-                        address: address
-                      } : null);
-                    }}
-                    className="w-full"
-                  />
-                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Latitud
+                    </label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={editingProperty?.latitude || ''}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseFloat(e.target.value) : null;
+                        setEditingProperty(prev => prev ? {
+                          ...prev,
+                          latitude: value
+                        } : null);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ej: -31.4201"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Longitud
+                    </label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={editingProperty?.longitude || ''}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseFloat(e.target.value) : null;
+                        setEditingProperty(prev => prev ? {
+                          ...prev,
+                          longitude: value
+                        } : null);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ej: -64.1888"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Descripción */}
