@@ -20,6 +20,7 @@
 ## 📋 Fase 2: Configuración de Servicios - PENDIENTE (Acciones Manuales)
 
 ### 2.1 Supabase (Base de Datos)
+
 - [ ] Crear cuenta en Supabase
 - [ ] Crear proyecto nuevo
 - [ ] Anotar credenciales de conexión (host, password, port)
@@ -28,6 +29,7 @@
 - [ ] Verificar que las tablas se hayan creado
 
 ### 2.2 Railway (Backend API)
+
 - [ ] Crear cuenta en Railway
 - [ ] Crear nuevo proyecto desde GitHub
 - [ ] Configurar variables de entorno:
@@ -41,6 +43,7 @@
 - [ ] Verificar que el backend esté funcionando
 
 ### 2.3 Vercel (Frontend)
+
 - [ ] Crear cuenta en Vercel
 - [ ] Importar repositorio desde GitHub
 - [ ] Configurar variables de entorno:
@@ -53,6 +56,7 @@
 - [ ] Realizar deploy y verificar
 
 ### 2.4 Cloudinary (Imágenes - Opcional)
+
 - [ ] Crear cuenta en Cloudinary
 - [ ] Obtener Cloud Name, API Key, API Secret
 - [ ] (Futuro) Integrar Cloudinary en `server/index.js`
@@ -62,7 +66,8 @@
 ## 📦 Fase 3: Migración de Datos - PENDIENTE
 
 ### 3.1 Migrar Datos a Supabase
-- [ ] Configurar variables PROD_DB_* o usar DB_* con valores de Supabase
+
+- [ ] Configurar variables PROD*DB*_ o usar DB\__ con valores de Supabase
 - [ ] Ejecutar script de migración: `node server/migrate-to-production.js`
 - [ ] Verificar que todas las propiedades se hayan migrado
 - [ ] Verificar que las imágenes se hayan migrado
@@ -73,6 +78,7 @@
 ## 🗺️ Fase 4: Google Maps API - PENDIENTE
 
 ### 4.1 Actualizar Restricciones de API Key
+
 - [ ] Ir a Google Cloud Console → APIs & Services → Credentials
 - [ ] Seleccionar tu API Key
 - [ ] En "Application restrictions" → "HTTP referrers", agregar:
@@ -90,6 +96,7 @@
 ## ✅ Fase 5: Testing y Verificación - PENDIENTE
 
 ### 5.1 Verificar Funcionalidades en Producción
+
 - [ ] Página principal carga correctamente
 - [ ] Propiedades se muestran en el catálogo
 - [ ] Mapas de Google Maps funcionan
@@ -104,12 +111,14 @@
 - [ ] Formulario de contacto funciona
 
 ### 5.2 Verificar Logs y Monitoreo
+
 - [ ] Revisar logs de Railway (backend)
 - [ ] Revisar logs de Vercel (frontend)
 - [ ] Verificar conexiones a BD en Supabase Dashboard
 - [ ] Verificar que no haya errores en consola del navegador
 
 ### 5.3 Verificar Performance
+
 - [ ] Páginas cargan rápido (< 3 segundos)
 - [ ] Imágenes se cargan correctamente
 - [ ] Mapas se cargan sin errores
@@ -121,16 +130,18 @@
 
 1. **Variables de Entorno**: No subas archivos `.env` al repositorio. Usa las variables de entorno en cada plataforma.
 
-2. **Seguridad**: 
+2. **Seguridad**:
+
    - Asegúrate de que las API Keys estén configuradas correctamente
    - No expongas credenciales en el código
    - Usa restricciones en las API Keys de Google Maps
 
-3. **Backups**: 
+3. **Backups**:
+
    - Supabase tiene backups automáticos
    - Considera hacer backups manuales periódicos
 
-4. **Monitoreo**: 
+4. **Monitoreo**:
    - Revisa los logs regularmente
    - Configura alertas si es posible
 
@@ -139,6 +150,7 @@
 ## 🆘 Troubleshooting
 
 Si encuentras problemas, revisa:
+
 - `DEPLOY_GUIDE.md` - Guía completa de despliegue
 - Logs en Railway y Vercel
 - Consola del navegador (F12)
@@ -155,4 +167,3 @@ Si encuentras problemas, revisa:
 - **Dominio**: Según proveedor
 
 **Total: $0-5/mes**
-

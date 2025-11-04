@@ -36,6 +36,7 @@ Esta guía te ayudará a desplegar la aplicación a producción usando Vercel (f
 ### 1.3 Ejecutar Migraciones
 
 1. Configura temporalmente tu `.env` local con las credenciales de Supabase:
+
    ```env
    DB_HOST=db.xxxxx.supabase.co
    DB_PORT=5432
@@ -46,6 +47,7 @@ Esta guía te ayudará a desplegar la aplicación a producción usando Vercel (f
    ```
 
 2. Ejecuta las migraciones:
+
    ```bash
    node server/migrate.js migrate
    ```
@@ -147,6 +149,7 @@ En **Settings** → **General** → **Build & Development Settings**:
 Si ya tienes propiedades en tu BD local:
 
 1. Configura las variables de producción en tu `.env`:
+
    ```env
    PROD_DB_HOST=db.xxxxx.supabase.co
    PROD_DB_PORT=5432
@@ -188,6 +191,7 @@ Por ahora, las imágenes se servirán desde el servidor de Railway. Para optimiz
 1. Ve a https://console.cloud.google.com/apis/credentials
 2. Selecciona tu API Key
 3. En **Application restrictions** → **HTTP referrers (web sites)**, agrega:
+
    ```
    https://tu-dominio.com.ar/*
    https://www.tu-dominio.com.ar/*
@@ -225,14 +229,16 @@ Por ahora, las imágenes se servirán desde el servidor de Railway. Para optimiz
 
 ### Problema: Error de conexión a BD
 
-**Solución**: 
+**Solución**:
+
 - Verifica que `DB_SSL=true` esté configurado
 - Verifica que las credenciales de Supabase sean correctas
 - Revisa los logs de Railway
 
 ### Problema: Imágenes no cargan
 
-**Solución**: 
+**Solución**:
+
 - Verifica que las rutas de imágenes sean correctas
 - Verifica que Railway tenga acceso al directorio `public/uploads`
 - Considera usar Cloudinary para mejor rendimiento
@@ -240,6 +246,7 @@ Por ahora, las imágenes se servirán desde el servidor de Railway. Para optimiz
 ### Problema: Google Maps no carga
 
 **Solución**:
+
 - Verifica que `VITE_GOOGLE_MAPS_API_KEY` esté configurado en Vercel
 - Verifica que las restricciones de la API Key incluyan tu dominio
 
@@ -269,7 +276,7 @@ Por ahora, las imágenes se servirán desde el servidor de Railway. Para optimiz
 ## 🆘 Soporte
 
 Si encuentras problemas:
+
 1. Revisa los logs en Railway y Vercel
 2. Verifica que todas las variables de entorno estén configuradas
 3. Revisa la consola del navegador (F12) para errores del frontend
-
