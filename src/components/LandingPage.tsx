@@ -11,6 +11,7 @@ import {
 import { Property } from '../types';
 import { handlePropertyWhatsAppContact } from '../services/whatsapp';
 import { getPropertyTypeIcon } from '../utils/propertyUtils';
+import { getApiBase } from '../utils/api';
 
 const LandingPage: React.FC = () => {
   // Número de WhatsApp del propietario (configurable)
@@ -29,7 +30,7 @@ const LandingPage: React.FC = () => {
     mensaje: ''
   });
   
-  const API_BASE = 'http://localhost:3001/api';
+  const API_BASE = getApiBase();
   
   // Obtener propiedades destacadas desde la API
   useEffect(() => {

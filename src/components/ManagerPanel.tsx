@@ -20,6 +20,7 @@ import {
 import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
 import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
 import SmartAddressInput from './SmartAddressInput';
+import { getApiBase, getServerBase } from '../utils/api';
 
 interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude' | 'featured'> {
   id?: number;
@@ -59,7 +60,8 @@ const ManagerPanel: React.FC = () => {
 
 
 
-  const API_BASE = 'http://localhost:3001/api';
+  const API_BASE = getApiBase();
+  const SERVER_BASE = getServerBase();
 
   useEffect(() => {
     fetchProperties();
@@ -819,7 +821,7 @@ const ManagerPanel: React.FC = () => {
                       {existingImages.map((image, index) => (
                         <div key={`existing-${index}`} className="relative group">
                           <img
-                            src={`http://localhost:3001${image.url}`}
+                            src={`${SERVER_BASE}${image.url}`}
                             alt={`Imagen ${index + 1}`}
                             className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
                           />
