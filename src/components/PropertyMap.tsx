@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import { Navigation, ExternalLink, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import { Navigation, ExternalLink } from "lucide-react";
 
 // Fix para iconos de Leaflet con Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
 interface PropertyMapProps {
@@ -24,14 +27,14 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   longitude,
   address,
   title,
-  className = ''
+  className = "",
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  
+
   // Convertir coordenadas a números si vienen como strings
-  const lat = typeof latitude === 'string' ? parseFloat(latitude) : latitude;
-  const lng = typeof longitude === 'string' ? parseFloat(longitude) : longitude;
-  
+  const lat = typeof latitude === "string" ? parseFloat(latitude) : latitude;
+  const lng = typeof longitude === "string" ? parseFloat(longitude) : longitude;
+
   const [mapCenter] = useState<[number, number]>([lat, lng]);
 
   // Lazy load del componente de mapa
@@ -48,14 +51,14 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const openGoogleMaps = () => {
     const query = encodeURIComponent(`${address}, ${lat}, ${lng}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
   // Función para abrir Apple Maps (detectar dispositivo)
   const openAppleMaps = () => {
     const query = encodeURIComponent(`${address}`);
     const url = `http://maps.apple.com/?q=${query}&ll=${lat},${lng}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
   // Función inteligente para abrir mapas según el dispositivo
@@ -63,7 +66,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     const userAgent = navigator.userAgent.toLowerCase();
     const isIOS = /iphone|ipad|ipod/.test(userAgent);
     const isMac = /macintosh/.test(userAgent);
-    
+
     if (isIOS || isMac) {
       openAppleMaps();
     } else {
@@ -75,22 +78,25 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const copyCoordinates = () => {
     const coords = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     navigator.clipboard.writeText(coords);
-    
+
     // Crear notificación temporal
-    const notification = document.createElement('div');
-    notification.textContent = 'Coordenadas copiadas';
-    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+    const notification = document.createElement("div");
+    notification.textContent = "Coordenadas copiadas";
+    notification.className =
+      "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300";
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
-      notification.style.opacity = '0';
+      notification.style.opacity = "0";
       setTimeout(() => document.body.removeChild(notification), 300);
     }, 2000);
   };
 
   if (!isLoaded) {
     return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}>
+      <div
+        className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}
+      >
         <div className="text-center p-8">
           <div className="w-8 h-8 border-4 border-[#f0782c] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando mapa...</p>
@@ -106,14 +112,14 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         <MapContainer
           center={mapCenter}
           zoom={15}
-          style={{ height: '400px', width: '100%' }}
+          style={{ height: "400px", width: "100%" }}
           className="z-0"
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          
+
           <Marker position={[lat, lng]}>
             <Popup>
               <div className="p-2">
@@ -155,13 +161,23 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         <button
           onClick={() => {
             // Implementar vista de pantalla completa si es necesario
-            console.log('Vista de pantalla completa');
+            console.log("Vista de pantalla completa");
           }}
           className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-lg shadow-lg transition-all"
           title="Vista de pantalla completa"
         >
-          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          <svg
+            className="w-4 h-4 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+            />
           </svg>
         </button>
       </div>
@@ -177,7 +193,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             <span className="text-xs">📋</span>
             Coordenadas
           </button>
-          
+
           <button
             onClick={openMapsApp}
             className="flex items-center gap-2 px-4 py-2 bg-[#f0782c] hover:bg-[#e06a1f] text-white rounded-lg font-medium transition-colors"
@@ -188,7 +204,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           </button>
         </div>
       </div>
-
     </div>
   );
 };
