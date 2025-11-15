@@ -16,6 +16,7 @@ import PropertyMap from './PropertyMap';
 import PropertyMapEmbed from './PropertyMapEmbed';
 import { handlePropertyWhatsAppContact } from '../services/whatsapp';
 import { getPropertyTypeIcon } from '../utils/propertyUtils';
+import { getApiBase } from '../utils/api';
 
 const PropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +25,7 @@ const PropertyPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const API_BASE = 'http://localhost:3001/api';
+  const API_BASE = getApiBase();
 
   useEffect(() => {
     if (id) {
