@@ -127,12 +127,11 @@ npm run dev
 npm run build
 ```
 
-### Configuración de Netlify
-El proyecto está configurado para desplegarse en Netlify con:
-- Node.js 20.19.0
+### Configuración de Vercel
+El proyecto está configurado para desplegarse en Vercel con:
 - Build command: `npm run build`
-- Publish directory: `dist`
-- Redirects configurados para SPA
+- Output directory: `dist`
+- Framework: Vite (detectado automáticamente)
 
 ## 📁 Estructura del Proyecto
 
