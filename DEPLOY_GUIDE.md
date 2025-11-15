@@ -22,26 +22,30 @@ Esta guía te ayudará a desplegar la aplicación a producción usando Vercel (f
    - **Project Name**: (ej: nasuti-inmobiliaria)
    - **Database Password**: (guárdala bien, la necesitarás)
 
-### 1.2 Obtener Credenciales de Conexión
+### 1.2 Obtener Credenciales de Conexión (Connection Pooler)
+
+**IMPORTANTE**: Para aplicaciones persistentes (Express.js, Railway), usa el **Connection Pooler en Session Mode**.
 
 1. En tu proyecto de Supabase, ve a **Settings** → **Database**
-2. Busca la sección **Connection string**
-3. Anota estos valores:
-   - **Host**: `db.xxxxx.supabase.co`
-   - **Port**: `5432`
+2. Busca la sección **Connection Pooler**
+3. Selecciona **Session Mode** (puerto 5432)
+4. Anota estos valores:
+   - **Host**: `aws-1-sa-east-1.pooler.supabase.com` (o la región correspondiente)
+   - **Port**: `5432` (Session Mode)
    - **Database**: `postgres`
-   - **User**: `postgres`
+   - **User**: `postgres.vyfntmpzjgrkfylpooei` (formato: `postgres.[PROJECT-ID]`)
    - **Password**: (la que creaste al crear el proyecto)
+   - **Pool Mode**: `session`
 
 ### 1.3 Ejecutar Migraciones
 
-1. Configura temporalmente tu `.env` local con las credenciales de Supabase:
+1. Configura temporalmente tu `.env` local con las credenciales del Connection Pooler:
 
    ```env
-   DB_HOST=db.xxxxx.supabase.co
+   DB_HOST=aws-1-sa-east-1.pooler.supabase.com
    DB_PORT=5432
    DB_NAME=postgres
-   DB_USER=postgres
+   DB_USER=postgres.vyfntmpzjgrkfylpooei
    DB_PASSWORD=tu-password-supabase
    DB_SSL=true
    ```
@@ -70,11 +74,12 @@ Esta guía te ayudará a desplegar la aplicación a producción usando Vercel (f
 En Railway, ve a tu proyecto → **Variables** y agrega:
 
 ```env
-# Base de Datos (Supabase)
-DB_HOST=db.xxxxx.supabase.co
+# Base de Datos (Supabase - Connection Pooler Session Mode)
+# IMPORTANTE: Usa el Connection Pooler en Session Mode para aplicaciones persistentes
+DB_HOST=aws-1-sa-east-1.pooler.supabase.com
 DB_PORT=5432
 DB_NAME=postgres
-DB_USER=postgres
+DB_USER=postgres.vyfntmpzjgrkfylpooei
 DB_PASSWORD=tu-password-supabase
 DB_SSL=true
 
@@ -85,6 +90,8 @@ NODE_ENV=production
 # CORS (reemplaza con tu dominio real)
 FRONTEND_URL=https://tu-dominio.com.ar,https://www.tu-dominio.com.ar
 ```
+
+**Nota**: Reemplaza `vyfntmpzjgrkfylpooei` con tu Project ID de Supabase.
 
 ### 2.3 Configurar Build y Start Commands
 
@@ -231,9 +238,14 @@ Por ahora, las imágenes se servirán desde el servidor de Railway. Para optimiz
 
 **Solución**:
 
+- Verifica que estés usando el **Connection Pooler** (no la conexión directa)
+- Verifica que `DB_HOST` sea `aws-X-REGION.pooler.supabase.com` (no `db.xxxxx.supabase.co`)
+- Verifica que `DB_USER` tenga el formato `postgres.[PROJECT-ID]` (con el punto)
+- Verifica que `DB_PORT=5432` (Session Mode para aplicaciones persistentes)
 - Verifica que `DB_SSL=true` esté configurado
 - Verifica que las credenciales de Supabase sean correctas
 - Revisa los logs de Railway
+- Si ves "Tenant or user not found", verifica el formato del usuario en Supabase Dashboard
 
 ### Problema: Imágenes no cargan
 
