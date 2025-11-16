@@ -20,12 +20,14 @@ Sistema completo de gestión inmobiliaria con panel administrativo y catálogo p
 ## 🛠️ Instalación
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone <repository-url>
 cd ProjectDurio
 ```
 
 ### 2. Instalar dependencias
+
 ```bash
 npm install
 ```
@@ -33,6 +35,7 @@ npm install
 ### 3. Configurar Base de Datos PostgreSQL
 
 Crear una base de datos PostgreSQL:
+
 ```sql
 CREATE DATABASE nasuti_inmobiliaria;
 ```
@@ -40,6 +43,7 @@ CREATE DATABASE nasuti_inmobiliaria;
 ### 4. Configurar Variables de Entorno
 
 Crear un archivo `.env` en la raíz del proyecto:
+
 ```env
 DB_USER=postgres
 DB_HOST=localhost
@@ -51,11 +55,13 @@ DB_PORT=5432
 ### 5. Ejecutar el Proyecto
 
 #### Opción A: Ejecutar todo junto (recomendado)
+
 ```bash
 npm run dev:full
 ```
 
 #### Opción B: Ejecutar por separado
+
 ```bash
 # Terminal 1 - Servidor backend
 npm run server
@@ -74,6 +80,7 @@ npm run dev
 ## 📊 Estructura de la Base de Datos
 
 ### Tabla: properties
+
 - `id` (SERIAL PRIMARY KEY)
 - `title` (VARCHAR(255) NOT NULL)
 - `description` (TEXT NOT NULL)
@@ -91,6 +98,7 @@ npm run dev
 - `updated_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
 
 ### Tabla: property_images
+
 - `id` (SERIAL PRIMARY KEY)
 - `property_id` (INTEGER REFERENCES properties(id) ON DELETE CASCADE)
 - `image_url` (TEXT NOT NULL)
@@ -99,6 +107,7 @@ npm run dev
 ## 🎯 Funcionalidades del Panel de Gestión
 
 ### Gestión de Propiedades
+
 - ✅ Agregar nuevas propiedades
 - ✅ Editar propiedades existentes
 - ✅ Eliminar propiedades
@@ -106,6 +115,7 @@ npm run dev
 - ✅ Gestión de estados (disponible, vendida, alquilada, reservada)
 
 ### Tipos de Propiedades Soportados
+
 - 🏠 Casa
 - 🏢 Departamento
 - 🏢 Oficina
@@ -114,6 +124,7 @@ npm run dev
 - 📐 Terreno
 
 ### Características Técnicas
+
 - 📱 Diseño responsive
 - 🔍 Filtros avanzados
 - 📸 Subida de imágenes múltiples
@@ -123,12 +134,15 @@ npm run dev
 ## 🚀 Despliegue
 
 ### Build para Producción
+
 ```bash
 npm run build
 ```
 
 ### Configuración de Vercel
+
 El proyecto está configurado para desplegarse en Vercel con:
+
 - Build command: `npm run build`
 - Output directory: `dist`
 - Framework: Vite (detectado automáticamente)
@@ -166,11 +180,5 @@ ProjectDurio/
 - El panel de gestión es accesible solo por URL directa (`/managerLogin`)
 - No hay autenticación implementada (requerimiento del proyecto)
 - Las imágenes se almacenan localmente en `public/uploads/`
-
-## 📞 Soporte
-
-Para soporte técnico o consultas sobre el proyecto, contactar al equipo de desarrollo.
-
----
 
 **Desarrollado para Nasuti Inmobiliaria** 🏠
