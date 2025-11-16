@@ -98,7 +98,7 @@ La aplicación muestra qué proveedor está siendo usado:
 ## 🧪 Testing de la Configuración
 
 ### Verificar que Mapbox funciona:
-1. Abre el MapPicker en `/managerLogin`
+1. Abre el MapPicker en `/admin`
 2. Busca una dirección (ej: "Av. Colón 1000, Córdoba")
 3. Verifica que aparezca el icono 🟡 "Mapbox"
 4. Los resultados deben ser más precisos y rápidos

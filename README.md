@@ -74,35 +74,8 @@ npm run dev
 
 - **Página Principal**: http://localhost:3000/
 - **Catálogo de Propiedades**: http://localhost:3000/catalogo
-- **Panel de Gestión**: http://localhost:3000/managerLogin
-- **API Backend**: http://localhost:3001/api
-
-## 📊 Estructura de la Base de Datos
-
-### Tabla: properties
-
-- `id` (SERIAL PRIMARY KEY)
-- `title` (VARCHAR(255) NOT NULL)
-- `description` (TEXT NOT NULL)
-- `price` (DECIMAL(12,2) NOT NULL)
-- `address` (VARCHAR(255) NOT NULL)
-- `city` (VARCHAR(100) NOT NULL)
-- `province` (VARCHAR(100) NOT NULL)
-- `type` (VARCHAR(50) NOT NULL)
-- `bedrooms` (INTEGER)
-- `bathrooms` (INTEGER)
-- `area` (INTEGER)
-- `status` (VARCHAR(20) DEFAULT 'disponible')
-- `published_date` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
-- `created_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
-- `updated_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
-
-### Tabla: property_images
-
-- `id` (SERIAL PRIMARY KEY)
-- `property_id` (INTEGER REFERENCES properties(id) ON DELETE CASCADE)
-- `image_url` (TEXT NOT NULL)
-- `created_at` (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+- **Panel de Gestión**: http://localhost:3000/admin
+- **API Backend**: http://localhost:3001/ap
 
 ## 🎯 Funcionalidades del Panel de Gestión
 
@@ -174,11 +147,5 @@ ProjectDurio/
 - `npm run dev:full` - Ejecutar frontend y backend juntos
 - `npm run build` - Build para producción
 - `npm run preview` - Preview del build
-
-## 🛡️ Seguridad
-
-- El panel de gestión es accesible solo por URL directa (`/managerLogin`)
-- No hay autenticación implementada (requerimiento del proyecto)
-- Las imágenes se almacenan localmente en `public/uploads/`
 
 **Desarrollado para Nasuti Inmobiliaria** 🏠
