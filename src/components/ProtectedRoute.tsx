@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginForm from "./LoginForm";
 
@@ -9,6 +9,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   // Mostrar loading mientras se verifica la autenticación
   if (isLoading) {
@@ -22,9 +23,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  // Si no está autenticado, mostrar el formulario de login
   if (!isAuthenticated) {
-    return <LoginForm />;
+    if (location.pathname === "/admin") {
+      return <LoginForm />;
+    }
+    return <Navigate to="/" replace />;
   }
 
   // Si está autenticado, mostrar el contenido protegido

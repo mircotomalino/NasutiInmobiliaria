@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Plus,
   Edit,
@@ -32,7 +32,6 @@ import {
   GarageType,
 } from "../types";
 import SmartAddressInput from "./SmartAddressInput";
-import { useAuth } from "../contexts/AuthContext";
 import { getApiBase, getServerBase } from "../utils/api";
 
 interface Property
@@ -53,8 +52,6 @@ interface Property
 }
 
 const ManagerPanel: React.FC = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -106,8 +103,8 @@ const ManagerPanel: React.FC = () => {
 
   // Función para cerrar sesión
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    localStorage.removeItem("isAuthenticated");
+    window.location.href = "/";
   };
 
   useEffect(() => {
