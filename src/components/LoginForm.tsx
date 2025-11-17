@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
     const success = login(username, password);
     
     if (success) {
-      navigate('/managerLogin');
+      navigate('/admin');
     } else {
       setError('Credenciales incorrectas. Intenta nuevamente.');
     }
