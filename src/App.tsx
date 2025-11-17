@@ -1,28 +1,35 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import PropertyFilters from './components/PropertyFilters';
-import PropertyList from './components/PropertyList';
-import { Property, FilterOptions, PropertyType, PropertyStatus, PatioType, GarageType } from './types';
-import { getApiBase } from './utils/api';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import PropertyFilters from "./components/PropertyFilters";
+import PropertyList from "./components/PropertyList";
+import {
+  Property,
+  FilterOptions,
+  PropertyType,
+  PropertyStatus,
+  PatioType,
+  GarageType,
+} from "./types";
+import { getApiBase } from "./utils/api";
 
 function App() {
   // Hook para manejar parámetros de URL
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Estados principales
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<FilterOptions>({
-    searchTerm: '',
-    city: '',
-    type: '',
+    searchTerm: "",
+    city: "",
+    type: "",
     minPrice: 0,
     maxPrice: 0,
-    status: '',
-    patio: '',
-    garage: ''
+    status: "",
+    patio: "",
+    garage: "",
   });
 
   const API_BASE = getApiBase();
@@ -36,7 +43,7 @@ function App() {
         setProperties(data);
         setFilteredProperties(data);
       } catch (error) {
-        console.error('Error fetching properties:', error);
+        console.error("Error fetching properties:", error);
       } finally {
         setLoading(false);
       }
@@ -48,21 +55,19 @@ function App() {
   // Cargar filtros desde URL al montar el componente
   useEffect(() => {
     const urlFilters: FilterOptions = {
-      searchTerm: searchParams.get('search') || '',
-      city: searchParams.get('city') || '',
-      type: (searchParams.get('type') as PropertyType) || '',
-      minPrice: parseInt(searchParams.get('minPrice') || '0') || 0,
-      maxPrice: parseInt(searchParams.get('maxPrice') || '0') || 0,
-      status: (searchParams.get('status') as PropertyStatus) || '',
-      patio: (searchParams.get('patio') as PatioType) || '',
-      garage: (searchParams.get('garage') as GarageType) || ''
+      searchTerm: searchParams.get("search") || "",
+      city: searchParams.get("city") || "",
+      type: (searchParams.get("type") as PropertyType) || "",
+      minPrice: parseInt(searchParams.get("minPrice") || "0") || 0,
+      maxPrice: parseInt(searchParams.get("maxPrice") || "0") || 0,
+      status: (searchParams.get("status") as PropertyStatus) || "",
+      patio: (searchParams.get("patio") as PatioType) || "",
+      garage: (searchParams.get("garage") as GarageType) || "",
     };
-    
+
     setFilters(urlFilters);
     setSearchTerm(urlFilters.searchTerm);
   }, [searchParams]);
-
-
 
   // Efecto para aplicar filtros
   useEffect(() => {
@@ -71,12 +76,13 @@ function App() {
     // Filtro por término de búsqueda
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(property =>
-        property.title.toLowerCase().includes(term) ||
-        property.description.toLowerCase().includes(term) ||
-        property.address.toLowerCase().includes(term) ||
-        property.city.toLowerCase().includes(term) ||
-        property.province.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        property =>
+          property.title.toLowerCase().includes(term) ||
+          property.description.toLowerCase().includes(term) ||
+          property.address.toLowerCase().includes(term) ||
+          property.city.toLowerCase().includes(term) ||
+          property.province.toLowerCase().includes(term)
       );
     }
 
@@ -92,15 +98,21 @@ function App() {
 
     // Filtro por estado
     if (filters.status) {
-      filtered = filtered.filter(property => property.status === filters.status);
+      filtered = filtered.filter(
+        property => property.status === filters.status
+      );
     }
 
     // Filtro por rango de precio
     if (filters.minPrice > 0) {
-      filtered = filtered.filter(property => property.price >= filters.minPrice);
+      filtered = filtered.filter(
+        property => property.price >= filters.minPrice
+      );
     }
     if (filters.maxPrice > 0) {
-      filtered = filtered.filter(property => property.price <= filters.maxPrice);
+      filtered = filtered.filter(
+        property => property.price <= filters.maxPrice
+      );
     }
 
     // Filtro por patio
@@ -110,7 +122,9 @@ function App() {
 
     // Filtro por garage
     if (filters.garage) {
-      filtered = filtered.filter(property => property.garage === filters.garage);
+      filtered = filtered.filter(
+        property => property.garage === filters.garage
+      );
     }
 
     setFilteredProperties(filtered);
@@ -121,16 +135,18 @@ function App() {
   // Función para actualizar URL con filtros
   const updateURLWithFilters = (newFilters: FilterOptions) => {
     const params = new URLSearchParams();
-    
-    if (newFilters.searchTerm) params.set('search', newFilters.searchTerm);
-    if (newFilters.city) params.set('city', newFilters.city);
-    if (newFilters.type) params.set('type', newFilters.type);
-    if (newFilters.minPrice > 0) params.set('minPrice', newFilters.minPrice.toString());
-    if (newFilters.maxPrice > 0) params.set('maxPrice', newFilters.maxPrice.toString());
-    if (newFilters.status) params.set('status', newFilters.status);
-    if (newFilters.patio) params.set('patio', newFilters.patio);
-    if (newFilters.garage) params.set('garage', newFilters.garage);
-    
+
+    if (newFilters.searchTerm) params.set("search", newFilters.searchTerm);
+    if (newFilters.city) params.set("city", newFilters.city);
+    if (newFilters.type) params.set("type", newFilters.type);
+    if (newFilters.minPrice > 0)
+      params.set("minPrice", newFilters.minPrice.toString());
+    if (newFilters.maxPrice > 0)
+      params.set("maxPrice", newFilters.maxPrice.toString());
+    if (newFilters.status) params.set("status", newFilters.status);
+    if (newFilters.patio) params.set("patio", newFilters.patio);
+    if (newFilters.garage) params.set("garage", newFilters.garage);
+
     setSearchParams(params);
   };
 
@@ -143,20 +159,19 @@ function App() {
   // Función para limpiar filtros
   const handleClearFilters = () => {
     const clearedFilters: FilterOptions = {
-      searchTerm: '',
-      city: '',
-      type: '',
+      searchTerm: "",
+      city: "",
+      type: "",
       minPrice: 0,
       maxPrice: 0,
-      status: '',
-      patio: '',
-      garage: ''
+      status: "",
+      patio: "",
+      garage: "",
     };
     setFilters(clearedFilters);
-    setSearchTerm('');
+    setSearchTerm("");
     setSearchParams(new URLSearchParams()); // Limpiar URL
   };
-
 
   if (loading) {
     return (
@@ -170,7 +185,6 @@ function App() {
     <div>
       {/* Contenido principal */}
       <main>
-        
         {/* Filtros */}
         <PropertyFilters
           filters={filters}
@@ -180,13 +194,10 @@ function App() {
         />
 
         {/* Lista de propiedades */}
-        <PropertyList
-          properties={filteredProperties}
-          filters={filters}
-        />
+        <PropertyList properties={filteredProperties} filters={filters} />
       </main>
     </div>
   );
 }
 
-export default App; 
+export default App;

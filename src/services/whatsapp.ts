@@ -1,5 +1,5 @@
 // Servicio centralizado para WhatsApp
-import { Property } from '../types';
+import { Property } from "../types";
 
 // Número de WhatsApp de Nasuti Inmobiliaria
 export const OWNER_PHONE = "5493513459377";
@@ -13,7 +13,7 @@ export const generateWhatsAppUrl = (message: string): string => {
 // Función para abrir WhatsApp con mensaje
 export const openWhatsApp = (message: string): void => {
   const url = generateWhatsAppUrl(message);
-  window.open(url, '_blank');
+  window.open(url, "_blank");
 };
 
 // Función para generar mensaje de contacto con propiedad
@@ -32,6 +32,7 @@ export const handlePropertyWhatsAppContact = (property: Property): void => {
 
 // Función para manejar contacto general por WhatsApp
 export const handleGeneralWhatsAppContact = (): void => {
-  const message = "Hola! Me interesa conocer más sobre las propiedades disponibles. ¿Podrías brindarme información?";
+  const message =
+    "Hola! Me interesa conocer más sobre las propiedades disponibles. ¿Podrías brindarme información?";
   openWhatsApp(message);
 };

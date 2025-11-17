@@ -1,13 +1,13 @@
-import pg from 'pg';
+import pg from "pg";
 const { Pool } = pg;
 
 const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'nasuti_inmobiliaria',
-  password: process.env.DB_PASSWORD || 'password',
+  user: process.env.DB_USER || "postgres",
+  host: process.env.DB_HOST || "localhost",
+  database: process.env.DB_NAME || "nasuti_inmobiliaria",
+  password: process.env.DB_PASSWORD || "password",
   port: process.env.DB_PORT || 5432,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
 // Crear las tablas si no existen
@@ -51,9 +51,9 @@ const initDatabase = async () => {
         ADD COLUMN IF NOT EXISTS patio VARCHAR(20),
         ADD COLUMN IF NOT EXISTS garage VARCHAR(20)
       `);
-      console.log('Added patio and garage columns if they did not exist');
+      console.log("Added patio and garage columns if they did not exist");
     } catch (error) {
-      console.log('Patio and garage columns may already exist:', error.message);
+      console.log("Patio and garage columns may already exist:", error.message);
     }
 
     // Hacer la columna province opcional (nullable)
@@ -62,9 +62,9 @@ const initDatabase = async () => {
         ALTER TABLE properties 
         ALTER COLUMN province DROP NOT NULL
       `);
-      console.log('Made province column nullable');
+      console.log("Made province column nullable");
     } catch (error) {
-      console.log('Province column may already be nullable:', error.message);
+      console.log("Province column may already be nullable:", error.message);
     }
 
     // Agregar columnas de geolocalización si no existen
@@ -74,9 +74,9 @@ const initDatabase = async () => {
         ADD COLUMN IF NOT EXISTS latitude DECIMAL(12, 8),
         ADD COLUMN IF NOT EXISTS longitude DECIMAL(13, 8)
       `);
-      console.log('Added latitude and longitude columns if they did not exist');
+      console.log("Added latitude and longitude columns if they did not exist");
     } catch (error) {
-      console.log('Geolocation columns may already exist:', error.message);
+      console.log("Geolocation columns may already exist:", error.message);
     }
 
     // Crear índices para coordenadas si no existen
@@ -86,9 +86,9 @@ const initDatabase = async () => {
         CREATE INDEX IF NOT EXISTS idx_properties_longitude ON properties(longitude);
         CREATE INDEX IF NOT EXISTS idx_properties_coordinates ON properties(latitude, longitude)
       `);
-      console.log('Created geolocation indexes if they did not exist');
+      console.log("Created geolocation indexes if they did not exist");
     } catch (error) {
-      console.log('Geolocation indexes may already exist:', error.message);
+      console.log("Geolocation indexes may already exist:", error.message);
     }
 
     // Agregar restricciones de validación para coordenadas
@@ -102,9 +102,14 @@ const initDatabase = async () => {
         ADD CONSTRAINT IF NOT EXISTS check_longitude_range 
         CHECK (longitude IS NULL OR (longitude >= -180 AND longitude <= 180))
       `);
-      console.log('Added coordinate validation constraints if they did not exist');
+      console.log(
+        "Added coordinate validation constraints if they did not exist"
+      );
     } catch (error) {
-      console.log('Coordinate validation constraints may already exist:', error.message);
+      console.log(
+        "Coordinate validation constraints may already exist:",
+        error.message
+      );
     }
 
     // Agregar columna featured para propiedades destacadas en el carrusel
@@ -113,9 +118,9 @@ const initDatabase = async () => {
         ALTER TABLE properties 
         ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT FALSE
       `);
-      console.log('Added featured column if it did not exist');
+      console.log("Added featured column if it did not exist");
     } catch (error) {
-      console.log('Featured column may already exist:', error.message);
+      console.log("Featured column may already exist:", error.message);
     }
 
     // Crear índice para featured
@@ -123,14 +128,14 @@ const initDatabase = async () => {
       await pool.query(`
         CREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured)
       `);
-      console.log('Created featured index if it did not exist');
+      console.log("Created featured index if it did not exist");
     } catch (error) {
-      console.log('Featured index may already exist:', error.message);
+      console.log("Featured index may already exist:", error.message);
     }
 
-    console.log('Database initialized successfully');
+    console.log("Database initialized successfully");
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error("Error initializing database:", error);
   }
 };
 

@@ -38,19 +38,19 @@ interface MapboxResult {
 // Configuración de APIs
 const GEOCODING_CONFIG = {
   nominatim: {
-    baseUrl: 'https://nominatim.openstreetmap.org/search',
+    baseUrl: "https://nominatim.openstreetmap.org/search",
     params: {
-      format: 'json',
-      limit: '5',
-      countrycodes: 'ar', // Solo Argentina
-      addressdetails: '1',
-      dedupe: '1'
-    }
+      format: "json",
+      limit: "5",
+      countrycodes: "ar", // Solo Argentina
+      addressdetails: "1",
+      dedupe: "1",
+    },
   },
   mapbox: {
-    baseUrl: 'https://api.mapbox.com/geocoding/v5/mapbox.places',
+    baseUrl: "https://api.mapbox.com/geocoding/v5/mapbox.places",
     // Token se obtiene de process.env.VITE_MAPBOX_TOKEN
-  }
+  },
 };
 
 // Detectar si Mapbox está disponible
@@ -64,37 +64,43 @@ export const getMapboxToken = (): string | null => {
 };
 
 // Búsqueda con Nominatim (OpenStreetMap)
-const searchWithNominatim = async (query: string): Promise<GeocodingResult[]> => {
+const searchWithNominatim = async (
+  query: string
+): Promise<GeocodingResult[]> => {
   try {
     const params = new URLSearchParams({
       ...GEOCODING_CONFIG.nominatim.params,
-      q: query
+      q: query,
     });
 
-    const response = await fetch(`${GEOCODING_CONFIG.nominatim.baseUrl}?${params}`, {
-      headers: {
-        'User-Agent': 'NasutiInmobiliaria/1.0 (contact@nasutiinmobiliaria.com)'
+    const response = await fetch(
+      `${GEOCODING_CONFIG.nominatim.baseUrl}?${params}`,
+      {
+        headers: {
+          "User-Agent":
+            "NasutiInmobiliaria/1.0 (contact@nasutiinmobiliaria.com)",
+        },
       }
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Nominatim API error: ${response.status}`);
     }
 
     const results: GeocodingResult[] = await response.json();
-    
+
     // Filtrar y mejorar resultados
     return results
       .filter(result => result.lat && result.lon && result.display_name)
       .map(result => ({
         ...result,
         lat: parseFloat(result.lat).toString(),
-        lon: parseFloat(result.lon).toString()
+        lon: parseFloat(result.lon).toString(),
       }))
       .sort((a, b) => (b.importance || 0) - (a.importance || 0));
   } catch (error) {
-    console.error('Error searching with Nominatim:', error);
-    throw new Error('Error al buscar direcciones con Nominatim');
+    console.error("Error searching with Nominatim:", error);
+    throw new Error("Error al buscar direcciones con Nominatim");
   }
 };
 
@@ -102,16 +108,16 @@ const searchWithNominatim = async (query: string): Promise<GeocodingResult[]> =>
 const searchWithMapbox = async (query: string): Promise<GeocodingResult[]> => {
   const token = getMapboxToken();
   if (!token) {
-    throw new Error('Mapbox token no configurado');
+    throw new Error("Mapbox token no configurado");
   }
 
   try {
     const params = new URLSearchParams({
       access_token: token,
-      country: 'AR', // Solo Argentina
-      limit: '5',
-      types: 'address,poi,place,locality,neighborhood',
-      language: 'es'
+      country: "AR", // Solo Argentina
+      limit: "5",
+      types: "address,poi,place,locality,neighborhood",
+      language: "es",
     });
 
     const encodedQuery = encodeURIComponent(query);
@@ -135,85 +141,95 @@ const searchWithMapbox = async (query: string): Promise<GeocodingResult[]> => {
           display_name: result.place_name,
           lat: lat.toString(),
           lon: lng.toString(),
-          place_id: parseInt(result.id.replace(/\D/g, '')) || Math.random(),
+          place_id: parseInt(result.id.replace(/\D/g, "")) || Math.random(),
           importance: result.relevance,
           address: {
             road: result.properties?.address,
-            city: result.context?.find(c => c.id.includes('place'))?.text,
-            state: result.context?.find(c => c.id.includes('region'))?.text,
-            country: result.context?.find(c => c.id.includes('country'))?.text
-          }
+            city: result.context?.find(c => c.id.includes("place"))?.text,
+            state: result.context?.find(c => c.id.includes("region"))?.text,
+            country: result.context?.find(c => c.id.includes("country"))?.text,
+          },
         };
       })
       .sort((a, b) => (b.importance || 0) - (a.importance || 0));
   } catch (error) {
-    console.error('Error searching with Mapbox:', error);
-    throw new Error('Error al buscar direcciones con Mapbox');
+    console.error("Error searching with Mapbox:", error);
+    throw new Error("Error al buscar direcciones con Mapbox");
   }
 };
 
 // Función principal de búsqueda con fallback automático
-export const searchAddress = async (query: string): Promise<{
+export const searchAddress = async (
+  query: string
+): Promise<{
   results: GeocodingResult[];
-  provider: 'mapbox' | 'nominatim';
+  provider: "mapbox" | "nominatim";
   fallback?: boolean;
 }> => {
   if (!query.trim()) {
-    return { results: [], provider: 'nominatim' };
+    return { results: [], provider: "nominatim" };
   }
 
   // Intentar primero con Mapbox si está disponible
   if (isMapboxAvailable()) {
     try {
-      console.log('🔍 Buscando con Mapbox...');
+      console.log("🔍 Buscando con Mapbox...");
       const results = await searchWithMapbox(query);
-      
+
       // Si Mapbox no devuelve resultados, hacer fallback a Nominatim
       if (results.length === 0) {
-        console.log('⚠️ Mapbox sin resultados, usando Nominatim como fallback');
+        console.log("⚠️ Mapbox sin resultados, usando Nominatim como fallback");
         const fallbackResults = await searchWithNominatim(query);
         return {
           results: fallbackResults,
-          provider: 'nominatim',
-          fallback: true
+          provider: "nominatim",
+          fallback: true,
         };
       }
 
       console.log(`✅ Mapbox: ${results.length} resultados encontrados`);
-      return { results, provider: 'mapbox' };
+      return { results, provider: "mapbox" };
     } catch (error) {
-      console.warn('⚠️ Error con Mapbox, usando Nominatim como fallback:', error);
-      
+      console.warn(
+        "⚠️ Error con Mapbox, usando Nominatim como fallback:",
+        error
+      );
+
       try {
         const fallbackResults = await searchWithNominatim(query);
         return {
           results: fallbackResults,
-          provider: 'nominatim',
-          fallback: true
+          provider: "nominatim",
+          fallback: true,
         };
       } catch (fallbackError) {
-        console.error('❌ Error con ambos servicios:', fallbackError);
-        throw new Error('No se pudo buscar la dirección. Intenta nuevamente.');
+        console.error("❌ Error con ambos servicios:", fallbackError);
+        throw new Error("No se pudo buscar la dirección. Intenta nuevamente.");
       }
     }
   }
 
   // Usar Nominatim directamente si Mapbox no está disponible
-  console.log('🔍 Buscando con Nominatim...');
+  console.log("🔍 Buscando con Nominatim...");
   try {
     const results = await searchWithNominatim(query);
     console.log(`✅ Nominatim: ${results.length} resultados encontrados`);
-    return { results, provider: 'nominatim' };
+    return { results, provider: "nominatim" };
   } catch (error) {
-    console.error('❌ Error con Nominatim:', error);
-    throw new Error('No se pudo buscar la dirección. Verifica tu conexión a internet.');
+    console.error("❌ Error con Nominatim:", error);
+    throw new Error(
+      "No se pudo buscar la dirección. Verifica tu conexión a internet."
+    );
   }
 };
 
 // Función para geocodificación inversa (coordenadas -> dirección)
-export const reverseGeocode = async (lat: number, lng: number): Promise<{
+export const reverseGeocode = async (
+  lat: number,
+  lng: number
+): Promise<{
   address: string;
-  provider: 'mapbox' | 'nominatim';
+  provider: "mapbox" | "nominatim";
 }> => {
   if (isMapboxAvailable()) {
     try {
@@ -228,12 +244,12 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<{
         if (result) {
           return {
             address: result.place_name,
-            provider: 'mapbox'
+            provider: "mapbox",
           };
         }
       }
     } catch (error) {
-      console.warn('Error con Mapbox reverse geocoding:', error);
+      console.warn("Error con Mapbox reverse geocoding:", error);
     }
   }
 
@@ -243,8 +259,9 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<{
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
       {
         headers: {
-          'User-Agent': 'NasutiInmobiliaria/1.0 (contact@nasutiinmobiliaria.com)'
-        }
+          "User-Agent":
+            "NasutiInmobiliaria/1.0 (contact@nasutiinmobiliaria.com)",
+        },
       }
     );
 
@@ -252,16 +269,16 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<{
       const data = await response.json();
       return {
         address: data.display_name || `${lat}, ${lng}`,
-        provider: 'nominatim'
+        provider: "nominatim",
       };
     }
   } catch (error) {
-    console.error('Error con Nominatim reverse geocoding:', error);
+    console.error("Error con Nominatim reverse geocoding:", error);
   }
 
   return {
     address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-    provider: 'nominatim'
+    provider: "nominatim",
   };
 };
 
@@ -269,14 +286,14 @@ export const reverseGeocode = async (lat: number, lng: number): Promise<{
 export const getGeocodingInfo = () => {
   const isMapbox = isMapboxAvailable();
   return {
-    provider: isMapbox ? 'mapbox' : 'nominatim',
+    provider: isMapbox ? "mapbox" : "nominatim",
     isPremium: isMapbox,
     tokenConfigured: !!getMapboxToken(),
     features: {
       autocomplete: true,
       reverseGeocoding: true,
       fallback: isMapbox, // Mapbox tiene fallback a Nominatim
-      rateLimit: isMapbox ? '100,000/month' : '1 request/second'
-    }
+      rateLimit: isMapbox ? "100,000/month" : "1 request/second",
+    },
   };
 };

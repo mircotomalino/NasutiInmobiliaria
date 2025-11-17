@@ -142,7 +142,7 @@ router.get("/:id", async (req, res) => {
     }
 
     const property = propertyResult.rows[0];
-    property.images = imagesResult.rows.map((img) => img.image_url);
+    property.images = imagesResult.rows.map(img => img.image_url);
 
     res.json(property);
   } catch (error) {
@@ -263,7 +263,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       // Insertar las imágenes si se subieron
       if (req.files && req.files.length > 0) {
         const imageValues = req.files
-          .map((file) => `(${property.id}, '/uploads/${file.filename}')`)
+          .map(file => `(${property.id}, '/uploads/${file.filename}')`)
           .join(", ");
         await pool.query(`
           INSERT INTO property_images (property_id, image_url)
@@ -276,7 +276,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         "SELECT * FROM property_images WHERE property_id = $1",
         [property.id]
       );
-      property.images = imagesResult.rows.map((img) => img.image_url);
+      property.images = imagesResult.rows.map(img => img.image_url);
 
       res.status(201).json(property);
     } catch (dbError) {
@@ -314,12 +314,10 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         .json({ error: "Property with this data already exists" });
     } else if (error.code === "23514") {
       // Check constraint violation
-      return res
-        .status(400)
-        .json({
-          error: "Invalid data: constraint violation",
-          details: error.message,
-        });
+      return res.status(400).json({
+        error: "Invalid data: constraint violation",
+        details: error.message,
+      });
     }
 
     res.status(500).json({ error: "Internal server error" });
@@ -415,7 +413,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     // Si se subieron nuevas imágenes, agregarlas
     if (req.files && req.files.length > 0) {
       const imageValues = req.files
-        .map((file) => `(${propertyId}, '/uploads/${file.filename}')`)
+        .map(file => `(${propertyId}, '/uploads/${file.filename}')`)
         .join(", ");
       await pool.query(`
         INSERT INTO property_images (property_id, image_url)
@@ -428,7 +426,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       "SELECT * FROM property_images WHERE property_id = $1",
       [propertyId]
     );
-    property.images = imagesResult.rows.map((img) => img.image_url);
+    property.images = imagesResult.rows.map(img => img.image_url);
 
     res.json(property);
   } catch (error) {
@@ -442,12 +440,10 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         .json({ error: "Property with this data already exists" });
     } else if (error.code === "23514") {
       // Check constraint violation
-      return res
-        .status(400)
-        .json({
-          error: "Invalid data: constraint violation",
-          details: error.message,
-        });
+      return res.status(400).json({
+        error: "Invalid data: constraint violation",
+        details: error.message,
+      });
     }
 
     res.status(500).json({ error: "Internal server error" });
@@ -475,4 +471,3 @@ router.delete("/:id", async (req, res) => {
 });
 
 export default router;
-

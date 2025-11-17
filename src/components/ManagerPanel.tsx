@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Plus,
   Edit,
@@ -16,15 +16,36 @@ import {
   ExternalLink,
   ImagePlus,
   Star,
-  LogOut
-} from 'lucide-react';
-import { propertyStatuses, cities, patioOptions, garageOptions } from '../data/properties';
-import { Property as PropertyType, PropertyType as PropType, PropertyStatus, PatioType, GarageType } from '../types';
-import SmartAddressInput from './SmartAddressInput';
-import { useAuth } from '../contexts/AuthContext';
-import { getApiBase, getServerBase } from '../utils/api';
+  LogOut,
+} from "lucide-react";
+import {
+  propertyStatuses,
+  cities,
+  patioOptions,
+  garageOptions,
+} from "../data/properties";
+import {
+  Property as PropertyType,
+  PropertyType as PropType,
+  PropertyStatus,
+  PatioType,
+  GarageType,
+} from "../types";
+import SmartAddressInput from "./SmartAddressInput";
+import { useAuth } from "../contexts/AuthContext";
+import { getApiBase, getServerBase } from "../utils/api";
 
-interface Property extends Omit<PropertyType, 'id' | 'publishedDate' | 'imageUrl' | 'province' | 'latitude' | 'longitude' | 'featured'> {
+interface Property
+  extends Omit<
+    PropertyType,
+    | "id"
+    | "publishedDate"
+    | "imageUrl"
+    | "province"
+    | "latitude"
+    | "longitude"
+    | "featured"
+  > {
   id?: number;
   latitude?: number | null;
   longitude?: number | null;
@@ -40,29 +61,45 @@ const ManagerPanel: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<Array<{id?: number, url: string}>>([]);
+  const [existingImages, setExistingImages] = useState<
+    Array<{ id?: number; url: string }>
+  >([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  
+
   // Estados para filtros del manager
   const [managerFilters, setManagerFilters] = useState({
-    search: '',
+    search: "",
     minPrice: 0,
     maxPrice: 0,
-    bedrooms: '',
-    type: '',
-    status: ''
+    bedrooms: "",
+    type: "",
+    status: "",
   });
 
   const propertyTypes = [
-    { value: 'casa', label: 'Casa', icon: <Home className="w-4 h-4" /> },
-    { value: 'departamento', label: 'Departamento', icon: <Building className="w-4 h-4" /> },
-    { value: 'oficina', label: 'Oficina', icon: <Briefcase className="w-4 h-4" /> },
-    { value: 'local', label: 'Local', icon: <Store className="w-4 h-4" /> },
-    { value: 'quinta', label: 'Quinta', icon: <TreePine className="w-4 h-4" /> },
-    { value: 'terreno', label: 'Terreno', icon: <Square className="w-4 h-4" /> }
+    { value: "casa", label: "Casa", icon: <Home className="w-4 h-4" /> },
+    {
+      value: "departamento",
+      label: "Departamento",
+      icon: <Building className="w-4 h-4" />,
+    },
+    {
+      value: "oficina",
+      label: "Oficina",
+      icon: <Briefcase className="w-4 h-4" />,
+    },
+    { value: "local", label: "Local", icon: <Store className="w-4 h-4" /> },
+    {
+      value: "quinta",
+      label: "Quinta",
+      icon: <TreePine className="w-4 h-4" />,
+    },
+    {
+      value: "terreno",
+      label: "Terreno",
+      icon: <Square className="w-4 h-4" />,
+    },
   ];
-
-
 
   const API_BASE = getApiBase();
   const SERVER_BASE = getServerBase();
@@ -70,7 +107,7 @@ const ManagerPanel: React.FC = () => {
   // Función para cerrar sesión
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
@@ -84,38 +121,47 @@ const ManagerPanel: React.FC = () => {
     // Filtro por búsqueda (nombre/título)
     if (managerFilters.search.trim()) {
       const searchTerm = managerFilters.search.toLowerCase();
-      filtered = filtered.filter(property =>
-        property.title.toLowerCase().includes(searchTerm) ||
-        property.address.toLowerCase().includes(searchTerm) ||
-        property.city.toLowerCase().includes(searchTerm)
+      filtered = filtered.filter(
+        property =>
+          property.title.toLowerCase().includes(searchTerm) ||
+          property.address.toLowerCase().includes(searchTerm) ||
+          property.city.toLowerCase().includes(searchTerm)
       );
     }
 
     // Filtro por precio mínimo
     if (managerFilters.minPrice > 0) {
-      filtered = filtered.filter(property => property.price >= managerFilters.minPrice);
+      filtered = filtered.filter(
+        property => property.price >= managerFilters.minPrice
+      );
     }
 
     // Filtro por precio máximo
     if (managerFilters.maxPrice > 0) {
-      filtered = filtered.filter(property => property.price <= managerFilters.maxPrice);
+      filtered = filtered.filter(
+        property => property.price <= managerFilters.maxPrice
+      );
     }
 
     // Filtro por habitaciones
     if (managerFilters.bedrooms) {
-      filtered = filtered.filter(property => 
-        property.bedrooms === parseInt(managerFilters.bedrooms)
+      filtered = filtered.filter(
+        property => property.bedrooms === parseInt(managerFilters.bedrooms)
       );
     }
 
     // Filtro por tipo
     if (managerFilters.type) {
-      filtered = filtered.filter(property => property.type === managerFilters.type);
+      filtered = filtered.filter(
+        property => property.type === managerFilters.type
+      );
     }
 
     // Filtro por estado/disponibilidad
     if (managerFilters.status) {
-      filtered = filtered.filter(property => property.status === managerFilters.status);
+      filtered = filtered.filter(
+        property => property.status === managerFilters.status
+      );
     }
 
     setFilteredProperties(filtered);
@@ -128,7 +174,7 @@ const ManagerPanel: React.FC = () => {
       setProperties(data);
       setFilteredProperties(data);
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error("Error fetching properties:", error);
     } finally {
       setLoading(false);
     }
@@ -137,47 +183,53 @@ const ManagerPanel: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      
+
       // Agregar nuevos archivos a los existentes (no reemplazar)
       setSelectedFiles(prev => [...prev, ...newFiles]);
-      
+
       // Generar URLs de previsualización para los nuevos archivos
       const newUrls = newFiles.map(file => URL.createObjectURL(file));
       setPreviewUrls(prev => [...prev, ...newUrls]);
-      
+
       // Limpiar el input para permitir seleccionar el mismo archivo nuevamente
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   // Función para eliminar una imagen existente
-  const handleDeleteExistingImage = async (imageId: number | undefined, imageUrl: string) => {
+  const handleDeleteExistingImage = async (
+    imageId: number | undefined,
+    imageUrl: string
+  ) => {
     if (!imageId || !editingProperty?.id) {
       // Si no hay ID, solo removemos de la vista (para imágenes nuevas que aún no se han guardado)
       setExistingImages(prev => prev.filter(img => img.url !== imageUrl));
       return;
     }
 
-    if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta imagen?")) {
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE}/properties/${editingProperty.id}/images/${imageId}`, {
-        method: 'DELETE'
-      });
+      const response = await fetch(
+        `${API_BASE}/properties/${editingProperty.id}/images/${imageId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         // Remover la imagen de la lista de imágenes existentes
         setExistingImages(prev => prev.filter(img => img.id !== imageId));
-        alert('Imagen eliminada exitosamente');
+        alert("Imagen eliminada exitosamente");
       } else {
-        console.error('Error deleting image');
-        alert('Error al eliminar la imagen');
+        console.error("Error deleting image");
+        alert("Error al eliminar la imagen");
       }
     } catch (error) {
-      console.error('Error deleting image:', error);
-      alert('Error de conexión al eliminar la imagen');
+      console.error("Error deleting image:", error);
+      alert("Error de conexión al eliminar la imagen");
     }
   };
 
@@ -193,26 +245,29 @@ const ManagerPanel: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingProperty) {
-      console.error('No hay propiedad para editar');
+      console.error("No hay propiedad para editar");
       return;
     }
 
-    console.log('🚀 Iniciando creación/actualización de propiedad:', editingProperty);
+    console.log(
+      "🚀 Iniciando creación/actualización de propiedad:",
+      editingProperty
+    );
 
     const formData = new FormData();
-    
+
     // Agregar datos de la propiedad
     Object.entries(editingProperty).forEach(([key, value]) => {
       // Excluir solo: id e images
-      if (key === 'id' || key === 'images') {
+      if (key === "id" || key === "images") {
         return;
       }
-      
+
       // Para valores null o undefined, enviar string vacío
       if (value === null || value === undefined) {
-        formData.append(key, '');
+        formData.append(key, "");
         console.log(`📝 Agregando campo vacío: ${key} = ""`);
       } else {
         formData.append(key, value.toString());
@@ -224,80 +279,90 @@ const ManagerPanel: React.FC = () => {
     if (selectedFiles.length > 0) {
       console.log(`📸 Agregando ${selectedFiles.length} nueva(s) imagen(es)`);
       selectedFiles.forEach(file => {
-        formData.append('images', file);
-        console.log(`📁 Agregando archivo: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+        formData.append("images", file);
+        console.log(
+          `📁 Agregando archivo: ${file.name} (${(file.size / 1024).toFixed(
+            2
+          )} KB)`
+        );
       });
     } else {
-      console.log('ℹ️ No hay nuevas imágenes para agregar');
+      console.log("ℹ️ No hay nuevas imágenes para agregar");
     }
 
     try {
-      const url = editingProperty.id 
+      const url = editingProperty.id
         ? `${API_BASE}/properties/${editingProperty.id}`
         : `${API_BASE}/properties`;
-      
-      const method = editingProperty.id ? 'PUT' : 'POST';
-      
+
+      const method = editingProperty.id ? "PUT" : "POST";
+
       console.log(`🌐 Enviando ${method} a: ${url}`);
-      
+
       const response = await fetch(url, {
         method,
-        body: formData
+        body: formData,
       });
 
-      console.log(`📡 Respuesta del servidor: ${response.status} ${response.statusText}`);
+      console.log(
+        `📡 Respuesta del servidor: ${response.status} ${response.statusText}`
+      );
 
       if (response.ok) {
         const result = await response.json();
-        console.log('✅ Propiedad creada/actualizada exitosamente:', result);
-        
+        console.log("✅ Propiedad creada/actualizada exitosamente:", result);
+
         // Limpiar las URLs de previsualización
         previewUrls.forEach(url => URL.revokeObjectURL(url));
-        
+
         // Recargar la lista de propiedades
         await fetchProperties();
-        
+
         // Cerrar el formulario de edición/creación
         handleCancel();
-        
+
         // Mostrar mensaje de éxito
-        const mensaje = isAdding ? '✅ Propiedad creada exitosamente' : '✅ Propiedad actualizada exitosamente';
+        const mensaje = isAdding
+          ? "✅ Propiedad creada exitosamente"
+          : "✅ Propiedad actualizada exitosamente";
         alert(mensaje);
       } else {
         const errorText = await response.text();
-        console.error('❌ Error del servidor:', response.status, errorText);
-        alert(`Error al guardar la propiedad: ${response.status} - ${errorText}`);
+        console.error("❌ Error del servidor:", response.status, errorText);
+        alert(
+          `Error al guardar la propiedad: ${response.status} - ${errorText}`
+        );
       }
     } catch (error) {
-      console.error('💥 Error de red:', error);
+      console.error("💥 Error de red:", error);
       alert(`Error de conexión: ${error}`);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta propiedad?')) {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta propiedad?")) {
       return;
     }
 
     try {
       const response = await fetch(`${API_BASE}/properties/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       if (response.ok) {
         await fetchProperties();
       } else {
-        console.error('Error deleting property');
+        console.error("Error deleting property");
       }
     } catch (error) {
-      console.error('Error deleting property:', error);
+      console.error("Error deleting property:", error);
     }
   };
 
   const handleToggleFeatured = async (id: number) => {
     try {
       const response = await fetch(`${API_BASE}/properties/${id}/featured`, {
-        method: 'PATCH'
+        method: "PATCH",
       });
 
       if (response.ok) {
@@ -306,71 +371,86 @@ const ManagerPanel: React.FC = () => {
         const errorData = await response.json();
         if (errorData.error && errorData.featuredProperties) {
           // Mostrar mensaje con las propiedades destacadas actuales
-          const propertyNames = errorData.featuredProperties.map((p: any) => `• ${p.title}`).join('\n');
-          alert(`${errorData.error}:\n\n${propertyNames}\n\nDebes quitar una estrella antes de agregar otra.`);
+          const propertyNames = errorData.featuredProperties
+            .map((p: any) => `• ${p.title}`)
+            .join("\n");
+          alert(
+            `${errorData.error}:\n\n${propertyNames}\n\nDebes quitar una estrella antes de agregar otra.`
+          );
         } else {
-          alert('Error al actualizar el estado destacado de la propiedad');
+          alert("Error al actualizar el estado destacado de la propiedad");
         }
       }
     } catch (error) {
-      console.error('Error toggling featured status:', error);
-      alert('Error al actualizar el estado destacado de la propiedad');
+      console.error("Error toggling featured status:", error);
+      alert("Error al actualizar el estado destacado de la propiedad");
     }
   };
 
   const handleEdit = async (property: Property) => {
-    console.log('🔧 Iniciando edición de propiedad:', property);
-    
+    console.log("🔧 Iniciando edición de propiedad:", property);
+
     // Limpiar estado primero
     setEditingProperty(null);
     setIsAdding(false);
     setSelectedFiles([]);
     setPreviewUrls([]);
     setExistingImages([]);
-    
+
     // Pequeño delay para asegurar que el estado se limpie
     setTimeout(async () => {
       try {
         // Crear una copia limpia de la propiedad para editar
         const propertyToEdit: Property = {
           id: property.id,
-          title: property.title || '',
-          description: property.description || '',
-          price: typeof property.price === 'string' ? parseFloat(property.price) : (property.price || 0),
-          address: property.address || '',
-          city: property.city || '',
-          type: property.type || 'casa',
+          title: property.title || "",
+          description: property.description || "",
+          price:
+            typeof property.price === "string"
+              ? parseFloat(property.price)
+              : property.price || 0,
+          address: property.address || "",
+          city: property.city || "",
+          type: property.type || "casa",
           bedrooms: property.bedrooms || 0,
           bathrooms: property.bathrooms || 0,
           area: property.area || 0,
-          patio: property.patio || 'No Tiene',
-          garage: property.garage || 'No Tiene',
-          status: property.status || 'disponible',
+          patio: property.patio || "No Tiene",
+          garage: property.garage || "No Tiene",
+          status: property.status || "disponible",
           images: property.images || [],
-          latitude: property.latitude ? parseFloat(property.latitude.toString()) : null,
-          longitude: property.longitude ? parseFloat(property.longitude.toString()) : null
+          latitude: property.latitude
+            ? parseFloat(property.latitude.toString())
+            : null,
+          longitude: property.longitude
+            ? parseFloat(property.longitude.toString())
+            : null,
         };
 
-        console.log('✅ Propiedad preparada para editar:', propertyToEdit);
+        console.log("✅ Propiedad preparada para editar:", propertyToEdit);
 
         // Cargar imágenes existentes con sus IDs desde el servidor
         if (property.id) {
           try {
-            const imageResponse = await fetch(`${API_BASE}/properties/${property.id}/images`);
-            
+            const imageResponse = await fetch(
+              `${API_BASE}/properties/${property.id}/images`
+            );
+
             if (imageResponse.ok) {
               const imagesData = await imageResponse.json();
               setExistingImages(imagesData);
-              console.log('📸 Imágenes cargadas:', imagesData);
+              console.log("📸 Imágenes cargadas:", imagesData);
             } else {
               // Fallback: usar las URLs sin IDs
-              const images = property.images?.map((url: string) => ({ url })) || [];
+              const images =
+                property.images?.map((url: string) => ({ url })) || [];
               setExistingImages(images);
             }
           } catch (error) {
-            console.error('Error loading images:', error);
+            console.error("Error loading images:", error);
             // Usar las imágenes de la propiedad actual como fallback
-            const images = property.images?.map((url: string) => ({ url })) || [];
+            const images =
+              property.images?.map((url: string) => ({ url })) || [];
             setExistingImages(images);
           }
         }
@@ -378,16 +458,18 @@ const ManagerPanel: React.FC = () => {
         setEditingProperty(propertyToEdit);
         setIsAdding(false);
 
-        console.log('✅ Estado actualizado, haciendo scroll...');
+        console.log("✅ Estado actualizado, haciendo scroll...");
 
         // Scroll hacia arriba para mostrar el formulario
         setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          console.log('✅ Scroll completado');
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          console.log("✅ Scroll completado");
         }, 200);
       } catch (error) {
-        console.error('❌ Error al editar propiedad:', error);
-        alert('Error al cargar la propiedad para editar. Por favor, inténtalo de nuevo.');
+        console.error("❌ Error al editar propiedad:", error);
+        alert(
+          "Error al cargar la propiedad para editar. Por favor, inténtalo de nuevo."
+        );
       }
     }, 50);
   };
@@ -396,35 +478,35 @@ const ManagerPanel: React.FC = () => {
   const handleFilterChange = (key: string, value: string | number) => {
     setManagerFilters(prev => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   const handleClearFilters = () => {
     setManagerFilters({
-      search: '',
+      search: "",
       minPrice: 0,
       maxPrice: 0,
-      bedrooms: '',
-      type: '',
-      status: ''
+      bedrooms: "",
+      type: "",
+      status: "",
     });
   };
 
   const handleAdd = () => {
     setEditingProperty({
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       price: 0,
-      address: '',
-      city: '',
-      type: 'casa',
+      address: "",
+      city: "",
+      type: "casa",
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
-      patio: 'No Tiene' as PatioType,
-      garage: 'No Tiene' as GarageType,
-      status: 'disponible'
+      patio: "No Tiene" as PatioType,
+      garage: "No Tiene" as GarageType,
+      status: "disponible",
     });
     setIsAdding(true);
     setSelectedFiles([]);
@@ -438,15 +520,15 @@ const ManagerPanel: React.FC = () => {
     setSelectedFiles([]);
     setPreviewUrls([]);
     setExistingImages([]);
-    
+
     // Liberar URLs de previsualización
     previewUrls.forEach(url => URL.revokeObjectURL(url));
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -466,8 +548,12 @@ const ManagerPanel: React.FC = () => {
         {/* Header con botón de logout */}
         <div className="mb-6 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
-            <p className="text-gray-600">Gestiona las propiedades de la inmobiliaria</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Panel de Administración
+            </h1>
+            <p className="text-gray-600">
+              Gestiona las propiedades de la inmobiliaria
+            </p>
           </div>
           <button
             onClick={handleLogout}
@@ -507,7 +593,7 @@ const ManagerPanel: React.FC = () => {
                 Limpiar filtros
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Buscador */}
               <div>
@@ -518,7 +604,7 @@ const ManagerPanel: React.FC = () => {
                   type="text"
                   placeholder="Buscar propiedades..."
                   value={managerFilters.search}
-                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  onChange={e => handleFilterChange("search", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -532,15 +618,25 @@ const ManagerPanel: React.FC = () => {
                   <input
                     type="number"
                     placeholder="Mín"
-                    value={managerFilters.minPrice || ''}
-                    onChange={(e) => handleFilterChange('minPrice', Number(e.target.value) || 0)}
+                    value={managerFilters.minPrice || ""}
+                    onChange={e =>
+                      handleFilterChange(
+                        "minPrice",
+                        Number(e.target.value) || 0
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
                     type="number"
                     placeholder="Máx"
-                    value={managerFilters.maxPrice || ''}
-                    onChange={(e) => handleFilterChange('maxPrice', Number(e.target.value) || 0)}
+                    value={managerFilters.maxPrice || ""}
+                    onChange={e =>
+                      handleFilterChange(
+                        "maxPrice",
+                        Number(e.target.value) || 0
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -553,7 +649,7 @@ const ManagerPanel: React.FC = () => {
                 </label>
                 <select
                   value={managerFilters.bedrooms}
-                  onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
+                  onChange={e => handleFilterChange("bedrooms", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Todas</option>
@@ -572,7 +668,7 @@ const ManagerPanel: React.FC = () => {
                 </label>
                 <select
                   value={managerFilters.type}
-                  onChange={(e) => handleFilterChange('type', e.target.value)}
+                  onChange={e => handleFilterChange("type", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Todos los tipos</option>
@@ -591,7 +687,7 @@ const ManagerPanel: React.FC = () => {
                 </label>
                 <select
                   value={managerFilters.status}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  onChange={e => handleFilterChange("status", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Todos los estados</option>
@@ -606,7 +702,8 @@ const ManagerPanel: React.FC = () => {
               {/* Contador de resultados */}
               <div className="flex items-end">
                 <div className="text-sm text-gray-600">
-                  Mostrando {filteredProperties.length} de {properties.length} propiedades
+                  Mostrando {filteredProperties.length} de {properties.length}{" "}
+                  propiedades
                 </div>
               </div>
             </div>
@@ -618,7 +715,7 @@ const ManagerPanel: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 relative z-20">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">
-                {isAdding ? 'Agregar Nueva Propiedad' : 'Editar Propiedad'}
+                {isAdding ? "Agregar Nueva Propiedad" : "Editar Propiedad"}
               </h2>
               <button
                 onClick={handleCancel}
@@ -638,8 +735,12 @@ const ManagerPanel: React.FC = () => {
                   <input
                     type="text"
                     required
-                    value={editingProperty?.title || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, title: e.target.value} : null)}
+                    value={editingProperty?.title || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev ? { ...prev, title: e.target.value } : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -653,8 +754,14 @@ const ManagerPanel: React.FC = () => {
                     type="number"
                     required
                     min="0"
-                    value={editingProperty?.price || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, price: parseFloat(e.target.value) || 0} : null)}
+                    value={editingProperty?.price || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, price: parseFloat(e.target.value) || 0 }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -666,8 +773,14 @@ const ManagerPanel: React.FC = () => {
                   </label>
                   <select
                     required
-                    value={editingProperty?.type || 'casa'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, type: e.target.value as PropType} : null)}
+                    value={editingProperty?.type || "casa"}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, type: e.target.value as PropType }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {propertyTypes.map(type => (
@@ -685,8 +798,17 @@ const ManagerPanel: React.FC = () => {
                   </label>
                   <select
                     required
-                    value={editingProperty?.status || 'disponible'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, status: e.target.value as PropertyStatus} : null)}
+                    value={editingProperty?.status || "disponible"}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              status: e.target.value as PropertyStatus,
+                            }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     {propertyStatuses.map(status => (
@@ -703,14 +825,22 @@ const ManagerPanel: React.FC = () => {
                     Dirección o Coordenadas *
                   </label>
                   <SmartAddressInput
-                    value={editingProperty?.address || ''}
-                    onChange={(address) => setEditingProperty(prev => prev ? {...prev, address} : null)}
+                    value={editingProperty?.address || ""}
+                    onChange={address =>
+                      setEditingProperty(prev =>
+                        prev ? { ...prev, address } : null
+                      )
+                    }
                     onCoordinatesChange={(lat, lng) => {
-                      setEditingProperty(prev => prev ? {
-                        ...prev,
-                        latitude: lat,
-                        longitude: lng
-                      } : null);
+                      setEditingProperty(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              latitude: lat,
+                              longitude: lng,
+                            }
+                          : null
+                      );
                     }}
                     placeholder="Dirección: 'Av. San Martín 1234, Córdoba' o Coordenadas: '-31.4201, -64.1888'"
                     showMapPreview={true}
@@ -725,12 +855,16 @@ const ManagerPanel: React.FC = () => {
                   </label>
                   <select
                     required
-                    value={editingProperty?.city || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, city: e.target.value} : null)}
+                    value={editingProperty?.city || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev ? { ...prev, city: e.target.value } : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
                     <option value="">Seleccionar ciudad</option>
-                    {cities.map((city) => (
+                    {cities.map(city => (
                       <option key={city} value={city}>
                         {city}
                       </option>
@@ -746,8 +880,14 @@ const ManagerPanel: React.FC = () => {
                   <input
                     type="number"
                     min="0"
-                    value={editingProperty?.bedrooms || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, bedrooms: parseInt(e.target.value) || 0} : null)}
+                    value={editingProperty?.bedrooms || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, bedrooms: parseInt(e.target.value) || 0 }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -760,8 +900,17 @@ const ManagerPanel: React.FC = () => {
                   <input
                     type="number"
                     min="0"
-                    value={editingProperty?.bathrooms || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, bathrooms: parseInt(e.target.value) || 0} : null)}
+                    value={editingProperty?.bathrooms || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              bathrooms: parseInt(e.target.value) || 0,
+                            }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -774,8 +923,14 @@ const ManagerPanel: React.FC = () => {
                   <input
                     type="number"
                     min="0"
-                    value={editingProperty?.area || ''}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, area: parseInt(e.target.value) || 0} : null)}
+                    value={editingProperty?.area || ""}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, area: parseInt(e.target.value) || 0 }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -786,11 +941,17 @@ const ManagerPanel: React.FC = () => {
                     Patio
                   </label>
                   <select
-                    value={editingProperty?.patio || 'No Tiene'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, patio: e.target.value as PatioType} : null)}
+                    value={editingProperty?.patio || "No Tiene"}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, patio: e.target.value as PatioType }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
-                    {patioOptions.map((option) => (
+                    {patioOptions.map(option => (
                       <option key={option} value={option}>
                         {option}
                       </option>
@@ -804,11 +965,17 @@ const ManagerPanel: React.FC = () => {
                     Garage
                   </label>
                   <select
-                    value={editingProperty?.garage || 'No Tiene'}
-                    onChange={(e) => setEditingProperty(prev => prev ? {...prev, garage: e.target.value as GarageType} : null)}
+                    value={editingProperty?.garage || "No Tiene"}
+                    onChange={e =>
+                      setEditingProperty(prev =>
+                        prev
+                          ? { ...prev, garage: e.target.value as GarageType }
+                          : null
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                   >
-                    {garageOptions.map((option) => (
+                    {garageOptions.map(option => (
                       <option key={option} value={option}>
                         {option}
                       </option>
@@ -816,7 +983,6 @@ const ManagerPanel: React.FC = () => {
                   </select>
                 </div>
               </div>
-
 
               {/* Descripción */}
               <div>
@@ -826,8 +992,12 @@ const ManagerPanel: React.FC = () => {
                 <textarea
                   required
                   rows={4}
-                  value={editingProperty?.description || ''}
-                  onChange={(e) => setEditingProperty(prev => prev ? {...prev, description: e.target.value} : null)}
+                  value={editingProperty?.description || ""}
+                  onChange={e =>
+                    setEditingProperty(prev =>
+                      prev ? { ...prev, description: e.target.value } : null
+                    )
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -837,14 +1007,19 @@ const ManagerPanel: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Imágenes de la Propiedad
                 </label>
-                
+
                 {/* Imágenes existentes */}
                 {existingImages.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">Imágenes actuales</h4>
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">
+                      Imágenes actuales
+                    </h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {existingImages.map((image, index) => (
-                        <div key={`existing-${index}`} className="relative group">
+                        <div
+                          key={`existing-${index}`}
+                          className="relative group"
+                        >
                           <img
                             src={`${SERVER_BASE}${image.url}`}
                             alt={`Imagen ${index + 1}`}
@@ -852,7 +1027,9 @@ const ManagerPanel: React.FC = () => {
                           />
                           <button
                             type="button"
-                            onClick={() => handleDeleteExistingImage(image.id, image.url)}
+                            onClick={() =>
+                              handleDeleteExistingImage(image.id, image.url)
+                            }
                             className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
                             title="Eliminar imagen"
                           >
@@ -867,7 +1044,9 @@ const ManagerPanel: React.FC = () => {
                 {/* Nuevas imágenes a subir */}
                 {previewUrls.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">Nuevas imágenes a agregar</h4>
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">
+                      Nuevas imágenes a agregar
+                    </h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {previewUrls.map((url, index) => (
                         <div key={`new-${index}`} className="relative group">
@@ -917,7 +1096,8 @@ const ManagerPanel: React.FC = () => {
 
                 {existingImages.length === 0 && previewUrls.length === 0 && (
                   <p className="mt-2 text-sm text-gray-500">
-                    No hay imágenes cargadas. Agrega al menos una imagen para mostrar la propiedad.
+                    No hay imágenes cargadas. Agrega al menos una imagen para
+                    mostrar la propiedad.
                   </p>
                 )}
               </div>
@@ -929,7 +1109,7 @@ const ManagerPanel: React.FC = () => {
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
                 >
                   <Save className="w-5 h-5" />
-                  {isAdding ? 'Crear' : 'Guardar'}
+                  {isAdding ? "Crear" : "Guardar"}
                 </button>
                 <button
                   type="button"
@@ -946,9 +1126,11 @@ const ManagerPanel: React.FC = () => {
         {/* Lista de propiedades */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold">Propiedades ({properties.length})</h2>
+            <h2 className="text-lg font-semibold">
+              Propiedades ({properties.length})
+            </h2>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -971,7 +1153,7 @@ const ManagerPanel: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredProperties.map((property) => (
+                {filteredProperties.map(property => (
                   <tr key={property.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
@@ -995,23 +1177,42 @@ const ManagerPanel: React.FC = () => {
                       {formatPrice(property.price)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        property.status === 'disponible' ? 'bg-green-100 text-green-800' :
-                        property.status === 'vendida' ? 'bg-red-100 text-red-800' :
-                        property.status === 'reservada' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          property.status === "disponible"
+                            ? "bg-green-100 text-green-800"
+                            : property.status === "vendida"
+                            ? "bg-red-100 text-red-800"
+                            : property.status === "reservada"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
                         {property.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
                         <button
-                          onClick={() => property.id && handleToggleFeatured(property.id)}
-                          className={`${property.featured ? 'text-yellow-500' : 'text-gray-400'} hover:text-yellow-600 transition-colors`}
-                          title={property.featured ? 'Quitar de destacados' : 'Destacar en carrusel (máx. 3)'}
+                          onClick={() =>
+                            property.id && handleToggleFeatured(property.id)
+                          }
+                          className={`${
+                            property.featured
+                              ? "text-yellow-500"
+                              : "text-gray-400"
+                          } hover:text-yellow-600 transition-colors`}
+                          title={
+                            property.featured
+                              ? "Quitar de destacados"
+                              : "Destacar en carrusel (máx. 3)"
+                          }
                         >
-                          <Star className={`w-5 h-5 ${property.featured ? 'fill-yellow-500' : ''}`} />
+                          <Star
+                            className={`w-5 h-5 ${
+                              property.featured ? "fill-yellow-500" : ""
+                            }`}
+                          />
                         </button>
                         <Link
                           to={`/propiedad/${property.id}`}
@@ -1028,7 +1229,9 @@ const ManagerPanel: React.FC = () => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => property.id && handleDelete(property.id)}
+                          onClick={() =>
+                            property.id && handleDelete(property.id)
+                          }
                           className="text-red-600 hover:text-red-900"
                           title="Eliminar propiedad"
                         >

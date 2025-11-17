@@ -59,4 +59,3 @@ router.get("/with-coordinates", async (req, res) => {
 });
 
 export default router;
-

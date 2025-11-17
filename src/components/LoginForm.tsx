@@ -1,34 +1,34 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, User, AlertCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Lock, User, AlertCircle } from "lucide-react";
 
 const LoginForm: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     // Simular un pequeño delay para mejor UX
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const success = login(username, password);
-    
+
     if (success) {
-      navigate('/admin');
+      navigate("/admin");
     } else {
-      setError('Credenciales incorrectas. Intenta nuevamente.');
+      setError("Credenciales incorrectas. Intenta nuevamente.");
     }
-    
+
     setIsLoading(false);
   };
 
@@ -52,7 +52,10 @@ const LoginForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campo Usuario */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Usuario
             </label>
             <div className="relative">
@@ -63,7 +66,7 @@ const LoginForm: React.FC = () => {
                 id="username"
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={e => setUsername(e.target.value)}
                 className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f0782c] focus:border-transparent transition-colors"
                 placeholder="Ingresa tu usuario"
                 required
@@ -74,7 +77,10 @@ const LoginForm: React.FC = () => {
 
           {/* Campo Contraseña */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Contraseña
             </label>
             <div className="relative">
@@ -83,9 +89,9 @@ const LoginForm: React.FC = () => {
               </div>
               <input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f0782c] focus:border-transparent transition-colors"
                 placeholder="Ingresa tu contraseña"
                 required
@@ -126,7 +132,7 @@ const LoginForm: React.FC = () => {
                 Verificando...
               </div>
             ) : (
-              'Ingresar'
+              "Ingresar"
             )}
           </button>
         </form>

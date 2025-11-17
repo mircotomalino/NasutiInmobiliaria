@@ -6,7 +6,7 @@ initDatabase()
     console.log("✅ Base de datos inicializada exitosamente!");
     process.exit(0);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error("❌ Error inicializando base de datos:", error);
     process.exit(1);
   });

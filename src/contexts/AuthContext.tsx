@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -20,8 +26,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Verificar autenticación al cargar la aplicación
   useEffect(() => {
     const checkAuth = () => {
-      const authFlag = localStorage.getItem('isAuthenticated');
-      if (authFlag === 'true') {
+      const authFlag = localStorage.getItem("isAuthenticated");
+      if (authFlag === "true") {
         setIsAuthenticated(true);
       }
       setIsLoading(false);
@@ -32,11 +38,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (username: string, password: string): boolean => {
     // Credenciales desde variables de entorno
-    const validUsername = import.meta.env.VITE_ADMIN_USER || 'admin';
-    const validPassword = import.meta.env.VITE_ADMIN_PASS || 'nasuti123';
+    const validUsername = import.meta.env.VITE_ADMIN_USER || "admin";
+    const validPassword = import.meta.env.VITE_ADMIN_PASS || "nasuti123";
 
     if (username === validUsername && password === validPassword) {
-      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem("isAuthenticated", "true");
       setIsAuthenticated(true);
       return true;
     }
@@ -44,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem("isAuthenticated");
     setIsAuthenticated(false);
   };
 
@@ -52,20 +58,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     login,
     logout,
-    isLoading
+    isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

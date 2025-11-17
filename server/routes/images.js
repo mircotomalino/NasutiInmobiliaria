@@ -39,4 +39,3 @@ router.delete("/images/:imageId", async (req, res) => {
 });
 
 export default router;
-

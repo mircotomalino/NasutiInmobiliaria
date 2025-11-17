@@ -27,7 +27,7 @@ const productionPool = new Pool({
 // Verificar que las variables de producción estén configuradas
 const checkProductionConfig = () => {
   const required = ["PROD_DB_HOST", "PROD_DB_USER", "PROD_DB_PASSWORD"];
-  const missing = required.filter((key) => !process.env[key]);
+  const missing = required.filter(key => !process.env[key]);
 
   if (missing.length > 0 && !process.env.DB_HOST?.includes("supabase")) {
     console.error("❌ Error: Variables de producción no configuradas");

@@ -3,9 +3,9 @@
  * Falls back to localhost for development
  */
 export function getApiBase(): string {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
   // Remove trailing slash if present
-  return apiUrl.replace(/\/$/, '') + '/api';
+  return apiUrl.replace(/\/$/, "") + "/api";
 }
 
 /**
@@ -13,8 +13,7 @@ export function getApiBase(): string {
  * Falls back to localhost for development
  */
 export function getServerBase(): string {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
   // Remove trailing slash if present
-  return apiUrl.replace(/\/$/, '');
+  return apiUrl.replace(/\/$/, "");
 }
-

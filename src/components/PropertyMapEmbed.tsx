@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PropertyMapEmbedProps {
   address: string;
@@ -10,10 +10,10 @@ interface PropertyMapEmbedProps {
 
 const PropertyMapEmbed: React.FC<PropertyMapEmbedProps> = ({
   address,
-  width = '100%',
-  height = '300px',
+  width = "100%",
+  height = "300px",
   zoom = 15,
-  className = ''
+  className = "",
 }) => {
   // Función para codificar la dirección para URL
   const encodeAddress = (address: string): string => {
@@ -25,7 +25,10 @@ const PropertyMapEmbed: React.FC<PropertyMapEmbedProps> = ({
   const mapUrl = `https://www.google.com/maps?q=${encodeAddress(address)}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
 
   return (
-    <div className={`property-map-embed ${className}`} style={{ width, height }}>
+    <div
+      className={`property-map-embed ${className}`}
+      style={{ width, height }}
+    >
       <iframe
         src={mapUrl}
         width="100%"

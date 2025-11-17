@@ -45,7 +45,7 @@ export const validateCoordinates = (latitude, longitude) => {
 };
 
 // Función para validar datos de propiedad
-export const validatePropertyData = (data) => {
+export const validatePropertyData = data => {
   const errors = [];
 
   // Campos requeridos
@@ -57,7 +57,7 @@ export const validatePropertyData = (data) => {
     "city",
     "type",
   ];
-  requiredFields.forEach((field) => {
+  requiredFields.forEach(field => {
     if (
       !data[field] ||
       (typeof data[field] === "string" && data[field].trim() === "")
@@ -76,7 +76,7 @@ export const validatePropertyData = (data) => {
 
   // Validar números enteros
   const integerFields = ["bedrooms", "bathrooms", "area"];
-  integerFields.forEach((field) => {
+  integerFields.forEach(field => {
     if (
       data[field] !== undefined &&
       data[field] !== null &&
@@ -109,4 +109,3 @@ export const validatePropertyData = (data) => {
     },
   };
 };
-

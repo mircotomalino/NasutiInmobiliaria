@@ -38,14 +38,14 @@ const createMigrationsTable = async () => {
 };
 
 // Calcular checksum del archivo
-const calculateChecksum = (content) => {
+const calculateChecksum = content => {
   return crypto.createHash("sha256").update(content).digest("hex");
 };
 
 // Ejecutar una migración específica
-const runMigration = async (filename) => {
+const runMigration = async filename => {
   const migrationPath = path.join(__dirname, "migrations", filename);
-  
+
   try {
     // Verificar si la migración ya se ejecutó
     const existingMigration = await pool.query(
@@ -66,16 +66,16 @@ const runMigration = async (filename) => {
 
     // Ejecutar la migración en una transacción
     await pool.query("BEGIN");
-    
+
     try {
       await pool.query(migrationSQL);
-      
+
       // Registrar la migración como ejecutada
       await pool.query(
         "INSERT INTO migrations (filename, checksum) VALUES ($1, $2)",
         [filename, checksum]
       );
-      
+
       await pool.query("COMMIT");
       console.log(`✅ Migration ${filename} completed successfully`);
     } catch (migrationError) {
@@ -92,7 +92,7 @@ const runMigration = async (filename) => {
 const runAllMigrations = async () => {
   try {
     console.log("🔄 Starting database migrations...\n");
-    
+
     // Crear tabla de migraciones
     await createMigrationsTable();
 
@@ -100,7 +100,7 @@ const runAllMigrations = async () => {
     const migrationsDir = path.join(__dirname, "migrations");
     const migrationFiles = fs
       .readdirSync(migrationsDir)
-      .filter((file) => file.endsWith(".sql"))
+      .filter(file => file.endsWith(".sql"))
       .sort();
 
     if (migrationFiles.length === 0) {
@@ -109,7 +109,7 @@ const runAllMigrations = async () => {
     }
 
     console.log(`📋 Found ${migrationFiles.length} migration(s):`);
-    migrationFiles.forEach((file) => console.log(`   - ${file}`));
+    migrationFiles.forEach(file => console.log(`   - ${file}`));
     console.log("");
 
     // Ejecutar cada migración
@@ -127,13 +127,13 @@ const runAllMigrations = async () => {
 };
 
 // Ejecutar migración específica
-const runSpecificMigration = async (filename) => {
+const runSpecificMigration = async filename => {
   try {
     console.log(`🎯 Running specific migration: ${filename}\n`);
-    
+
     await createMigrationsTable();
     await runMigration(filename);
-    
+
     console.log("\n✅ Specific migration completed!");
   } catch (error) {
     console.error("\n💥 Specific migration failed:", error);
@@ -147,34 +147,32 @@ const runSpecificMigration = async (filename) => {
 const showMigrationStatus = async () => {
   try {
     console.log("📊 Migration Status:\n");
-    
+
     await createMigrationsTable();
-    
+
     const executedMigrations = await pool.query(
       "SELECT * FROM migrations ORDER BY executed_at"
     );
-    
+
     const migrationsDir = path.join(__dirname, "migrations");
     const allMigrationFiles = fs
       .readdirSync(migrationsDir)
-      .filter((file) => file.endsWith(".sql"))
+      .filter(file => file.endsWith(".sql"))
       .sort();
-    
+
     console.log("Executed migrations:");
-    executedMigrations.rows.forEach((row) => {
+    executedMigrations.rows.forEach(row => {
       console.log(`  ✅ ${row.filename} (${row.executed_at})`);
     });
-    
-    const executedFilenames = executedMigrations.rows.map(
-      (row) => row.filename
-    );
+
+    const executedFilenames = executedMigrations.rows.map(row => row.filename);
     const pendingMigrations = allMigrationFiles.filter(
-      (file) => !executedFilenames.includes(file)
+      file => !executedFilenames.includes(file)
     );
-    
+
     if (pendingMigrations.length > 0) {
       console.log("\nPending migrations:");
-      pendingMigrations.forEach((file) => {
+      pendingMigrations.forEach(file => {
         console.log(`  ⏳ ${file}`);
       });
     } else {

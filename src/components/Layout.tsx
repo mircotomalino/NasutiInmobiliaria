@@ -1,6 +1,6 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import SiteNavbar from './SiteNavbar';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import SiteNavbar from "./SiteNavbar";
 
 const Layout: React.FC = () => {
   return (
@@ -12,7 +12,3 @@ const Layout: React.FC = () => {
 };
 
 export default Layout;
-
-
-
-

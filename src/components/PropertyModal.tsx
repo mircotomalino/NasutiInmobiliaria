@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import { X, MapPin, Bed, Bath, Square, ChevronLeft, ChevronRight, Trees, Car } from 'lucide-react';
-import { Property } from '../types';
-import { handlePropertyWhatsAppContact } from '../services/whatsapp';
-import { getPropertyTypeIcon } from '../utils/propertyUtils';
+import React, { useState } from "react";
+import {
+  X,
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  ChevronLeft,
+  ChevronRight,
+  Trees,
+  Car,
+} from "lucide-react";
+import { Property } from "../types";
+import { handlePropertyWhatsAppContact } from "../services/whatsapp";
+import { getPropertyTypeIcon } from "../utils/propertyUtils";
 
 interface PropertyModalProps {
   property: Property | null;
@@ -10,29 +20,27 @@ interface PropertyModalProps {
   onClose: () => void;
 }
 
-const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose }) => {
+const PropertyModal: React.FC<PropertyModalProps> = ({
+  property,
+  isOpen,
+  onClose,
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  
+
   if (!property || !isOpen) return null;
-
-
-
-
-
 
   // Funciones para manejar el carrusel de imágenes
   const nextImage = () => {
     const images = property.images || [];
     if (images.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      setCurrentImageIndex(prev => (prev + 1) % images.length);
     }
   };
 
   const prevImage = () => {
     const images = property.images || [];
     if (images.length > 0) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+      setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length);
     }
   };
 
@@ -42,7 +50,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
     if (images.length > 0) {
       return images[currentImageIndex];
     }
-    return property.imageUrl || '/img/default-property.jpg';
+    return property.imageUrl || "/img/default-property.jpg";
   };
 
   // Verificar si hay múltiples imágenes
@@ -51,24 +59,17 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
   return (
     <div className="modal-overlay" onClick={onClose}>
       {/* Modal */}
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
         {/* Header del modal */}
         <div className="modal-header">
-          <h2 className="modal-title">
-            Detalles de la Propiedad
-          </h2>
-          <button
-            onClick={onClose}
-            className="modal-close"
-          >
+          <h2 className="modal-title">Detalles de la Propiedad</h2>
+          <button onClick={onClose} className="modal-close">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Contenido del modal */}
         <div className="modal-body">
-          
           {/* Carrusel de imágenes */}
           <div className="modal-image-container">
             <img
@@ -76,7 +77,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
               alt={property.title}
               className="modal-image"
             />
-            
+
             {/* Controles de navegación del carrusel */}
             {hasMultipleImages && (
               <>
@@ -88,7 +89,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
-                
+
                 {/* Botón siguiente */}
                 <button
                   onClick={nextImage}
@@ -97,7 +98,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
-                
+
                 {/* Indicadores de posición */}
                 <div className="modal-carousel-indicators">
                   {property.images?.map((_, index) => (
@@ -105,13 +106,13 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`modal-carousel-indicator ${
-                        index === currentImageIndex ? 'active' : ''
+                        index === currentImageIndex ? "active" : ""
                       }`}
                       aria-label={`Ir a imagen ${index + 1}`}
                     />
                   ))}
                 </div>
-                
+
                 {/* Contador de imágenes */}
                 <div className="modal-carousel-counter">
                   {currentImageIndex + 1} / {property.images?.length}
@@ -122,29 +123,33 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
 
           {/* Información principal */}
           <div className="modal-grid">
-            
             {/* Columna izquierda */}
             <div>
-              
               {/* Título */}
               <div className="modal-section">
-                <h3 className="modal-section h4">
-                  {property.title}
-                </h3>
+                <h3 className="modal-section h4">{property.title}</h3>
               </div>
 
               {/* Tipo y estado */}
               <div className="modal-badges">
                 <div className="modal-badge">
                   {getPropertyTypeIcon(property.type)}
-                  <span>{property.type.charAt(0).toUpperCase() + property.type.slice(1)}</span>
+                  <span>
+                    {property.type.charAt(0).toUpperCase() +
+                      property.type.slice(1)}
+                  </span>
                 </div>
-                <div className={`property-status-badge ${
-                  property.status === 'disponible' ? 'status-available' :
-                  property.status === 'reservada' ? 'status-reserved' :
-                  'status-sold'
-                }`}>
-                  {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+                <div
+                  className={`property-status-badge ${
+                    property.status === "disponible"
+                      ? "status-available"
+                      : property.status === "reservada"
+                        ? "status-reserved"
+                        : "status-sold"
+                  }`}
+                >
+                  {property.status.charAt(0).toUpperCase() +
+                    property.status.slice(1)}
                 </div>
               </div>
 
@@ -166,7 +171,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
 
             {/* Columna derecha */}
             <div>
-              
               {/* Características */}
               <div className="modal-section">
                 <h4>Características</h4>
@@ -187,13 +191,13 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                     <Square className="w-5 h-5" />
                     <span>{property.area} m²</span>
                   </div>
-                  {property.patio && property.patio !== 'No Tiene' && (
+                  {property.patio && property.patio !== "No Tiene" && (
                     <div className="modal-feature">
                       <Trees className="w-5 h-5" />
                       <span>Patio {property.patio}</span>
                     </div>
                   )}
-                  {property.garage && property.garage !== 'No Tiene' && (
+                  {property.garage && property.garage !== "No Tiene" && (
                     <div className="modal-feature">
                       <Car className="w-5 h-5" />
                       <span>Garage: {property.garage}</span>
@@ -201,7 +205,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
                   )}
                 </div>
               </div>
-
 
               {/* Botones de acción */}
               <div className="modal-actions">
@@ -220,4 +223,4 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ property, isOpen, onClose
   );
 };
 
-export default PropertyModal; 
+export default PropertyModal;
