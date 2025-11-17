@@ -6,6 +6,9 @@ const SiteNavbar: React.FC = () => {
   const { pathname, hash } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Detectar si estamos en la página de login/admin
+  const isLoginPage = pathname === "/admin";
+
   const isInicio = pathname === "/";
   const isCatalogo =
     pathname.startsWith("/catalogo") || pathname.startsWith("/propiedad");
@@ -46,8 +49,9 @@ const SiteNavbar: React.FC = () => {
             </h1>
           </NavLink>
 
-          {/* Navegación desktop */}
-          <nav className="hidden md:flex space-x-8">
+          {/* Navegación desktop - Ocultar en página de login */}
+          {!isLoginPage && (
+            <nav className="hidden md:flex space-x-8">
             <NavLink
               to="/"
               className={classes(isInicio)}
@@ -68,8 +72,10 @@ const SiteNavbar: React.FC = () => {
               Contacto
             </a>
           </nav>
+          )}
 
-          {/* Botón hamburguesa móvil */}
+          {/* Botón hamburguesa móvil - Ocultar en página de login */}
+          {!isLoginPage && (
           <button
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -81,10 +87,12 @@ const SiteNavbar: React.FC = () => {
               <Menu className="w-6 h-6 text-gray-600" />
             )}
           </button>
+          )}
         </div>
       </div>
 
-      {/* Menú móvil */}
+      {/* Menú móvil - Ocultar en página de login */}
+      {!isLoginPage && (
       <div
         className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
@@ -124,6 +132,7 @@ const SiteNavbar: React.FC = () => {
           </a>
         </nav>
       </div>
+      )}
     </header>
   );
 };
