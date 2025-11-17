@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/catalogo" element={<App />} />
-            <Route path="/managerLogin" element={
+            <Route path="/admin" element={
               <ProtectedRoute>
                 <ManagerPanel />
               </ProtectedRoute>

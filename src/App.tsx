@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyList from './components/PropertyList';
 import { Property, FilterOptions, PropertyType, PropertyStatus, PatioType, GarageType } from './types';
+import { getApiBase } from './utils/api';
 
 function App() {
   // Hook para manejar parámetros de URL
@@ -24,7 +25,7 @@ function App() {
     garage: ''
   });
 
-  const API_BASE = 'http://localhost:3001/api';
+  const API_BASE = getApiBase();
 
   // Cargar propiedades desde la API
   useEffect(() => {

@@ -62,8 +62,8 @@ export VITE_MAPBOX_TOKEN="pk.eyJ1IjoieW91cnVzZXJuYW1lIiwiYSI6ImNsZXhhbXBsZWFwZXM
 npm run dev:full
 ```
 
-### Opción 3: Netlify/Vercel (Deploy)
-En tu plataforma de deploy, agrega la variable de entorno:
+### Opción 3: Vercel (Deploy)
+En Vercel, agrega la variable de entorno:
 - **Nombre**: `VITE_MAPBOX_TOKEN`
 - **Valor**: `pk.eyJ1IjoieW91cnVzZXJuYW1lIiwiYSI6ImNsZXhhbXBsZWFwZXMzem5yN2F5dWl3eG8ifQ.example_token_here`
 
@@ -98,7 +98,7 @@ La aplicación muestra qué proveedor está siendo usado:
 ## 🧪 Testing de la Configuración
 
 ### Verificar que Mapbox funciona:
-1. Abre el MapPicker en `/managerLogin`
+1. Abre el MapPicker en `/admin`
 2. Busca una dirección (ej: "Av. Colón 1000, Córdoba")
 3. Verifica que aparezca el icono 🟡 "Mapbox"
 4. Los resultados deben ser más precisos y rápidos
