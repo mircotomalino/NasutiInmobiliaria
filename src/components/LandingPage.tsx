@@ -75,9 +75,9 @@ const LandingPage: React.FC = () => {
     e.preventDefault();
 
     // Construir el mensaje para WhatsApp
-    const message = `Hola, soy ${formData.nombre}.
-Asunto: ${formData.asunto || "Consulta general"}
-Mensaje: ${formData.mensaje}`;
+    const message = `Hola Nasuti! Mi nombre es: ${formData.nombre}
+Te hablo para ${formData.asunto || "Consulta general"}
+${formData.mensaje}`;
 
     // Codificar el mensaje para URL
     const encodedMessage = encodeURIComponent(message);
