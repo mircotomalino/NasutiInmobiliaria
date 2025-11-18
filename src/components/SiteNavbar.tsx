@@ -51,7 +51,7 @@ const SiteNavbar: React.FC = () => {
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
-            <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8">
             <NavLink
               to="/"
               className={classes(isInicio)}
