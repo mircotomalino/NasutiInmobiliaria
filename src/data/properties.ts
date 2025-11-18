@@ -92,7 +92,7 @@ export const sampleProperties: Property[] = [
     description:
       "Hermosa quinta con pileta, quincho y 4 dormitorios. Ideal para escapadas de fin de semana.",
     address: "Ruta Provincial 23 Km 12",
-    city: "Otras",
+    city: "Otra",
     province: "Córdoba",
     price: 380000,
     type: "quinta",
@@ -160,7 +160,7 @@ export const sampleProperties: Property[] = [
     description:
       "Terreno de 800m² con vista panorámica a las sierras. Ideal para construir casa de campo.",
     address: "Camino de las Sierras 987",
-    city: "Otras",
+    city: "Otra",
     province: "Córdoba",
     price: 95000,
     type: "terreno",
@@ -173,13 +173,7 @@ export const sampleProperties: Property[] = [
   },
 ];
 
-export const cities = [
-  "Marcos Juárez",
-  "Leones",
-  "Córdoba",
-  "Rosario",
-  "Otras",
-];
+export const cities = ["Marcos Juárez", "Leones", "Córdoba", "Rosario", "Otra"];
 export const provinces = [
   "Buenos Aires",
   "Córdoba",

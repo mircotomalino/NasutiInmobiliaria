@@ -140,7 +140,9 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
     if (lat && lng) {
       return `https://www.google.com/maps?q=${lat},${lng}`;
     }
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      address
+    )}`;
   };
 
   // Manejar cambios en el input
@@ -217,8 +219,8 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
             detectedType === "coordinates" && !isValid
               ? "border-red-300 focus:ring-red-500"
               : detectedType === "coordinates" && isValid
-                ? "border-green-300 focus:ring-green-500"
-                : "border-gray-300 focus:ring-blue-500"
+              ? "border-green-300 focus:ring-green-500"
+              : "border-gray-300 focus:ring-blue-500"
           }`}
         />
 

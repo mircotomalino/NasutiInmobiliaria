@@ -182,7 +182,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       garage,
       latitude,
       longitude,
-      status,
+      status = null,
     } = validation.validatedData;
 
     // 🔍 LOGGING DETALLADO PARA DEBUGGING
@@ -363,7 +363,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       garage,
       latitude,
       longitude,
-      status,
+      status = null,
     } = validation.validatedData;
 
     // Verificar que la propiedad existe
