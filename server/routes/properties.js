@@ -182,8 +182,10 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       garage,
       latitude,
       longitude,
-      status = null,
+      status,
     } = validation.validatedData;
+
+    const finalStatus = status || "disponible";
 
     // 🔍 LOGGING DETALLADO PARA DEBUGGING
     console.log("🔍 DEBUGGING - Datos recibidos para crear propiedad:");
@@ -238,7 +240,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       garage,
       latitude,
       longitude,
-      status,
+      finalStatus,
     ];
     console.log("🔍 DEBUGGING - Parámetros de la query:");
     queryParams.forEach((param, index) => {
@@ -363,8 +365,10 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       garage,
       latitude,
       longitude,
-      status = null,
+      status,
     } = validation.validatedData;
+
+    const finalStatus = status || "disponible";
 
     // Verificar que la propiedad existe
     const existingProperty = await pool.query(
@@ -403,7 +407,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         garage,
         latitude,
         longitude,
-        status,
+        finalStatus,
         propertyId,
       ]
     );

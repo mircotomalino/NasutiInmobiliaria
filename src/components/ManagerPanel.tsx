@@ -4,7 +4,6 @@ import {
   Plus,
   Edit,
   Trash2,
-  Save,
   X,
   Home,
   Building,
@@ -14,7 +13,6 @@ import {
   Square,
   Search,
   ExternalLink,
-  ImagePlus,
   Star,
   LogOut,
 } from "lucide-react";
@@ -26,15 +24,14 @@ import {
 } from "../data/properties";
 import {
   Property as PropertyType,
-  PropertyType as PropType,
   PropertyStatus,
   PatioType,
   GarageType,
 } from "../types";
-import SmartAddressInput from "./SmartAddressInput";
-import { getApiBase, getServerBase } from "../utils/api";
+import PropertyFormModal from "./PropertyFormModal";
+import { getApiBase } from "../utils/api";
 
-interface Property
+export interface Property
   extends Omit<
     PropertyType,
     | "id"
@@ -101,7 +98,6 @@ const ManagerPanel: React.FC = () => {
   ];
 
   const API_BASE = getApiBase();
-  const SERVER_BASE = getServerBase();
 
   // Función para cerrar sesión
   const handleLogout = () => {
@@ -707,402 +703,23 @@ const ManagerPanel: React.FC = () => {
           </div>
         )}
 
-        {(isAdding || editingProperty) && editingProperty && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-            onClick={handleCancel}
-          >
-            <div
-              className="bg-white rounded-lg shadow-xl p-6 relative z-20 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">
-                  {isAdding ? "Agregar Nueva Propiedad" : "Editar Propiedad"}
-                </h2>
-                <button
-                  onClick={handleCancel}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                  {/* Título */}
-                  <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Título *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={editingProperty?.title || ""}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev ? { ...prev, title: e.target.value } : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Tipo */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tipo *
-                    </label>
-                    <select
-                      required
-                      value={editingProperty?.type || "casa"}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? { ...prev, type: e.target.value as PropType }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
-                    >
-                      {propertyTypes.map(type => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Precio (USD) *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min="0"
-                      value={editingProperty?.price ?? 0}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? {
-                                ...prev,
-                                price: parseFloat(e.target.value) || 0,
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Dirección Inteligente */}
-                  <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dirección o Coordenadas *
-                    </label>
-                    <SmartAddressInput
-                      value={editingProperty?.address || ""}
-                      onChange={address =>
-                        setEditingProperty(prev =>
-                          prev ? { ...prev, address } : null
-                        )
-                      }
-                      onCoordinatesChange={(lat, lng) => {
-                        setEditingProperty(prev =>
-                          prev
-                            ? {
-                                ...prev,
-                                latitude: lat,
-                                longitude: lng,
-                              }
-                            : null
-                        );
-                      }}
-                      placeholder="Dirección: 'Av. San Martín 1234, Córdoba' o Coordenadas: '-31.4201, -64.1888'"
-                      showMapPreview={true}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* Ciudad */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ciudad *
-                    </label>
-                    <select
-                      required
-                      value={editingProperty?.city || "Marcos Juárez"}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev ? { ...prev, city: e.target.value } : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
-                    >
-                      <option value="">Seleccionar ciudad</option>
-                      {cities.map(city => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Habitaciones */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Habitaciones
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={editingProperty?.bedrooms ?? 1}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? {
-                                ...prev,
-                                bedrooms: parseInt(e.target.value) || 0,
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Baños */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Baños
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={editingProperty?.bathrooms ?? 1}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? {
-                                ...prev,
-                                bathrooms: parseInt(e.target.value) || 0,
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Área */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Área (m²)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={editingProperty?.area ?? 0}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? { ...prev, area: parseInt(e.target.value) || 0 }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  {/* Patio */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Patio
-                    </label>
-                    <select
-                      value={editingProperty?.patio || "No Tiene"}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? { ...prev, patio: e.target.value as PatioType }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
-                    >
-                      {patioOptions.map(option => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Garage */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Garage
-                    </label>
-                    <select
-                      value={editingProperty?.garage || "No Tiene"}
-                      onChange={e =>
-                        setEditingProperty(prev =>
-                          prev
-                            ? { ...prev, garage: e.target.value as GarageType }
-                            : null
-                        )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
-                    >
-                      {garageOptions.map(option => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Descripción */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Descripción *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={editingProperty?.description || ""}
-                    onChange={e =>
-                      setEditingProperty(prev =>
-                        prev ? { ...prev, description: e.target.value } : null
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Gestión de imágenes */}
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Imágenes de la Propiedad
-                  </label>
-
-                  {/* Imágenes existentes */}
-                  {existingImages.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-600 mb-2">
-                        Imágenes actuales
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {existingImages.map((image, index) => (
-                          <div
-                            key={`existing-${index}`}
-                            className="relative group"
-                          >
-                            <img
-                              src={`${SERVER_BASE}${image.url}`}
-                              alt={`Imagen ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleDeleteExistingImage(image.id, image.url)
-                              }
-                              className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
-                              title="Eliminar imagen"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Nuevas imágenes a subir */}
-                  {previewUrls.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-600 mb-2">
-                        Nuevas imágenes a agregar
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {previewUrls.map((url, index) => (
-                          <div key={`new-${index}`} className="relative group">
-                            <img
-                              src={url}
-                              alt={`Nueva imagen ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg border-2 border-blue-300"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveNewImage(index)}
-                              className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
-                              title="Quitar imagen"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                            <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                              Nueva
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Botón para agregar más imágenes */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                    <label className="cursor-pointer">
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                      <div className="flex flex-col items-center gap-2">
-                        <ImagePlus className="w-12 h-12 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-700">
-                          Agregar imágenes
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          Haz clic aquí o arrastra archivos
-                        </span>
-                      </div>
-                    </label>
-                  </div>
-
-                  {existingImages.length === 0 && previewUrls.length === 0 && (
-                    <p className="mt-2 text-sm text-gray-500">
-                      No hay imágenes cargadas. Agrega al menos una imagen para
-                      mostrar la propiedad.
-                    </p>
-                  )}
-                </div>
-
-                {/* Botones */}
-                <div className="flex gap-4">
-                  <button
-                    type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
-                  >
-                    <Save className="w-5 h-5" />
-                    {isAdding ? "Crear" : "Guardar"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        <PropertyFormModal
+          isOpen={isAdding || !!editingProperty}
+          isAdding={isAdding}
+          editingProperty={editingProperty}
+          setEditingProperty={setEditingProperty}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onFileChange={handleFileChange}
+          onDeleteExistingImage={handleDeleteExistingImage}
+          onRemoveNewImage={handleRemoveNewImage}
+          existingImages={existingImages}
+          previewUrls={previewUrls}
+          propertyTypes={propertyTypes}
+          cities={cities}
+          patioOptions={patioOptions}
+          garageOptions={garageOptions}
+        />
 
         {/* Lista de propiedades */}
         <div className="bg-white rounded-lg shadow-md">
