@@ -11,21 +11,35 @@
     
     <!-- Configuración personalizada de colores y gradientes -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1F2937',
-                        secondary: '#6B7280',
-                        accent: '#f0782c'
-                    },
-                    backgroundImage: {
-                        'gradient-primary': 'linear-gradient(135deg, #1F2937 0%, #f0782c 100%)',
-                        'gradient-accent': 'linear-gradient(135deg, #f0782c 0%, #e65a1a 100%)'
+        // Función para configurar Tailwind
+        function configureTailwind() {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                primary: '#1F2937',
+                                secondary: '#6B7280',
+                                accent: '#f0782c'
+                            },
+                            backgroundImage: {
+                                'gradient-primary': 'linear-gradient(135deg, #1F2937 0%, #f0782c 100%)',
+                                'gradient-accent': 'linear-gradient(135deg, #f0782c 0%, #e65a1a 100%)'
+                            }
+                        }
                     }
-                }
+                };
+            } else {
+                // Si Tailwind aún no está cargado, intentar de nuevo después de un breve delay
+                setTimeout(configureTailwind, 50);
             }
         }
+        
+        // Intentar configurar inmediatamente
+        configureTailwind();
+        
+        // También intentar cuando la página esté completamente cargada
+        window.addEventListener('load', configureTailwind);
     </script>
 </head>
 <body>
