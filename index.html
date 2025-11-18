@@ -1,49 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nasuti Inmobiliaria - Catálogo de Propiedades</title>
-    <meta name="description" content="Catálogo de propiedades inmobiliarias moderno y responsive - 60 años de experiencia">
-    
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Configuración personalizada de colores y gradientes -->
-    <script>
-        // Función para configurar Tailwind
-        function configureTailwind() {
-            if (typeof tailwind !== 'undefined') {
-                tailwind.config = {
-                    theme: {
-                        extend: {
-                            colors: {
-                                primary: '#1F2937',
-                                secondary: '#6B7280',
-                                accent: '#f0782c'
-                            },
-                            backgroundImage: {
-                                'gradient-primary': 'linear-gradient(135deg, #1F2937 0%, #f0782c 100%)',
-                                'gradient-accent': 'linear-gradient(135deg, #f0782c 0%, #e65a1a 100%)'
-                            }
-                        }
-                    }
-                };
-            } else {
-                // Si Tailwind aún no está cargado, intentar de nuevo después de un breve delay
-                setTimeout(configureTailwind, 50);
-            }
-        }
-        
-        // Intentar configurar inmediatamente
-        configureTailwind();
-        
-        // También intentar cuando la página esté completamente cargada
-        window.addEventListener('load', configureTailwind);
-    </script>
-</head>
-<body>
+    <meta
+      name="description"
+      content="Catálogo de propiedades inmobiliarias moderno y responsive - 60 años de experiencia"
+    />
+  </head>
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-</body>
+  </body>
 </html>
