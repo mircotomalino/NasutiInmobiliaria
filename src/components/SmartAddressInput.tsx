@@ -333,18 +333,6 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
             )}
         </div>
       )}
-
-      {/* Instrucciones */}
-      <div className="mt-2 text-xs text-gray-500">
-        <p>
-          <strong>Tipos de entrada soportados:</strong>
-        </p>
-        <ul className="list-disc list-inside mt-1 space-y-1">
-          <li>Direcciones: "Av. San Martín 1234, Córdoba"</li>
-          <li>Coordenadas: "-31.4201, -64.1888" o "-31.4201 -64.1888"</li>
-          <li>Pega coordenadas directamente desde Google Maps</li>
-        </ul>
-      </div>
     </div>
   );
 };
