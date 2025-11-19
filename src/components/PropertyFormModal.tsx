@@ -260,7 +260,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dirección o Coordenadas *
+                Dirección *
               </label>
               <SmartAddressInput
                 value={editingProperty?.address || ""}
@@ -280,7 +280,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                       : null
                   );
                 }}
-                placeholder="Dirección: 'Av. San Martín 1234, Córdoba' o Coordenadas: '-31.4201, -64.1888'"
+                placeholder="Buscar dirección..."
                 showMapPreview={true}
                 className="w-full"
               />
