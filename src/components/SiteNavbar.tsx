@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 const SiteNavbar: React.FC = () => {
   const { pathname, hash } = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Detectar si estamos en la página de login/admin
@@ -16,8 +17,8 @@ const SiteNavbar: React.FC = () => {
   const isContacto = pathname === "/" && hash === "#contacto";
 
   const linkBase =
-    "text-gray-600 hover:text-[#f0782c] transition-colors duration-200";
-  const activeMods = "text-[#f0782c] font-semibold";
+    "text-white hover:text-gray-100 transition-colors duration-200";
+  const activeMods = "text-white font-semibold underline";
 
   const classes = (active: boolean) =>
     `${linkBase} ${active ? activeMods : ""}`;
@@ -28,26 +29,26 @@ const SiteNavbar: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-[#f0782c] shadow-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo y nombre - Clickeable */}
-          <NavLink
-            to="/"
-            className="logo-container cursor-pointer hover:opacity-80 transition-opacity"
+          <div
+            className="logo-container cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-3"
             onClick={() => {
+              navigate("/");
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <img
-              src="/img/LogonNasuti.png"
+              src="/img/LogoNasuti.png"
               alt="Nasuti Inmobiliaria Logo"
               className="h-12 w-auto"
             />
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">
               Nasuti Inmobiliaria
             </h1>
-          </NavLink>
+          </div>
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
@@ -77,14 +78,14 @@ const SiteNavbar: React.FC = () => {
           {/* Botón hamburguesa móvil - Ocultar en página de login */}
           {!isLoginPage && (
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-[#e06a1f] transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Abrir menú"
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6 text-gray-600" />
+              <X className="w-6 h-6 text-white" />
             ) : (
-              <Menu className="w-6 h-6 text-gray-600" />
+              <Menu className="w-6 h-6 text-white" />
             )}
           </button>
           )}
@@ -98,7 +99,7 @@ const SiteNavbar: React.FC = () => {
           isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <nav className="px-4 pt-2 pb-4 space-y-3 bg-white border-t border-gray-100">
+        <nav className="px-4 pt-2 pb-4 space-y-3 bg-[#f0782c] border-t border-[#e06a1f]">
           <NavLink
             to="/"
             className={`block py-2 px-4 rounded-lg ${classes(isInicio)}`}

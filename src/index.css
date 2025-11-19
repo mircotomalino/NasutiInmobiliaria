@@ -40,12 +40,12 @@ body {
 
 /* Header styles */
 header {
-  background: white;
+  background: #f0782c;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e06a1f;
   transition: all 0.3s ease-in-out;
 }
 
@@ -110,11 +110,7 @@ header {
 .header-title h1 {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1f2937;
-  background: linear-gradient(135deg, #1f2937 0%, #f0782c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
   transition: all 0.3s ease-in-out;
 }
 
@@ -124,21 +120,21 @@ header {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: #f0782c;
-  color: white;
+  background: white;
+  color: #f0782c;
   border: none;
   border-radius: 0.5rem;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0 2px 4px rgba(240, 120, 44, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .home-button:hover {
-  background: #e65a1a;
+  background: #f3f4f6;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(240, 120, 44, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .home-text {
