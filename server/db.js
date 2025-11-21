@@ -101,6 +101,75 @@ const initDatabase = async () => {
         ALTER TABLE public.property_images ENABLE ROW LEVEL SECURITY;
       `);
 
+      // Habilitar RLS en migrations si existe (puede existir si se usó migrate.js antes)
+      try {
+        await pool.query(`
+          DO $$
+          BEGIN
+            IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'migrations') THEN
+              ALTER TABLE public.migrations ENABLE ROW LEVEL SECURITY;
+              
+              DROP POLICY IF EXISTS "Allow service role to read migrations" ON public.migrations;
+              CREATE POLICY "Allow service role to read migrations"
+              ON public.migrations FOR SELECT USING (true);
+
+              DROP POLICY IF EXISTS "Allow service role to insert migrations" ON public.migrations;
+              CREATE POLICY "Allow service role to insert migrations"
+              ON public.migrations FOR INSERT WITH CHECK (true);
+            END IF;
+          END $$;
+        `);
+      } catch (migrationsError) {
+        console.warn(
+          "Could not configure RLS for migrations table:",
+          migrationsError.message
+        );
+      }
+
+      // Eliminar PostGIS y spatial_ref_sys si existen (no los necesitamos)
+      let postgisRemoved = false;
+      try {
+        await pool.query(`
+          DO $$
+          BEGIN
+            -- Intentar eliminar la extensión PostGIS si existe
+            IF EXISTS (SELECT FROM pg_extension WHERE extname = 'postgis') THEN
+              DROP EXTENSION IF EXISTS postgis CASCADE;
+              RAISE NOTICE 'PostGIS extension eliminada';
+            END IF;
+          END $$;
+        `);
+        console.log("PostGIS extension removed if it existed");
+        postgisRemoved = true;
+      } catch (postgisError) {
+        // Puede fallar si no tenemos permisos o si hay dependencias
+        // En ese caso, habilitar RLS en spatial_ref_sys como fallback
+        console.warn(
+          "Could not remove PostGIS extension:",
+          postgisError.message
+        );
+      }
+
+      // Si PostGIS no se pudo eliminar, habilitar RLS en spatial_ref_sys si existe
+      if (!postgisRemoved) {
+        try {
+          await pool.query(`
+            DO $$
+            BEGIN
+              IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'spatial_ref_sys') THEN
+                ALTER TABLE public.spatial_ref_sys ENABLE ROW LEVEL SECURITY;
+                
+                DROP POLICY IF EXISTS "Allow public read access to spatial_ref_sys" ON public.spatial_ref_sys;
+                CREATE POLICY "Allow public read access to spatial_ref_sys"
+                ON public.spatial_ref_sys FOR SELECT USING (true);
+              END IF;
+            END $$;
+          `);
+          console.log("RLS enabled for spatial_ref_sys (PostGIS could not be removed)");
+        } catch (spatialRefError) {
+          console.warn("Could not configure RLS for spatial_ref_sys:", spatialRefError.message);
+        }
+      }
       // Crear políticas para properties
       await pool.query(`
         DROP POLICY IF EXISTS "Allow public read access to properties" ON public.properties;
