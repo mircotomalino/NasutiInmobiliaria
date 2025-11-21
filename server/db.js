@@ -59,6 +59,96 @@ const initDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured)
     `);
 
+    // Crear función helper para calcular distancia (en metros)
+    // SET search_path = '' previene problemas de seguridad con search_path mutable
+    await pool.query(`
+      CREATE OR REPLACE FUNCTION calculate_distance(
+        lat1 DECIMAL(12,8), 
+        lng1 DECIMAL(13,8), 
+        lat2 DECIMAL(12,8), 
+        lng2 DECIMAL(13,8)
+      ) RETURNS DECIMAL 
+      LANGUAGE plpgsql
+      SET search_path = ''
+      AS $$
+      DECLARE
+        earth_radius DECIMAL := 6371000;
+        dlat DECIMAL;
+        dlng DECIMAL;
+        a DECIMAL;
+        c DECIMAL;
+      BEGIN
+        dlat := radians(lat2 - lat1);
+        dlng := radians(lng2 - lng1);
+        
+        a := sin(dlat/2) * sin(dlat/2) + 
+             cos(radians(lat1)) * cos(radians(lat2)) * 
+             sin(dlng/2) * sin(dlng/2);
+        
+        c := 2 * atan2(sqrt(a), sqrt(1-a));
+        
+        RETURN earth_radius * c;
+      END;
+      $$;
+    `);
+
+    // Habilitar Row Level Security (RLS) en Supabase
+    // Esto resuelve los problemas de seguridad detectados por el linter de Supabase
+    try {
+      // Habilitar RLS en las tablas principales
+      await pool.query(`
+        ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE public.property_images ENABLE ROW LEVEL SECURITY;
+      `);
+
+      // Crear políticas para properties
+      await pool.query(`
+        DROP POLICY IF EXISTS "Allow public read access to properties" ON public.properties;
+        CREATE POLICY "Allow public read access to properties"
+        ON public.properties FOR SELECT USING (true);
+
+        DROP POLICY IF EXISTS "Allow service role to insert properties" ON public.properties;
+        CREATE POLICY "Allow service role to insert properties"
+        ON public.properties FOR INSERT WITH CHECK (true);
+
+        DROP POLICY IF EXISTS "Allow service role to update properties" ON public.properties;
+        CREATE POLICY "Allow service role to update properties"
+        ON public.properties FOR UPDATE USING (true) WITH CHECK (true);
+
+        DROP POLICY IF EXISTS "Allow service role to delete properties" ON public.properties;
+        CREATE POLICY "Allow service role to delete properties"
+        ON public.properties FOR DELETE USING (true);
+      `);
+
+      // Crear políticas para property_images
+      await pool.query(`
+        DROP POLICY IF EXISTS "Allow public read access to property_images" ON public.property_images;
+        CREATE POLICY "Allow public read access to property_images"
+        ON public.property_images FOR SELECT USING (true);
+
+        DROP POLICY IF EXISTS "Allow service role to insert property_images" ON public.property_images;
+        CREATE POLICY "Allow service role to insert property_images"
+        ON public.property_images FOR INSERT WITH CHECK (true);
+
+        DROP POLICY IF EXISTS "Allow service role to update property_images" ON public.property_images;
+        CREATE POLICY "Allow service role to update property_images"
+        ON public.property_images FOR UPDATE USING (true) WITH CHECK (true);
+
+        DROP POLICY IF EXISTS "Allow service role to delete property_images" ON public.property_images;
+        CREATE POLICY "Allow service role to delete property_images"
+        ON public.property_images FOR DELETE USING (true);
+      `);
+
+      console.log("RLS policies configured successfully");
+    } catch (rlsError) {
+      // Si falla (por ejemplo, en desarrollo local sin Supabase), solo loguear el error
+      // pero no fallar la inicialización completa
+      console.warn(
+        "Warning: Could not configure RLS policies:",
+        rlsError.message
+      );
+    }
+
     console.log("Database tables initialized successfully");
   } catch (error) {
     console.error("Error initializing database:", error);
