@@ -21,7 +21,6 @@ const initDatabase = async () => {
         description TEXT,
         price DECIMAL(12,2) NOT NULL,
         city VARCHAR(100) NOT NULL,
-        province VARCHAR(100),
         type VARCHAR(50) NOT NULL,
         bedrooms INTEGER,
         bathrooms INTEGER,
@@ -77,15 +76,15 @@ const initDatabase = async () => {
       console.log("Address column may already exist:", error.message);
     }
 
-    // Hacer la columna province opcional (nullable)
+    // Eliminar la columna province si existe
     try {
       await pool.query(`
         ALTER TABLE properties 
-        ALTER COLUMN province DROP NOT NULL
+        DROP COLUMN IF EXISTS province
       `);
-      console.log("Made province column nullable");
+      console.log("Removed province column if it existed");
     } catch (error) {
-      console.log("Province column may already be nullable:", error.message);
+      console.log("Province column may already be removed:", error.message);
     }
 
     // Agregar columnas de geolocalización si no existen
