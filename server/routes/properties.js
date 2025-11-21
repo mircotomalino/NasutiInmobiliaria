@@ -152,7 +152,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Crear una nueva propiedad
-router.post("/", upload.array("images", 10), async (req, res) => {
+router.post("/", upload.any(), async (req, res) => {
   try {
     // Validar datos de entrada
     const validation = validatePropertyData({
@@ -317,11 +317,14 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         try {
           // Subir imágenes a Supabase Storage o usar ruta local
           const imageUrls = await Promise.all(
-            req.files.map(async (file) => {
+            imageFiles.map(async file => {
               try {
                 return await uploadToSupabase(file, property.id);
               } catch (uploadError) {
-                console.error(`❌ Error subiendo imagen ${file.originalname}:`, uploadError);
+                console.error(
+                  `❌ Error subiendo imagen ${file.originalname}:`,
+                  uploadError
+                );
                 throw uploadError; // Re-lanzar para que se maneje arriba
               }
             })
@@ -351,10 +354,15 @@ router.post("/", upload.array("images", 10), async (req, res) => {
           console.error("❌ Error procesando imágenes:", imageError);
           // Si falla la subida de imágenes, eliminar la propiedad creada
           try {
-            await pool.query("DELETE FROM properties WHERE id = $1", [property.id]);
+            await pool.query("DELETE FROM properties WHERE id = $1", [
+              property.id,
+            ]);
             console.log("🗑️ Propiedad eliminada debido a error en imágenes");
           } catch (deleteError) {
-            console.error("❌ Error eliminando propiedad después de fallo en imágenes:", deleteError);
+            console.error(
+              "❌ Error eliminando propiedad después de fallo en imágenes:",
+              deleteError
+            );
           }
           throw imageError; // Re-lanzar para que se maneje en el catch externo
         }
@@ -449,7 +457,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 });
 
 // Actualizar una propiedad
-router.put("/:id", upload.array("images", 10), async (req, res) => {
+router.put("/:id", upload.any(), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -583,10 +591,12 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     const property = propertyResult.rows[0];
 
     // Si se subieron nuevas imágenes, agregarlas
-    if (req.files && req.files.length > 0) {
+    // Filtrar solo los archivos (req.files puede contener todos los campos)
+    const imageFiles = req.files ? req.files.filter(file => file.fieldname === "images") : [];
+    if (imageFiles.length > 0) {
       // Subir imágenes a Supabase Storage o usar ruta local
       const imageUrls = await Promise.all(
-        req.files.map(file => uploadToSupabase(file, propertyId))
+        imageFiles.map(file => uploadToSupabase(file, propertyId))
       );
 
       // Log para debugging
