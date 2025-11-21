@@ -58,6 +58,7 @@ const ManagerPanel: React.FC = () => {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<
     Array<{ id?: number; url: string }>
@@ -249,6 +250,8 @@ const ManagerPanel: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     // Validaciones de campos obligatorios
     const errors: string[] = [];
 
@@ -395,6 +398,8 @@ const ManagerPanel: React.FC = () => {
     } catch (error) {
       console.error("💥 Error de red:", error);
       alert(`Error de conexión: No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -769,23 +774,24 @@ const ManagerPanel: React.FC = () => {
           </div>
         )}
 
-        <PropertyFormModal
-          isOpen={isAdding || !!editingProperty}
-          isAdding={isAdding}
-          editingProperty={editingProperty}
-          setEditingProperty={setEditingProperty}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-          onFileChange={handleFileChange}
-          onDeleteExistingImage={handleDeleteExistingImage}
-          onRemoveNewImage={handleRemoveNewImage}
-          existingImages={existingImages}
-          previewUrls={previewUrls}
-          propertyTypes={propertyTypes}
-          cities={cities}
-          patioOptions={patioOptions}
-          garageOptions={garageOptions}
-        />
+          <PropertyFormModal
+            isOpen={isAdding || !!editingProperty}
+            isAdding={isAdding}
+            editingProperty={editingProperty}
+            setEditingProperty={setEditingProperty}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+            onFileChange={handleFileChange}
+            onDeleteExistingImage={handleDeleteExistingImage}
+            onRemoveNewImage={handleRemoveNewImage}
+            existingImages={existingImages}
+            previewUrls={previewUrls}
+            propertyTypes={propertyTypes}
+            cities={cities}
+            patioOptions={patioOptions}
+            garageOptions={garageOptions}
+            isSubmitting={isSubmitting}
+          />
 
         {/* Lista de propiedades */}
         <div className="bg-white rounded-lg shadow-md">

@@ -8,6 +8,7 @@ interface SmartAddressInputProps {
   className?: string;
   placeholder?: string;
   showMapPreview?: boolean;
+  disabled?: boolean;
 }
 
 const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
@@ -17,6 +18,7 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
   className = "",
   placeholder = "Coordenadas (ej: -31.4201, -64.1888)",
   showMapPreview = true,
+  disabled = false,
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [parsedCoordinates, setParsedCoordinates] = useState<{
@@ -110,9 +112,12 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          disabled={disabled}
           placeholder={placeholder}
           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-            inputValue.trim() && !isValid
+            disabled
+              ? "bg-gray-100 cursor-not-allowed border-gray-300"
+              : inputValue.trim() && !isValid
               ? "border-red-300 focus:ring-red-500"
               : inputValue.trim() && isValid && parsedCoordinates
               ? "border-green-300 focus:ring-green-500"

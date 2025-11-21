@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { X, Save, ImagePlus, Trash2 } from "lucide-react";
+import { X, Save, ImagePlus, Trash2, Loader2 } from "lucide-react";
 import SmartAddressInput from "./SmartAddressInput";
 import ConfirmDialog from "./ConfirmDialog";
 import { PropertyType as PropType, PatioType, GarageType } from "../types";
@@ -25,6 +25,7 @@ interface PropertyFormModalProps {
   cities: string[];
   patioOptions: string[];
   garageOptions: string[];
+  isSubmitting?: boolean;
 }
 
 const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
@@ -43,6 +44,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
   cities,
   patioOptions,
   garageOptions,
+  isSubmitting = false,
 }) => {
   const SERVER_BASE = getServerBase();
   const initialPropertyRef = useRef<Property | null>(null);
@@ -111,6 +113,11 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
   // Función para manejar el cierre con confirmación
   const handleCancel = () => {
+    // No permitir cerrar si está guardando
+    if (isSubmitting) {
+      return;
+    }
+    
     if (hasChanges()) {
       setPendingCancel(() => onCancel);
       setShowConfirmDialog(true);
@@ -151,7 +158,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
       />
       <div
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-        onClick={handleCancel}
+        onClick={isSubmitting ? undefined : handleCancel}
       >
         <div
           className="bg-white rounded-lg shadow-xl p-6 relative z-20 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
@@ -165,13 +172,14 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
             </h2>
             <button
               onClick={handleCancel}
-              className="text-gray-500 hover:text-gray-700"
+              disabled={isSubmitting}
+              className={`text-gray-500 hover:text-gray-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-6">
+          <form onSubmit={onSubmit} className="space-y-6" noValidate>
             {/* Primera fila: Título */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -185,8 +193,9 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     prev ? { ...prev, title: e.target.value } : null
                   )
                 }
+                disabled={isSubmitting}
                 placeholder="Si no se especifica, se generará automáticamente"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               />
             </div>
 
@@ -197,6 +206,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  disabled={isSubmitting}
                   title="El tipo de propiedad es obligatorio"
                   value={editingProperty?.type || "casa"}
                   onChange={e =>
@@ -216,7 +226,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   {propertyTypes.map(type => (
                     <option key={type.value} value={type.value}>
@@ -233,6 +243,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   required
+                  disabled={isSubmitting}
                   min="0.01"
                   step="0.01"
                   title="El precio es obligatorio y debe ser mayor a 0"
@@ -268,7 +279,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     target.setCustomValidity("");
                   }}
                   placeholder="0"
-                  className="w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -278,6 +289,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  disabled={isSubmitting}
                   title="La ciudad es obligatoria"
                   value={editingProperty?.city || "Marcos Juárez"}
                   onChange={e =>
@@ -293,7 +305,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   {cities.map(city => (
                     <option key={city} value={city}>
@@ -317,7 +329,8 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     prev ? { ...prev, address: e.target.value } : null
                   )
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isSubmitting}
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 placeholder="Ej: Av. San Martín 1234, Centro"
               />
             </div>
@@ -348,6 +361,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                       : null
                   );
                 }}
+                disabled={isSubmitting}
                 placeholder="Coordenadas (ej: -31.4201, -64.1888)"
                 showMapPreview={true}
                 className="w-full"
@@ -362,6 +376,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   min="0"
+                  disabled={isSubmitting}
                   value={editingProperty?.bedrooms ?? 1}
                   onChange={e =>
                     setEditingProperty(prev =>
@@ -373,7 +388,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -384,6 +399,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   min="0"
+                  disabled={isSubmitting}
                   value={editingProperty?.bathrooms ?? 1}
                   onChange={e =>
                     setEditingProperty(prev =>
@@ -395,7 +411,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -406,6 +422,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   min="0"
+                  disabled={isSubmitting}
                   value={
                     editingProperty?.area && editingProperty.area > 0
                       ? editingProperty.area
@@ -423,7 +440,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     );
                   }}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -434,6 +451,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   min="0"
+                  disabled={isSubmitting}
                   value={
                     editingProperty?.coveredArea &&
                     editingProperty.coveredArea > 0
@@ -453,7 +471,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     );
                   }}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
@@ -465,6 +483,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   value={editingProperty?.patio || "No Tiene"}
+                  disabled={isSubmitting}
                   onChange={e =>
                     setEditingProperty(prev =>
                       prev
@@ -472,7 +491,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   {patioOptions.map(option => (
                     <option key={option} value={option}>
@@ -488,6 +507,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   value={editingProperty?.garage || "No Tiene"}
+                  disabled={isSubmitting}
                   onChange={e =>
                     setEditingProperty(prev =>
                       prev
@@ -495,7 +515,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   {garageOptions.map(option => (
                     <option key={option} value={option}>
@@ -512,13 +532,14 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
               </label>
               <textarea
                 rows={4}
+                disabled={isSubmitting}
                 value={editingProperty?.description || ""}
                 onChange={e =>
                   setEditingProperty(prev =>
                     prev ? { ...prev, description: e.target.value } : null
                   )
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               />
             </div>
 
@@ -554,7 +575,8 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                           onClick={() =>
                             onDeleteExistingImage(image.id, image.url)
                           }
-                          className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                          disabled={isSubmitting}
+                          className={`absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                           title="Eliminar imagen"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -583,7 +605,8 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         <button
                           type="button"
                           onClick={() => onRemoveNewImage(index)}
-                          className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                          disabled={isSubmitting}
+                          className={`absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                           title="Quitar imagen"
                         >
                           <X className="w-4 h-4" />
@@ -598,13 +621,14 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
               )}
 
               {/* Botón para agregar más imágenes */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                <label className="cursor-pointer">
+              <div className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:border-blue-500'}`}>
+                <label className={isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer'}>
                   <input
                     type="file"
                     multiple
                     accept="image/*"
                     onChange={onFileChange}
+                    disabled={isSubmitting}
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-2">
@@ -631,15 +655,26 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
+                disabled={isSubmitting}
+                className={`bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center gap-2 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-700'}`}
               >
-                <Save className="w-5 h-5" />
-                {isAdding ? "Crear" : "Guardar"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    {isAdding ? "Creando..." : "Guardando..."}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    {isAdding ? "Crear" : "Guardar"}
+                  </>
+                )}
               </button>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg"
+                disabled={isSubmitting}
+                className={`bg-gray-500 text-white px-6 py-2 rounded-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-600'}`}
               >
                 Cancelar
               </button>
