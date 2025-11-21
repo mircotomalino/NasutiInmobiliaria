@@ -17,7 +17,6 @@ L.Icon.Default.mergeOptions({
 interface PropertyMapProps {
   latitude: number | string;
   longitude: number | string;
-  address: string;
   title: string;
   className?: string;
 }
@@ -25,7 +24,6 @@ interface PropertyMapProps {
 const PropertyMap: React.FC<PropertyMapProps> = ({
   latitude,
   longitude,
-  address,
   title,
   className = "",
 }) => {
@@ -49,15 +47,13 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   // Función para abrir Google Maps
   const openGoogleMaps = () => {
-    const query = encodeURIComponent(`${address}, ${lat}, ${lng}`);
-    const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
     window.open(url, "_blank");
   };
 
   // Función para abrir Apple Maps (detectar dispositivo)
   const openAppleMaps = () => {
-    const query = encodeURIComponent(`${address}`);
-    const url = `http://maps.apple.com/?q=${query}&ll=${lat},${lng}`;
+    const url = `http://maps.apple.com/?ll=${lat},${lng}`;
     window.open(url, "_blank");
   };
 
@@ -124,7 +120,9 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             <Popup>
               <div className="p-2">
                 <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
-                <p className="text-sm text-gray-600 mb-2">{address}</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  {lat.toFixed(6)}, {lng.toFixed(6)}
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={openGoogleMaps}
@@ -150,7 +148,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
           <div className="text-sm">
             <p className="font-medium text-gray-900">{title}</p>
-            <p className="text-gray-600 text-xs">{address}</p>
             <p className="text-gray-500 text-xs mt-1">
               {lat.toFixed(6)}, {lng.toFixed(6)}
             </p>

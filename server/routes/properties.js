@@ -10,23 +10,23 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-             p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, 
+             p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area as "coveredArea", p.patio, p.garage, p.status,
              p.latitude, p.longitude, p.featured,
              p.published_date as "publishedDate",
              p.created_at, p.updated_at,
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area, p.patio, p.garage, p.status,
                p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
     `);
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -35,8 +35,8 @@ router.get("/", async (req, res) => {
 router.get("/featured", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-             p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, 
+             p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area as "coveredArea", p.patio, p.garage, p.status,
              p.latitude, p.longitude, p.featured,
              p.published_date as "publishedDate",
              p.created_at, p.updated_at,
@@ -44,8 +44,8 @@ router.get("/featured", async (req, res) => {
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
       WHERE p.featured = TRUE
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
-               p.type, p.bedrooms, p.bathrooms, p.area, p.patio, p.garage, p.status,
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, 
+               p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area, p.patio, p.garage, p.status,
                p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at ASC
       LIMIT 3
@@ -53,7 +53,7 @@ router.get("/featured", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching featured properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -69,7 +69,7 @@ router.patch("/:id/featured", async (req, res) => {
     const propertyId = parseInt(id);
 
     if (isNaN(propertyId)) {
-      return res.status(400).json({ error: "Invalid property ID" });
+      return res.status(400).json({ error: "ID de propiedad inválido" });
     }
 
     // Obtener el estado actual de la propiedad
@@ -79,7 +79,7 @@ router.patch("/:id/featured", async (req, res) => {
     );
 
     if (currentProperty.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     const isFeatured = currentProperty.rows[0].featured;
@@ -113,7 +113,7 @@ router.patch("/:id/featured", async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Error toggling featured status:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -123,8 +123,8 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const propertyResult = await pool.query(
       `
-      SELECT id, title, description, price, address, city, province, 
-             type, bedrooms, bathrooms, area, patio, garage, status,
+      SELECT id, title, description, price, address, city, 
+             type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at
@@ -138,7 +138,7 @@ router.get("/:id", async (req, res) => {
     );
 
     if (propertyResult.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     const property = propertyResult.rows[0];
@@ -147,7 +147,7 @@ router.get("/:id", async (req, res) => {
     res.json(property);
   } catch (error) {
     console.error("Error fetching property:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -157,12 +157,11 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     // Validar datos de entrada
     const validation = validatePropertyData({
       ...req.body,
-      province: req.body.province || "Córdoba", // Valor por defecto
     });
 
     if (!validation.isValid) {
       return res.status(400).json({
-        error: "Validation failed",
+        error: "Error de validación",
         details: validation.errors,
       });
     }
@@ -173,11 +172,11 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       price,
       address,
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
       area,
+      coveredArea,
       patio,
       garage,
       latitude,
@@ -187,9 +186,21 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
     const finalStatus = status || "disponible";
 
+    // Generar título automático si no se proporciona
+    let finalTitle = title;
+    if (!finalTitle || finalTitle.trim() === "") {
+      // Contar propiedades existentes para generar el número
+      const countResult = await pool.query(
+        "SELECT COUNT(*) as count FROM properties"
+      );
+      const propertyCount = parseInt(countResult.rows[0].count) || 0;
+      finalTitle = `Propiedad ${propertyCount + 1}`;
+      console.log(`📝 Título generado automáticamente: ${finalTitle}`);
+    }
+
     // 🔍 LOGGING DETALLADO PARA DEBUGGING
     console.log("🔍 DEBUGGING - Datos recibidos para crear propiedad:");
-    console.log("📝 title:", title, "type:", typeof title);
+    console.log("📝 title:", finalTitle, "type:", typeof finalTitle);
     console.log(
       "📝 description:",
       description?.substring(0, 50) + "...",
@@ -197,13 +208,13 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       typeof description
     );
     console.log("💰 price:", price, "type:", typeof price);
-    console.log("🏠 address:", address, "type:", typeof address);
+    console.log("🛣️ address:", address, "type:", typeof address);
     console.log("🏙️ city:", city, "type:", typeof city);
-    console.log("🌍 province:", province, "type:", typeof province);
     console.log("🏘️ type:", type, "type:", typeof type);
     console.log("🛏️ bedrooms:", bedrooms, "type:", typeof bedrooms);
     console.log("🚿 bathrooms:", bathrooms, "type:", typeof bathrooms);
     console.log("📐 area:", area, "type:", typeof area);
+    console.log("🏠 coveredArea:", coveredArea, "type:", typeof coveredArea);
     console.log("🌳 patio:", patio, "type:", typeof patio);
     console.log("🚗 garage:", garage, "type:", typeof garage);
     console.log("📍 latitude:", latitude, "type:", typeof latitude);
@@ -223,19 +234,25 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     if (area && (typeof area !== "number" || area > 2147483647)) {
       console.error("❌ ERROR: area fuera de rango:", area);
     }
+    if (
+      coveredArea &&
+      (typeof coveredArea !== "number" || coveredArea > 2147483647)
+    ) {
+      console.error("❌ ERROR: coveredArea fuera de rango:", coveredArea);
+    }
 
     // Insertar la propiedad
     const queryParams = [
-      title,
-      description,
+      finalTitle,
+      description && description.trim() !== "" ? description : null,
       price,
-      address,
+      address && address.trim() !== "" ? address.trim() : "",
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
       area,
+      coveredArea || null,
       patio,
       garage,
       latitude,
@@ -250,10 +267,10 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     try {
       const propertyResult = await pool.query(
         `
-        INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status)
+        INSERT INTO properties (title, description, price, address, city, type, bedrooms, bathrooms, area, covered_area, patio, garage, latitude, longitude, status)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-        RETURNING id, title, description, price, address, city, province, 
-                  type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
+        RETURNING id, title, description, price, address, city, 
+                  type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, latitude, longitude, status, featured,
                   published_date as "publishedDate",
                   created_at, updated_at
       `,
@@ -303,7 +320,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
       res
         .status(500)
-        .json({ error: "Internal server error", details: dbError.message });
+        .json({ error: "Error interno del servidor", details: dbError.message });
     }
   } catch (error) {
     console.error("Error creating property:", error);
@@ -313,16 +330,16 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       // Unique constraint violation
       return res
         .status(400)
-        .json({ error: "Property with this data already exists" });
+        .json({ error: "Ya existe una propiedad con estos datos" });
     } else if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Invalid data: constraint violation",
+        error: "Datos inválidos: violación de restricción",
         details: error.message,
       });
     }
 
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -334,18 +351,17 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     // Validar que el ID sea un número válido
     const propertyId = parseInt(id);
     if (isNaN(propertyId)) {
-      return res.status(400).json({ error: "Invalid property ID" });
+      return res.status(400).json({ error: "ID de propiedad inválido" });
     }
 
     // Validar datos de entrada
     const validation = validatePropertyData({
       ...req.body,
-      province: req.body.province || "Córdoba", // Valor por defecto
     });
 
     if (!validation.isValid) {
       return res.status(400).json({
-        error: "Validation failed",
+        error: "Error de validación",
         details: validation.errors,
       });
     }
@@ -356,11 +372,11 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       price,
       address,
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
       area,
+      coveredArea,
       patio,
       garage,
       latitude,
@@ -370,13 +386,27 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 
     const finalStatus = status || "disponible";
 
+    // Generar título automático si no se proporciona
+    let finalTitle = title;
+    if (!finalTitle || finalTitle.trim() === "") {
+      // Contar propiedades existentes para generar el número
+      const countResult = await pool.query(
+        "SELECT COUNT(*) as count FROM properties"
+      );
+      const propertyCount = parseInt(countResult.rows[0].count) || 0;
+      finalTitle = `Propiedad ${propertyCount + 1}`;
+      console.log(
+        `📝 Título generado automáticamente en UPDATE: ${finalTitle}`
+      );
+    }
+
     // Verificar que la propiedad existe
     const existingProperty = await pool.query(
       "SELECT id FROM properties WHERE id = $1",
       [propertyId]
     );
     if (existingProperty.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     // Actualizar la propiedad
@@ -384,25 +414,25 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       `
       UPDATE properties 
       SET title = $1, description = $2, price = $3, address = $4, city = $5, 
-          province = $6, type = $7, bedrooms = $8, bathrooms = $9, area = $10, 
-          patio = $11, garage = $12, latitude = $13, longitude = $14, status = $15, updated_at = CURRENT_TIMESTAMP
+          type = $6, bedrooms = $7, bathrooms = $8, area = $9, 
+          covered_area = $10, patio = $11, garage = $12, latitude = $13, longitude = $14, status = $15, updated_at = CURRENT_TIMESTAMP
       WHERE id = $16
-      RETURNING id, title, description, price, address, city, province, 
-                type, bedrooms, bathrooms, area, patio, garage, latitude, longitude, status, featured,
+      RETURNING id, title, description, price, address, city, 
+                type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, latitude, longitude, status, featured,
                 published_date as "publishedDate",
                 created_at, updated_at
     `,
       [
-        title,
-        description,
+        finalTitle,
+        description && description.trim() !== "" ? description : null,
         price,
-        address,
+        address && address.trim() !== "" ? address.trim() : "",
         city,
-        province,
         type,
         bedrooms,
         bathrooms,
         area,
+        coveredArea || null,
         patio,
         garage,
         latitude,
@@ -441,16 +471,16 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       // Unique constraint violation
       return res
         .status(400)
-        .json({ error: "Property with this data already exists" });
+        .json({ error: "Ya existe una propiedad con estos datos" });
     } else if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Invalid data: constraint violation",
+        error: "Datos inválidos: violación de restricción",
         details: error.message,
       });
     }
 
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -464,13 +494,13 @@ router.delete("/:id", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     res.json({ message: "Property deleted successfully" });
   } catch (error) {
     console.error("Error deleting property:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

@@ -144,8 +144,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                     property.status === "disponible"
                       ? "status-available"
                       : property.status === "reservada"
-                        ? "status-reserved"
-                        : "status-sold"
+                      ? "status-reserved"
+                      : "status-sold"
                   }`}
                 >
                   {property.status.charAt(0).toUpperCase() +
@@ -157,8 +157,14 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
               <div className="modal-location">
                 <MapPin className="w-5 h-5" />
                 <div className="modal-location-text">
-                  <h5>{property.address}</h5>
-                  <p>{property.city}</p>
+                  {property.address && <h5>{property.address}</h5>}
+                  <h5>{property.city}</h5>
+                  {property.latitude && property.longitude && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {property.latitude.toFixed(6)},{" "}
+                      {property.longitude.toFixed(6)}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -189,8 +195,16 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                   )}
                   <div className="modal-feature">
                     <Square className="w-5 h-5" />
-                    <span>{property.area} m²</span>
+                    <span>Terreno: {property.area} m²</span>
                   </div>
+                  {property.coveredArea && property.coveredArea > 0 && (
+                    <div className="modal-feature">
+                      <Square className="w-5 h-5" />
+                      <span>
+                        Superficie Cubierta: {property.coveredArea} m²
+                      </span>
+                    </div>
+                  )}
                   {property.patio && property.patio !== "No Tiene" && (
                     <div className="modal-feature">
                       <Trees className="w-5 h-5" />

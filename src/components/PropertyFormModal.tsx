@@ -80,6 +80,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
       current.bedrooms !== initial.bedrooms ||
       current.bathrooms !== initial.bathrooms ||
       current.area !== initial.area ||
+      current.coveredArea !== initial.coveredArea ||
       current.patio !== initial.patio ||
       current.garage !== initial.garage ||
       current.latitude !== initial.latitude ||
@@ -172,17 +173,17 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
             {/* Primera fila: Título */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título *
+                Título
               </label>
               <input
                 type="text"
-                required
                 value={editingProperty?.title || ""}
                 onChange={e =>
                   setEditingProperty(prev =>
                     prev ? { ...prev, title: e.target.value } : null
                   )
                 }
+                placeholder="Si no se especifica, se generará automáticamente"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -194,6 +195,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  title="El tipo de propiedad es obligatorio"
                   value={editingProperty?.type || "casa"}
                   onChange={e =>
                     setEditingProperty(prev =>
@@ -202,6 +204,16 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
+                  onInvalid={e => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity(
+                      "El tipo de propiedad es obligatorio"
+                    );
+                  }}
+                  onInput={e => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("");
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                 >
                   {propertyTypes.map(type => (
@@ -219,18 +231,41 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   required
-                  min="0"
-                  value={editingProperty?.price ?? 0}
-                  onChange={e =>
+                  min="0.01"
+                  step="0.01"
+                  title="El precio es obligatorio y debe ser mayor a 0"
+                  value={
+                    editingProperty?.price && editingProperty.price > 0
+                      ? editingProperty.price
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
+                    const numValue = value === "" ? 0 : parseFloat(value) || 0;
                     setEditingProperty(prev =>
                       prev
                         ? {
                             ...prev,
-                            price: parseFloat(e.target.value) || 0,
+                            price: numValue,
                           }
                         : null
-                    )
-                  }
+                    );
+                  }}
+                  onInvalid={e => {
+                    const target = e.target as HTMLInputElement;
+                    if (target.validity.valueMissing) {
+                      target.setCustomValidity("El precio es obligatorio");
+                    } else if (target.validity.rangeUnderflow) {
+                      target.setCustomValidity("El precio debe ser mayor a 0");
+                    } else {
+                      target.setCustomValidity("");
+                    }
+                  }}
+                  onInput={e => {
+                    const target = e.target as HTMLInputElement;
+                    target.setCustomValidity("");
+                  }}
+                  placeholder="0"
                   className="w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -241,12 +276,21 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  title="La ciudad es obligatoria"
                   value={editingProperty?.city || "Marcos Juárez"}
                   onChange={e =>
                     setEditingProperty(prev =>
                       prev ? { ...prev, city: e.target.value } : null
                     )
                   }
+                  onInvalid={e => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("La ciudad es obligatoria");
+                  }}
+                  onInput={e => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("");
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                 >
                   {cities.map(city => (
@@ -258,17 +302,39 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
               </div>
             </div>
 
+            {/* Dirección */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dirección *
+                Dirección
               </label>
-              <SmartAddressInput
+              <input
+                type="text"
                 value={editingProperty?.address || ""}
-                onChange={address =>
+                onChange={e =>
                   setEditingProperty(prev =>
-                    prev ? { ...prev, address } : null
+                    prev ? { ...prev, address: e.target.value } : null
                   )
                 }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Ej: Av. San Martín 1234, Centro"
+              />
+            </div>
+
+            {/* Coordenadas */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Coordenadas *
+              </label>
+              <SmartAddressInput
+                value={
+                  editingProperty?.latitude && editingProperty?.longitude
+                    ? `${editingProperty.latitude}, ${editingProperty.longitude}`
+                    : ""
+                }
+                onChange={() => {
+                  // El componente maneja el parsing de coordenadas internamente
+                  // Los cambios se manejan a través de onCoordinatesChange
+                }}
                 onCoordinatesChange={(lat, lng) => {
                   setEditingProperty(prev =>
                     prev
@@ -280,13 +346,13 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                       : null
                   );
                 }}
-                placeholder="Buscar dirección..."
+                placeholder="Coordenadas (ej: -31.4201, -64.1888)"
                 showMapPreview={true}
                 className="w-full"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Habitaciones
@@ -333,23 +399,64 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Área (m²)
+                  Terreno (m²)
                 </label>
                 <input
                   type="number"
                   min="0"
-                  value={editingProperty?.area ?? 0}
-                  onChange={e =>
+                  value={
+                    editingProperty?.area && editingProperty.area > 0
+                      ? editingProperty.area
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
                     setEditingProperty(prev =>
                       prev
-                        ? { ...prev, area: parseInt(e.target.value) || 0 }
+                        ? {
+                            ...prev,
+                            area: value === "" ? 0 : parseInt(value) || 0,
+                          }
                         : null
-                    )
-                  }
+                    );
+                  }}
+                  placeholder="0"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Superficie Cubierta (m²)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={
+                    editingProperty?.coveredArea &&
+                    editingProperty.coveredArea > 0
+                      ? editingProperty.coveredArea
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
+                    setEditingProperty(prev =>
+                      prev
+                        ? {
+                            ...prev,
+                            coveredArea:
+                              value === "" ? 0 : parseInt(value) || 0,
+                          }
+                        : null
+                    );
+                  }}
+                  placeholder="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Patio
@@ -399,10 +506,9 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descripción *
+                Descripción
               </label>
               <textarea
-                required
                 rows={4}
                 value={editingProperty?.description || ""}
                 onChange={e =>

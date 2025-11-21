@@ -6,9 +6,9 @@ export const validateCoordinates = (latitude, longitude) => {
   if (latitude !== undefined && latitude !== null && latitude !== "") {
     const lat = parseFloat(latitude);
     if (isNaN(lat)) {
-      errors.push("Latitude must be a valid number");
+      errors.push("La latitud debe ser un número válido");
     } else if (lat < -90 || lat > 90) {
-      errors.push("Latitude must be between -90 and 90 degrees");
+      errors.push("La latitud debe estar entre -90 y 90 grados");
     }
   }
 
@@ -16,9 +16,9 @@ export const validateCoordinates = (latitude, longitude) => {
   if (longitude !== undefined && longitude !== null && longitude !== "") {
     const lng = parseFloat(longitude);
     if (isNaN(lng)) {
-      errors.push("Longitude must be a valid number");
+      errors.push("La longitud debe ser un número válido");
     } else if (lng < -180 || lng > 180) {
-      errors.push("Longitude must be between -180 and 180 degrees");
+      errors.push("La longitud debe estar entre -180 y 180 grados");
     }
   }
 
@@ -27,7 +27,7 @@ export const validateCoordinates = (latitude, longitude) => {
     (latitude !== undefined && latitude !== null && latitude !== "") !==
     (longitude !== undefined && longitude !== null && longitude !== "")
   ) {
-    errors.push("Both latitude and longitude must be provided together");
+    errors.push("Ambas coordenadas (latitud y longitud) deben estar presentes");
   }
 
   return {
@@ -48,21 +48,19 @@ export const validateCoordinates = (latitude, longitude) => {
 export const validatePropertyData = data => {
   const errors = [];
 
-  // Campos requeridos
-  const requiredFields = [
-    "title",
-    "description",
-    "price",
-    "address",
-    "city",
-    "type",
-  ];
-  requiredFields.forEach(field => {
+  // Campos requeridos (title y description ya no son requeridos, title se genera automáticamente si falta)
+  const requiredFields = {
+    price: "El precio",
+    city: "La ciudad",
+    type: "El tipo de propiedad"
+  };
+  
+  Object.entries(requiredFields).forEach(([field, label]) => {
     if (
       !data[field] ||
       (typeof data[field] === "string" && data[field].trim() === "")
     ) {
-      errors.push(`${field} is required`);
+      errors.push(`${label} es obligatorio`);
     }
   });
 
@@ -70,13 +68,19 @@ export const validatePropertyData = data => {
   if (data.price !== undefined) {
     const price = parseFloat(data.price);
     if (isNaN(price) || price < 0) {
-      errors.push("Price must be a valid positive number");
+      errors.push("El precio debe ser un número positivo válido");
     }
   }
 
   // Validar números enteros
-  const integerFields = ["bedrooms", "bathrooms", "area"];
-  integerFields.forEach(field => {
+  const integerFields = {
+    bedrooms: "Las habitaciones",
+    bathrooms: "Los baños",
+    area: "El área",
+    coveredArea: "La superficie cubierta"
+  };
+  
+  Object.entries(integerFields).forEach(([field, label]) => {
     if (
       data[field] !== undefined &&
       data[field] !== null &&
@@ -84,12 +88,16 @@ export const validatePropertyData = data => {
     ) {
       const value = parseInt(data[field]);
       if (isNaN(value) || value < 0) {
-        errors.push(`${field} must be a valid positive integer`);
+        errors.push(`${label} debe ser un número entero positivo válido`);
       }
     }
   });
 
-  // Validar coordenadas
+  // Validar coordenadas (requeridas)
+  if (!data.latitude || !data.longitude) {
+    errors.push("Ambas coordenadas (latitud y longitud) son obligatorias");
+  }
+
   const coordValidation = validateCoordinates(data.latitude, data.longitude);
   if (!coordValidation.isValid) {
     errors.push(...coordValidation.errors);
@@ -106,6 +114,7 @@ export const validatePropertyData = data => {
       bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
       bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
       area: data.area ? parseInt(data.area) : null,
+      coveredArea: data.coveredArea ? parseInt(data.coveredArea) : null,
     },
   };
 };

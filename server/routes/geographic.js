@@ -11,14 +11,14 @@ router.get("/nearby", async (req, res) => {
     if (!lat || !lng) {
       return res
         .status(400)
-        .json({ error: "Latitude and longitude are required" });
+        .json({ error: "La latitud y la longitud son obligatorias" });
     }
 
     // Consulta simplificada usando la función calculate_distance
     const result = await pool.query(
       `
-      SELECT id, title, description, price, address, city, province, 
-             type, bedrooms, bathrooms, area, patio, garage, status,
+      SELECT id, title, description, price, address, city, 
+             type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at,
@@ -34,7 +34,7 @@ router.get("/nearby", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching nearby properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -42,8 +42,8 @@ router.get("/nearby", async (req, res) => {
 router.get("/with-coordinates", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT id, title, description, price, address, city, province, 
-             type, bedrooms, bathrooms, area, patio, garage, status,
+      SELECT id, title, description, price, address, city, 
+             type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at
@@ -54,7 +54,7 @@ router.get("/with-coordinates", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching properties with coordinates:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
