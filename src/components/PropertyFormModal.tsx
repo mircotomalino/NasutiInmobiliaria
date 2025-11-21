@@ -220,7 +220,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 <input
                   type="number"
                   required
-                  min="0"
+                  min="0.01"
                   step="0.01"
                   value={
                     editingProperty?.price && editingProperty.price > 0
@@ -229,11 +229,12 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                   }
                   onChange={e => {
                     const value = e.target.value;
+                    const numValue = value === "" ? 0 : parseFloat(value) || 0;
                     setEditingProperty(prev =>
                       prev
                         ? {
                             ...prev,
-                            price: value === "" ? 0 : parseFloat(value) || 0,
+                            price: numValue,
                           }
                         : null
                     );

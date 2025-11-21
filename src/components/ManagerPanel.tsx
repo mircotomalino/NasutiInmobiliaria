@@ -249,11 +249,51 @@ const ManagerPanel: React.FC = () => {
       return;
     }
 
-    // Validar que las coordenadas sean requeridas
-    if (!editingProperty.latitude || !editingProperty.longitude) {
-      alert(
-        "Las coordenadas son requeridas. Por favor, ingresa las coordenadas de la propiedad."
-      );
+    // Validaciones de campos obligatorios
+    const errors: string[] = [];
+
+    // Validar tipo
+    if (!editingProperty.type || editingProperty.type.trim() === "") {
+      errors.push("El tipo de propiedad es obligatorio");
+    }
+
+    // Validar ciudad
+    if (!editingProperty.city || editingProperty.city.trim() === "") {
+      errors.push("La ciudad es obligatoria");
+    }
+
+    // Validar precio
+    if (!editingProperty.price || editingProperty.price <= 0) {
+      errors.push("El precio es obligatorio y debe ser mayor a 0");
+    }
+
+    // Validar coordenadas
+    if (
+      !editingProperty.latitude ||
+      !editingProperty.longitude ||
+      isNaN(editingProperty.latitude) ||
+      isNaN(editingProperty.longitude)
+    ) {
+      errors.push("Las coordenadas son obligatorias");
+    } else {
+      // Validar rango de coordenadas
+      if (
+        editingProperty.latitude < -90 ||
+        editingProperty.latitude > 90
+      ) {
+        errors.push("La latitud debe estar entre -90 y 90 grados");
+      }
+      if (
+        editingProperty.longitude < -180 ||
+        editingProperty.longitude > 180
+      ) {
+        errors.push("La longitud debe estar entre -180 y 180 grados");
+      }
+    }
+
+    // Mostrar errores si hay alguno
+    if (errors.length > 0) {
+      alert("Por favor, corrige los siguientes errores:\n\n" + errors.join("\n"));
       return;
     }
 
