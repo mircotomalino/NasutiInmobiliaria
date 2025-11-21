@@ -195,6 +195,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  title="El tipo de propiedad es obligatorio"
                   value={editingProperty?.type || "casa"}
                   onChange={e =>
                     setEditingProperty(prev =>
@@ -203,6 +204,14 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
+                  onInvalid={(e) => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("El tipo de propiedad es obligatorio");
+                  }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("");
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                 >
                   {propertyTypes.map(type => (
@@ -222,6 +231,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                   required
                   min="0.01"
                   step="0.01"
+                  title="El precio es obligatorio y debe ser mayor a 0"
                   value={
                     editingProperty?.price && editingProperty.price > 0
                       ? editingProperty.price
@@ -239,6 +249,20 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     );
                   }}
+                  onInvalid={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (target.validity.valueMissing) {
+                      target.setCustomValidity("El precio es obligatorio");
+                    } else if (target.validity.rangeUnderflow) {
+                      target.setCustomValidity("El precio debe ser mayor a 0");
+                    } else {
+                      target.setCustomValidity("");
+                    }
+                  }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    target.setCustomValidity("");
+                  }}
                   placeholder="0"
                   className="w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -250,12 +274,21 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                 </label>
                 <select
                   required
+                  title="La ciudad es obligatoria"
                   value={editingProperty?.city || "Marcos Juárez"}
                   onChange={e =>
                     setEditingProperty(prev =>
                       prev ? { ...prev, city: e.target.value } : null
                     )
                   }
+                  onInvalid={(e) => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("La ciudad es obligatoria");
+                  }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLSelectElement;
+                    target.setCustomValidity("");
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10"
                 >
                   {cities.map(city => (
