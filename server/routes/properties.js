@@ -639,7 +639,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Obtener todas las imágenes de la propiedad antes de borrarla
     const imagesResult = await pool.query(
       "SELECT image_url FROM property_images WHERE property_id = $1",
@@ -658,26 +658,35 @@ router.delete("/:id", async (req, res) => {
 
     // Eliminar imágenes de Supabase Storage si están configuradas
     if (imagesResult.rows.length > 0) {
-      const { supabase, STORAGE_BUCKET } = await import("../config/supabase.js");
-      
+      const { supabase, STORAGE_BUCKET } = await import(
+        "../config/supabase.js"
+      );
+
       if (supabase) {
-        const deletePromises = imagesResult.rows.map(async (img) => {
+        const deletePromises = imagesResult.rows.map(async img => {
           try {
             // Extraer el path del archivo de la URL completa
             // La URL tiene formato: https://...supabase.co/storage/v1/object/public/PropertyImages/14/1763693736222-332094349.jpeg
             const url = img.image_url;
-            const pathMatch = url.match(/\/storage\/v1\/object\/public\/[^/]+\/(.+)$/);
-            
+            const pathMatch = url.match(
+              /\/storage\/v1\/object\/public\/[^/]+\/(.+)$/
+            );
+
             if (pathMatch && pathMatch[1]) {
               const filePath = pathMatch[1];
               const { error } = await supabase.storage
                 .from(STORAGE_BUCKET)
                 .remove([filePath]);
-              
+
               if (error) {
-                console.error(`Error eliminando imagen ${filePath} de Supabase:`, error);
+                console.error(
+                  `Error eliminando imagen ${filePath} de Supabase:`,
+                  error
+                );
               } else {
-                console.log(`✅ Imagen eliminada de Supabase Storage: ${filePath}`);
+                console.log(
+                  `✅ Imagen eliminada de Supabase Storage: ${filePath}`
+                );
               }
             }
           } catch (imgError) {
@@ -695,9 +704,9 @@ router.delete("/:id", async (req, res) => {
       [id]
     );
 
-    res.json({ 
+    res.json({
       message: "Property deleted successfully",
-      deletedImages: imagesResult.rows.length 
+      deletedImages: imagesResult.rows.length,
     });
   } catch (error) {
     console.error("Error deleting property:", error);
