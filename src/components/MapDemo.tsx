@@ -2,18 +2,24 @@ import React from "react";
 import PropertyMapEmbed from "./PropertyMapEmbed";
 
 const MapDemo: React.FC = () => {
-  const sampleAddresses = [
+  const sampleProperties = [
     {
       title: "Casa en Ipanema, Rio de Janeiro",
       address: "Rua Visconde de Pirajá 520, Ipanema, Rio de Janeiro, Brasil",
+      latitude: -22.9848,
+      longitude: -43.1986,
     },
     {
       title: "Propiedad en Córdoba, Argentina",
       address: "Av. San Martín 1234, Marcos Juárez, Córdoba, Argentina",
+      latitude: -32.6979,
+      longitude: -62.0963,
     },
     {
       title: "Casa en Leones, Córdoba",
       address: "Obispo luque 1346, Leones, Córdoba, Argentina",
+      latitude: -32.35,
+      longitude: -62.3,
     },
   ];
 
@@ -32,7 +38,7 @@ const MapDemo: React.FC = () => {
         </div>
 
         <div className="grid gap-8">
-          {sampleAddresses.map((property, index) => (
+          {sampleProperties.map((property, index) => (
             <div
               key={index}
               className="bg-white rounded-xl shadow-lg overflow-hidden"
@@ -44,6 +50,9 @@ const MapDemo: React.FC = () => {
                 <p className="text-gray-600 mb-4">
                   <strong>Dirección:</strong> {property.address}
                 </p>
+                <p className="text-gray-500 text-sm mb-4">
+                  <strong>Coordenadas:</strong> {property.latitude}, {property.longitude}
+                </p>
 
                 <div className="space-y-4">
                   <div>
@@ -51,7 +60,8 @@ const MapDemo: React.FC = () => {
                       Mapa con zoom 15 (por defecto)
                     </h3>
                     <PropertyMapEmbed
-                      address={property.address}
+                      latitude={property.latitude}
+                      longitude={property.longitude}
                       height="250px"
                       zoom={15}
                       className="rounded-lg overflow-hidden shadow-md"
@@ -63,7 +73,8 @@ const MapDemo: React.FC = () => {
                       Mapa con zoom 18 (más detallado)
                     </h3>
                     <PropertyMapEmbed
-                      address={property.address}
+                      latitude={property.latitude}
+                      longitude={property.longitude}
                       height="250px"
                       zoom={18}
                       className="rounded-lg overflow-hidden shadow-md"
@@ -84,8 +95,7 @@ const MapDemo: React.FC = () => {
               ✅ <strong>Gratuito:</strong> No requiere API key de Google Maps
             </li>
             <li>
-              ✅ <strong>Fácil de usar:</strong> Solo pasa la dirección como
-              prop
+              ✅ <strong>Fácil de usar:</strong> Solo pasa las coordenadas (latitude, longitude) como props
             </li>
             <li>
               ✅ <strong>Personalizable:</strong> Ajusta zoom, tamaño y estilos
