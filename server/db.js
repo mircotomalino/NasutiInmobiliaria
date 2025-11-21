@@ -120,7 +120,10 @@ const initDatabase = async () => {
           END $$;
         `);
       } catch (migrationsError) {
-        console.warn("Could not configure RLS for migrations table:", migrationsError.message);
+        console.warn(
+          "Could not configure RLS for migrations table:",
+          migrationsError.message
+        );
       }
 
       // Eliminar PostGIS y spatial_ref_sys si existen (no los necesitamos)
@@ -138,7 +141,10 @@ const initDatabase = async () => {
         console.log("PostGIS extension removed if it existed");
       } catch (postgisError) {
         // Puede fallar si no tenemos permisos o si hay dependencias
-        console.warn("Could not remove PostGIS extension:", postgisError.message);
+        console.warn(
+          "Could not remove PostGIS extension:",
+          postgisError.message
+        );
       }
 
       // Crear políticas para properties

@@ -371,12 +371,10 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         });
       }
 
-      res
-        .status(500)
-        .json({
-          error: "Error interno del servidor",
-          details: dbError.message,
-        });
+      res.status(500).json({
+        error: "Error interno del servidor",
+        details: dbError.message,
+      });
     }
   } catch (error) {
     console.error("Error creating property:", error);
