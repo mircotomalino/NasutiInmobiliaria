@@ -59,6 +59,16 @@ const initDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured)
     `);
 
+    // Eliminar cualquier trigger o función relacionada con geometrías si existen
+    try {
+      await pool.query(`
+        DROP TRIGGER IF EXISTS trigger_update_property_geom ON properties;
+        DROP FUNCTION IF EXISTS update_property_geom() CASCADE;
+      `);
+    } catch (dropError) {
+      // Ignorar errores si no existen
+    }
+
     // Crear función helper para calcular distancia (en metros)
     // SET search_path = '' previene problemas de seguridad con search_path mutable
     await pool.query(`
@@ -126,49 +136,19 @@ const initDatabase = async () => {
         );
       }
 
-      // Eliminar PostGIS y spatial_ref_sys si existen (no los necesitamos)
-      let postgisRemoved = false;
+      // Intentar eliminar cualquier extensión o tabla relacionada con geometrías si existen
       try {
         await pool.query(`
           DO $$
           BEGIN
-            -- Intentar eliminar la extensión PostGIS si existe
+            -- Eliminar extensión si existe
             IF EXISTS (SELECT FROM pg_extension WHERE extname = 'postgis') THEN
               DROP EXTENSION IF EXISTS postgis CASCADE;
-              RAISE NOTICE 'PostGIS extension eliminada';
             END IF;
           END $$;
         `);
-        console.log("PostGIS extension removed if it existed");
-        postgisRemoved = true;
-      } catch (postgisError) {
-        // Puede fallar si no tenemos permisos o si hay dependencias
-        // En ese caso, habilitar RLS en spatial_ref_sys como fallback
-        console.warn(
-          "Could not remove PostGIS extension:",
-          postgisError.message
-        );
-      }
-
-      // Si PostGIS no se pudo eliminar, habilitar RLS en spatial_ref_sys si existe
-      if (!postgisRemoved) {
-        try {
-          await pool.query(`
-            DO $$
-            BEGIN
-              IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'spatial_ref_sys') THEN
-                ALTER TABLE public.spatial_ref_sys ENABLE ROW LEVEL SECURITY;
-                
-                DROP POLICY IF EXISTS "Allow public read access to spatial_ref_sys" ON public.spatial_ref_sys;
-                CREATE POLICY "Allow public read access to spatial_ref_sys"
-                ON public.spatial_ref_sys FOR SELECT USING (true);
-              END IF;
-            END $$;
-          `);
-          console.log("RLS enabled for spatial_ref_sys (PostGIS could not be removed)");
-        } catch (spatialRefError) {
-          console.warn("Could not configure RLS for spatial_ref_sys:", spatialRefError.message);
-        }
+      } catch (cleanupError) {
+        // Ignorar errores de limpieza (puede no tener permisos o no existir)
       }
       // Crear políticas para properties
       await pool.query(`
