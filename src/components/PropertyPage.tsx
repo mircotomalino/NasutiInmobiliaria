@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Property } from "../types";
 import PropertyMap from "./PropertyMap";
-import PropertyMapEmbed from "./PropertyMapEmbed";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
@@ -225,10 +224,24 @@ const PropertyPage: React.FC = () => {
                   <div className="flex items-start gap-3 text-gray-700 mb-4">
                     <MapPin className="w-5 h-5 mt-1 text-[#f0782c]" />
                     <div>
-                      <p className="font-medium">{property.address}</p>
-                      <p>
-                        {property.city}, {property.province}
+                      {property.street && property.streetNumber && (
+                        <p className="font-medium">
+                          {property.street} {property.streetNumber}
+                        </p>
+                      )}
+                      {property.neighborhood && (
+                        <p className="text-sm text-gray-600">Barrio: {property.neighborhood}</p>
+                      )}
+                      <p className="font-medium">
+                        {property.locality || property.city}
+                        {property.city && property.locality && property.locality !== property.city && `, ${property.city}`}
+                        {property.province && `, ${property.province}`}
                       </p>
+                      {property.latitude && property.longitude && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Coordenadas: {property.latitude.toFixed(6)}, {property.longitude.toFixed(6)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -237,24 +250,13 @@ const PropertyPage: React.FC = () => {
                     <PropertyMap
                       latitude={property.latitude}
                       longitude={property.longitude}
-                      address={property.address}
                       title={property.title}
                       className="mt-4"
                     />
                   ) : (
-                    <div className="mt-4">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-3">
-                        Ubicación en el mapa
-                      </h4>
-                      <PropertyMapEmbed
-                        address={`${property.address}, ${property.city}, ${property.province}`}
-                        height="300px"
-                        zoom={15}
-                        className="rounded-lg overflow-hidden shadow-md"
-                      />
-                      <p className="text-sm text-gray-600 mt-2">
-                        Mapa aproximado basado en la dirección. Para coordenadas
-                        exactas, contacta con nosotros.
+                    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        Esta propiedad no tiene coordenadas configuradas. Por favor, agrega las coordenadas desde el panel de administración.
                       </p>
                     </div>
                   )}

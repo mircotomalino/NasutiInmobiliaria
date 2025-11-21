@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Copy, Check, AlertCircle } from "lucide-react";
+import { MapPin, Check, AlertCircle } from "lucide-react";
 
 interface SmartAddressInputProps {
   value: string;
-  onChange: (address: string) => void;
+  onChange: (coordinates: string) => void;
   onCoordinatesChange?: (lat: number | null, lng: number | null) => void;
   className?: string;
   placeholder?: string;
@@ -15,76 +15,15 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
   onChange,
   onCoordinatesChange,
   className = "",
-  placeholder = "Dirección o coordenadas (ej: -31.4201, -64.1888)",
+  placeholder = "Coordenadas (ej: -31.4201, -64.1888)",
   showMapPreview = true,
 }) => {
   const [inputValue, setInputValue] = useState(value);
-  const [detectedType, setDetectedType] = useState<
-    "address" | "coordinates" | "unknown"
-  >("unknown");
   const [parsedCoordinates, setParsedCoordinates] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
   const [isValid, setIsValid] = useState(true);
-
-  // Función para detectar si el input contiene coordenadas
-  const detectInputType = (
-    input: string
-  ): "address" | "coordinates" | "unknown" => {
-    if (!input.trim()) return "unknown";
-
-    // Patrones para detectar coordenadas
-    const coordinatePatterns = [
-      // Formato: "lat, lng" o "lat,lng"
-      /^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/,
-      // Formato: "lat lng" (espacio)
-      /^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)$/,
-      // Formato con coma decimal: "31,4201, -64,1888"
-      /^(-?\d+),(\d+)\s*,\s*(-?\d+),(\d+)$/,
-      // Formato de Google Maps: "lat, lng" con más contexto
-      /^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*[^\d]/,
-    ];
-
-    for (const pattern of coordinatePatterns) {
-      if (pattern.test(input.trim())) {
-        return "coordinates";
-      }
-    }
-
-    // Si contiene palabras comunes de direcciones, es una dirección
-    const addressKeywords = [
-      "calle",
-      "avenida",
-      "av",
-      "pasaje",
-      "pas",
-      "ruta",
-      "rt",
-      "km",
-      "barrio",
-      "zona",
-      "centro",
-      "norte",
-      "sur",
-      "este",
-      "oeste",
-      "street",
-      "avenue",
-      "road",
-      "boulevard",
-      "lane",
-      "drive",
-    ];
-
-    const lowerInput = input.toLowerCase();
-    if (addressKeywords.some(keyword => lowerInput.includes(keyword))) {
-      return "address";
-    }
-
-    return "unknown";
-  };
 
   // Función para parsear coordenadas
   const parseCoordinates = (
@@ -132,17 +71,8 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
   };
 
   // Función para generar URL de Google Maps
-  const generateGoogleMapsUrl = (
-    address: string,
-    lat?: number,
-    lng?: number
-  ): string => {
-    if (lat && lng) {
-      return `https://www.google.com/maps?q=${lat},${lng}`;
-    }
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      address
-    )}`;
+  const generateGoogleMapsUrl = (lat: number, lng: number): string => {
+    return `https://www.google.com/maps?q=${lat},${lng}`;
   };
 
   // Manejar cambios en el input
@@ -151,59 +81,25 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
     setInputValue(newValue);
     onChange(newValue);
 
-    const inputType = detectInputType(newValue);
-    setDetectedType(inputType);
+    const coords = parseCoordinates(newValue);
+    setParsedCoordinates(coords);
+    setIsValid(!!coords || newValue.trim() === "");
 
-    if (inputType === "coordinates") {
-      const coords = parseCoordinates(newValue);
-      setParsedCoordinates(coords);
-      setIsValid(!!coords);
-
-      if (coords && onCoordinatesChange) {
-        onCoordinatesChange(coords.lat, coords.lng);
-      }
+    if (coords && onCoordinatesChange) {
+      onCoordinatesChange(coords.lat, coords.lng);
     } else {
-      setParsedCoordinates(null);
-      setIsValid(true);
-
       if (onCoordinatesChange) {
         onCoordinatesChange(null, null);
       }
     }
   };
 
-  // Copiar coordenadas al portapapeles
-  const copyCoordinates = () => {
-    if (parsedCoordinates) {
-      const coordsText = `${parsedCoordinates.lat}, ${parsedCoordinates.lng}`;
-      navigator.clipboard.writeText(coordsText).then(() => {
-        // Mostrar feedback visual
-        const button = document.getElementById("copy-coords-btn");
-        if (button) {
-          const originalText = button.innerHTML;
-          button.innerHTML = '<Check className="w-4 h-4" />';
-          setTimeout(() => {
-            button.innerHTML = originalText;
-          }, 2000);
-        }
-      });
-    }
-  };
-
   // Sincronizar con el valor externo
   useEffect(() => {
     setInputValue(value);
-    const inputType = detectInputType(value);
-    setDetectedType(inputType);
-
-    if (inputType === "coordinates") {
-      const coords = parseCoordinates(value);
-      setParsedCoordinates(coords);
-      setIsValid(!!coords);
-    } else {
-      setParsedCoordinates(null);
-      setIsValid(true);
-    }
+    const coords = parseCoordinates(value);
+    setParsedCoordinates(coords);
+    setIsValid(!!coords || value.trim() === "");
   }, [value]);
 
   return (
@@ -216,25 +112,21 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
           onChange={handleInputChange}
           placeholder={placeholder}
           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-            detectedType === "coordinates" && !isValid
+            inputValue.trim() && !isValid
               ? "border-red-300 focus:ring-red-500"
-              : detectedType === "coordinates" && isValid
+              : inputValue.trim() && isValid && parsedCoordinates
               ? "border-green-300 focus:ring-green-500"
               : "border-gray-300 focus:ring-blue-500"
           }`}
         />
 
-        {/* Indicador de tipo detectado */}
-        {detectedType !== "unknown" && (
+        {/* Indicador de validación */}
+        {inputValue.trim() && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            {detectedType === "coordinates" ? (
-              isValid ? (
-                <MapPin className="w-4 h-4 text-green-600" />
-              ) : (
-                <AlertCircle className="w-4 h-4 text-red-600" />
-              )
+            {isValid && parsedCoordinates ? (
+              <MapPin className="w-4 h-4 text-green-600" />
             ) : (
-              <MapPin className="w-4 h-4 text-blue-600" />
+              <AlertCircle className="w-4 h-4 text-red-600" />
             )}
           </div>
         )}
@@ -243,94 +135,48 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
       {/* Información y controles */}
       {inputValue && (
         <div className="mt-2 space-y-2">
-          {/* Información del tipo detectado */}
+          {/* Información de coordenadas */}
           <div className="text-sm">
-            {detectedType === "coordinates" && isValid && (
+            {isValid && parsedCoordinates ? (
               <div className="flex items-center gap-2 text-green-700">
                 <Check className="w-4 h-4" />
                 <span>
-                  Coordenadas detectadas: {parsedCoordinates?.lat.toFixed(6)},{" "}
-                  {parsedCoordinates?.lng.toFixed(6)}
+                  Coordenadas válidas: {parsedCoordinates.lat.toFixed(6)},{" "}
+                  {parsedCoordinates.lng.toFixed(6)}
                 </span>
-                <button
-                  id="copy-coords-btn"
-                  onClick={copyCoordinates}
-                  className="ml-2 p-1 hover:bg-green-100 rounded transition-colors"
-                  title="Copiar coordenadas"
-                >
-                  <Copy className="w-4 h-4" />
-                </button>
               </div>
-            )}
-            {detectedType === "coordinates" && !isValid && (
-              <div className="flex items-center gap-2 text-red-700">
-                <AlertCircle className="w-4 h-4" />
-                <span>Formato de coordenadas inválido</span>
-              </div>
-            )}
-            {detectedType === "address" && (
-              <div className="flex items-center gap-2 text-blue-700">
-                <MapPin className="w-4 h-4" />
-                <span>Dirección detectada</span>
-              </div>
+            ) : (
+              inputValue.trim() && (
+                <div className="flex items-center gap-2 text-red-700">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>
+                    Formato de coordenadas inválido. Use: lat, lng (ej:
+                    -31.4201, -64.1888)
+                  </span>
+                </div>
+              )
             )}
           </div>
 
           {/* Botón para ver en Google Maps */}
-          {showMapPreview &&
-            (detectedType === "address" ||
-              (detectedType === "coordinates" && isValid)) && (
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const url = generateGoogleMapsUrl(
-                      inputValue,
-                      parsedCoordinates?.lat,
-                      parsedCoordinates?.lng
-                    );
-                    window.open(url, "_blank");
-                  }}
-                  className="flex items-center gap-2 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
-                >
-                  <MapPin className="w-4 h-4" />
-                  Ver en Google Maps
-                </button>
-
-                {showMapPreview && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPreview(!showPreview)}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-                  >
-                    {showPreview ? "Ocultar" : "Mostrar"} Mapa
-                  </button>
-                )}
-              </div>
-            )}
-
-          {/* Preview del mapa */}
-          {showPreview &&
-            showMapPreview &&
-            (detectedType === "address" ||
-              (detectedType === "coordinates" && isValid)) && (
-              <div className="mt-2">
-                <iframe
-                  src={generateGoogleMapsUrl(
-                    inputValue,
-                    parsedCoordinates?.lat,
-                    parsedCoordinates?.lng
-                  )}
-                  width="100%"
-                  height="200"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="rounded-md"
-                />
-              </div>
-            )}
+          {showMapPreview && isValid && parsedCoordinates && (
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = generateGoogleMapsUrl(
+                    parsedCoordinates.lat,
+                    parsedCoordinates.lng
+                  );
+                  window.open(url, "_blank");
+                }}
+                className="flex items-center gap-2 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+              >
+                <MapPin className="w-4 h-4" />
+                Ver en Google Maps
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

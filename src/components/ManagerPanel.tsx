@@ -44,6 +44,10 @@ export interface Property
     | "status"
   > {
   id?: number;
+  street?: string;
+  streetNumber?: string;
+  neighborhood?: string;
+  locality?: string;
   latitude?: number | null;
   longitude?: number | null;
   featured?: boolean;
@@ -113,13 +117,18 @@ const ManagerPanel: React.FC = () => {
   useEffect(() => {
     let filtered = [...properties];
 
-    // Filtro por búsqueda (nombre/título)
+    // Filtro por búsqueda (nombre/título/dirección)
     if (managerFilters.search.trim()) {
       const searchTerm = managerFilters.search.toLowerCase();
       filtered = filtered.filter(
         property =>
           property.title.toLowerCase().includes(searchTerm) ||
-          property.address.toLowerCase().includes(searchTerm) ||
+          (property.street &&
+            property.street.toLowerCase().includes(searchTerm)) ||
+          (property.neighborhood &&
+            property.neighborhood.toLowerCase().includes(searchTerm)) ||
+          (property.locality &&
+            property.locality.toLowerCase().includes(searchTerm)) ||
           property.city.toLowerCase().includes(searchTerm)
       );
     }
@@ -243,6 +252,14 @@ const ManagerPanel: React.FC = () => {
 
     if (!editingProperty) {
       console.error("No hay propiedad para editar");
+      return;
+    }
+
+    // Validar que las coordenadas sean requeridas
+    if (!editingProperty.latitude || !editingProperty.longitude) {
+      alert(
+        "Las coordenadas son requeridas. Por favor, ingresa las coordenadas de la propiedad."
+      );
       return;
     }
 
@@ -404,7 +421,10 @@ const ManagerPanel: React.FC = () => {
             typeof property.price === "string"
               ? parseFloat(property.price)
               : property.price || 0,
-          address: property.address || "",
+          street: property.street || "",
+          streetNumber: property.streetNumber || "",
+          neighborhood: property.neighborhood || "",
+          locality: property.locality || "",
           city: property.city || "Marcos Juárez",
           type: property.type || "casa",
           bedrooms: property.bedrooms || 0,
@@ -492,7 +512,10 @@ const ManagerPanel: React.FC = () => {
       title: "",
       description: "",
       price: 0,
-      address: "",
+      street: "",
+      streetNumber: "",
+      neighborhood: "",
+      locality: "",
       city: "Marcos Juárez",
       type: "casa",
       bedrooms: 1,
@@ -591,7 +614,7 @@ const ManagerPanel: React.FC = () => {
               {/* Buscador */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Buscar por nombre/dirección
+                  Buscar por nombre o ciudad
                 </label>
                 <input
                   type="text"

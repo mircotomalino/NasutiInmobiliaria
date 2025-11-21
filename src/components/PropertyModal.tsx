@@ -157,8 +157,19 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
               <div className="modal-location">
                 <MapPin className="w-5 h-5" />
                 <div className="modal-location-text">
-                  <h5>{property.address}</h5>
-                  <p>{property.city}</p>
+                  {property.street && property.streetNumber && (
+                    <h5>{property.street} {property.streetNumber}</h5>
+                  )}
+                  {property.neighborhood && (
+                    <p className="text-sm">Barrio: {property.neighborhood}</p>
+                  )}
+                  <h5>{property.locality || property.city}</h5>
+                  {property.province && <p>{property.province}</p>}
+                  {property.latitude && property.longitude && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {property.latitude.toFixed(6)}, {property.longitude.toFixed(6)}
+                    </p>
+                  )}
                 </div>
               </div>
 

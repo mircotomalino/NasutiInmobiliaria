@@ -59,7 +59,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           <div className="flex items-center gap-1 text-sm text-gray-600">
             <MapPin className="w-4 h-4" />
             <span className="truncate">
-              {property.address}, {property.city}
+              {property.street && property.streetNumber
+                ? `${property.street} ${property.streetNumber}`
+                : property.locality || property.city}
+              {property.city && property.locality !== property.city && `, ${property.city}`}
+              {property.province && `, ${property.province}`}
             </span>
           </div>
         </div>

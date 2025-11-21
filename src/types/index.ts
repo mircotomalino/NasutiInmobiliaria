@@ -2,8 +2,11 @@ export interface Property {
   id: string;
   title: string;
   description: string;
-  address: string;
-  city: string;
+  street?: string; // Calle
+  streetNumber?: string; // Número
+  neighborhood?: string; // Barrio
+  locality?: string; // Localidad
+  city: string; // Ciudad
   province: string;
   price: number;
   type: PropertyType;

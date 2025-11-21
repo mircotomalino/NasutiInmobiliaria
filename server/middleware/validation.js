@@ -49,14 +49,7 @@ export const validatePropertyData = data => {
   const errors = [];
 
   // Campos requeridos
-  const requiredFields = [
-    "title",
-    "description",
-    "price",
-    "address",
-    "city",
-    "type",
-  ];
+  const requiredFields = ["title", "description", "price", "city", "type"];
   requiredFields.forEach(field => {
     if (
       !data[field] ||
@@ -89,7 +82,11 @@ export const validatePropertyData = data => {
     }
   });
 
-  // Validar coordenadas
+  // Validar coordenadas (requeridas)
+  if (!data.latitude || !data.longitude) {
+    errors.push("Both latitude and longitude are required");
+  }
+
   const coordValidation = validateCoordinates(data.latitude, data.longitude);
   if (!coordValidation.isValid) {
     errors.push(...coordValidation.errors);

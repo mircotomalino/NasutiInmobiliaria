@@ -20,7 +20,6 @@ const initDatabase = async () => {
         title VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         price DECIMAL(12,2) NOT NULL,
-        address VARCHAR(255) NOT NULL,
         city VARCHAR(100) NOT NULL,
         province VARCHAR(100) NOT NULL,
         type VARCHAR(50) NOT NULL,
@@ -54,6 +53,32 @@ const initDatabase = async () => {
       console.log("Added patio and garage columns if they did not exist");
     } catch (error) {
       console.log("Patio and garage columns may already exist:", error.message);
+    }
+
+    // Agregar columnas de dirección separadas si no existen
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ADD COLUMN IF NOT EXISTS street VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS street_number VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS neighborhood VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS locality VARCHAR(255)
+      `);
+      console.log("Added address fields columns if they did not exist");
+    } catch (error) {
+      console.log("Address fields columns may already exist:", error.message);
+    }
+
+    // Crear índices para campos de dirección
+    try {
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_properties_street ON properties(street);
+        CREATE INDEX IF NOT EXISTS idx_properties_neighborhood ON properties(neighborhood);
+        CREATE INDEX IF NOT EXISTS idx_properties_locality ON properties(locality)
+      `);
+      console.log("Created address fields indexes if they did not exist");
+    } catch (error) {
+      console.log("Address fields indexes may already exist:", error.message);
     }
 
     // Hacer la columna province opcional (nullable)

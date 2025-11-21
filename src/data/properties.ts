@@ -6,7 +6,6 @@ export const sampleProperties: Property[] = [
     title: "Casa Moderna en Barrio Privado",
     description:
       "Hermosa casa de 3 dormitorios con jardín y garaje para 2 autos. Excelente ubicación en barrio privado con seguridad 24/7.",
-    address: "Av. San Martín 1234",
     city: "Marcos Juárez",
     province: "Córdoba",
     price: 450000,
@@ -23,7 +22,6 @@ export const sampleProperties: Property[] = [
     title: "Departamento de Lujo en Microcentro",
     description:
       "Departamento completamente amueblado con vista al río. Incluye amenities como piscina, gimnasio y seguridad.",
-    address: "Florida 567",
     city: "Leones",
     province: "Córdoba",
     price: 280000,
@@ -40,7 +38,6 @@ export const sampleProperties: Property[] = [
     title: "Terreno Comercial en Zona de Desarrollo",
     description:
       "Terreno de 500m² ideal para desarrollo comercial. Excelente ubicación con alto tránsito vehicular.",
-    address: "Ruta 9 Km 45",
     city: "Córdoba",
     province: "Córdoba",
     price: 120000,
@@ -57,7 +54,6 @@ export const sampleProperties: Property[] = [
     title: "Oficina Ejecutiva en Torre Corporativa",
     description:
       "Oficina completamente equipada en torre de clase A. Incluye recepción, sala de reuniones y estacionamiento.",
-    address: "Av. Corrientes 1234",
     city: "Marcos Juárez",
     province: "Córdoba",
     price: 350000,
@@ -74,7 +70,6 @@ export const sampleProperties: Property[] = [
     title: "Local Comercial en Shopping",
     description:
       "Local de 80m² en planta baja del shopping más importante de la ciudad. Alto tránsito de personas.",
-    address: "Shopping Center Local 15",
     city: "Rosario",
     province: "Santa Fe",
     price: 200000,
@@ -91,7 +86,6 @@ export const sampleProperties: Property[] = [
     title: "Quinta de Fin de Semana",
     description:
       "Hermosa quinta con pileta, quincho y 4 dormitorios. Ideal para escapadas de fin de semana.",
-    address: "Ruta Provincial 23 Km 12",
     city: "Otra",
     province: "Córdoba",
     price: 380000,
@@ -108,7 +102,6 @@ export const sampleProperties: Property[] = [
     title: "Casa Familiar en Barrio Residencial",
     description:
       "Casa de 4 dormitorios con amplio jardín y terraza. Barrio tranquilo con excelentes escuelas cerca.",
-    address: "Belgrano 789",
     city: "Córdoba",
     province: "Córdoba",
     price: 320000,
@@ -125,7 +118,6 @@ export const sampleProperties: Property[] = [
     title: "Departamento Studio en Palermo",
     description:
       "Departamento tipo studio completamente renovado. Ideal para profesionales jóvenes o inversión.",
-    address: "Palermo Soho 456",
     city: "Leones",
     province: "Córdoba",
     price: 150000,
@@ -142,7 +134,6 @@ export const sampleProperties: Property[] = [
     title: "Oficina Pequeña en Edificio Histórico",
     description:
       "Oficina de 60m² en edificio histórico restaurado. Ambiente único y elegante.",
-    address: "San Telmo 321",
     city: "Marcos Juárez",
     province: "Córdoba",
     price: 180000,
@@ -159,7 +150,6 @@ export const sampleProperties: Property[] = [
     title: "Terreno Residencial con Vista Panorámica",
     description:
       "Terreno de 800m² con vista panorámica a las sierras. Ideal para construir casa de campo.",
-    address: "Camino de las Sierras 987",
     city: "Otra",
     province: "Córdoba",
     price: 95000,
