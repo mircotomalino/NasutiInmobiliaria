@@ -44,13 +44,19 @@ export const uploadToSupabase = async (file, propertyId) => {
   if (!supabase) {
     // Fallback: retornar ruta local
     // Si el archivo tiene filename (diskStorage), usarlo; si no, generar uno
-    const filename = file.filename || `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+    const filename =
+      file.filename ||
+      `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(
+        file.originalname
+      )}`;
     return `/uploads/${filename}`;
   }
-  
+
   // Verificar que el archivo tenga buffer (necesario para Supabase Storage)
   if (!file.buffer) {
-    throw new Error(`File ${file.originalname} does not have buffer. Make sure multer is using memoryStorage when Supabase is configured.`);
+    throw new Error(
+      `File ${file.originalname} does not have buffer. Make sure multer is using memoryStorage when Supabase is configured.`
+    );
   }
 
   try {
@@ -91,7 +97,9 @@ export const uploadToSupabase = async (file, propertyId) => {
       // Si es relativa, construir la URL absoluta usando supabaseUrl
       const supabaseUrl = process.env.SUPABASE_URL;
       if (supabaseUrl) {
-        const fullUrl = `${supabaseUrl}${publicUrl.startsWith("/") ? "" : "/"}${publicUrl}`;
+        const fullUrl = `${supabaseUrl}${
+          publicUrl.startsWith("/") ? "" : "/"
+        }${publicUrl}`;
         console.log("🔗 Constructed absolute URL:", fullUrl);
         return fullUrl;
       }
@@ -99,8 +107,8 @@ export const uploadToSupabase = async (file, propertyId) => {
     }
 
     // Asegurar que la URL tenga el formato correcto (https://)
-    const finalUrl = publicUrl.startsWith("https://") 
-      ? publicUrl 
+    const finalUrl = publicUrl.startsWith("https://")
+      ? publicUrl
       : publicUrl.replace(/^http:\/\//, "https://");
 
     console.log("🔗 Final URL to save:", finalUrl);
