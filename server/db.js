@@ -77,14 +77,45 @@ const initDatabase = async () => {
     }
 
     // Eliminar la columna province si existe
+    // Primero eliminar cualquier constraint o índice que dependa de ella
     try {
+      // Intentar eliminar constraints que puedan depender de province
       await pool.query(`
         ALTER TABLE properties 
-        DROP COLUMN IF EXISTS province
+        DROP CONSTRAINT IF EXISTS properties_province_check
+      `);
+    } catch (error) {
+      // Ignorar si no existe
+    }
+    
+    try {
+      // Intentar eliminar índices que puedan depender de province
+      await pool.query(`
+        DROP INDEX IF EXISTS idx_properties_province
+      `);
+    } catch (error) {
+      // Ignorar si no existe
+    }
+    
+    try {
+      // Ahora intentar eliminar la columna
+      await pool.query(`
+        ALTER TABLE properties 
+        DROP COLUMN IF EXISTS province CASCADE
       `);
       console.log("Removed province column if it existed");
     } catch (error) {
-      console.log("Province column may already be removed:", error.message);
+      console.log("Province column may already be removed or has dependencies:", error.message);
+      // Si falla, intentar sin CASCADE (más seguro)
+      try {
+        await pool.query(`
+          ALTER TABLE properties 
+          DROP COLUMN IF EXISTS province
+        `);
+        console.log("Removed province column");
+      } catch (error2) {
+        console.log("Could not remove province column:", error2.message);
+      }
     }
 
     // Agregar columnas de geolocalización si no existen
@@ -137,11 +168,12 @@ const initDatabase = async () => {
       await pool.query(`
         ALTER TABLE properties 
         ADD CONSTRAINT IF NOT EXISTS check_latitude_range 
-        CHECK (latitude IS NULL OR (latitude >= -90 AND latitude <= 90));
-        
+        CHECK (latitude >= -90 AND latitude <= 90)
+      `);
+      await pool.query(`
         ALTER TABLE properties 
         ADD CONSTRAINT IF NOT EXISTS check_longitude_range 
-        CHECK (longitude IS NULL OR (longitude >= -180 AND longitude <= 180))
+        CHECK (longitude >= -180 AND longitude <= 180)
       `);
       console.log(
         "Added coordinate validation constraints if they did not exist"
