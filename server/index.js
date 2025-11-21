@@ -41,4 +41,5 @@ app.use("/api/properties", geographicRouter); // Rutas geográficas bajo /api/pr
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log("✅ Supabase Storage configured:", !!process.env.SUPABASE_URL);
 });
