@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Check, AlertCircle } from "lucide-react";
+import { MapPin, AlertCircle } from "lucide-react";
 
 interface SmartAddressInputProps {
   value: string;
@@ -135,28 +135,18 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
       {/* Información y controles */}
       {inputValue && (
         <div className="mt-2 space-y-2">
-          {/* Información de coordenadas */}
-          <div className="text-sm">
-            {isValid && parsedCoordinates ? (
-              <div className="flex items-center gap-2 text-green-700">
-                <Check className="w-4 h-4" />
+          {/* Mensaje de error si las coordenadas son inválidas */}
+          {inputValue.trim() && !isValid && (
+            <div className="text-sm">
+              <div className="flex items-center gap-2 text-red-700">
+                <AlertCircle className="w-4 h-4" />
                 <span>
-                  Coordenadas válidas: {parsedCoordinates.lat.toFixed(6)},{" "}
-                  {parsedCoordinates.lng.toFixed(6)}
+                  Formato de coordenadas inválido. Use: lat, lng (ej: -31.4201,
+                  -64.1888)
                 </span>
               </div>
-            ) : (
-              inputValue.trim() && (
-                <div className="flex items-center gap-2 text-red-700">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>
-                    Formato de coordenadas inválido. Use: lat, lng (ej:
-                    -31.4201, -64.1888)
-                  </span>
-                </div>
-              )
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Botón para ver en Google Maps */}
           {showMapPreview && isValid && parsedCoordinates && (

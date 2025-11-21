@@ -44,10 +44,8 @@ export interface Property
     | "status"
   > {
   id?: number;
-  street?: string;
-  streetNumber?: string;
-  neighborhood?: string;
-  locality?: string;
+  address?: string;
+  coveredArea?: number;
   latitude?: number | null;
   longitude?: number | null;
   featured?: boolean;
@@ -123,12 +121,8 @@ const ManagerPanel: React.FC = () => {
       filtered = filtered.filter(
         property =>
           property.title.toLowerCase().includes(searchTerm) ||
-          (property.street &&
-            property.street.toLowerCase().includes(searchTerm)) ||
-          (property.neighborhood &&
-            property.neighborhood.toLowerCase().includes(searchTerm)) ||
-          (property.locality &&
-            property.locality.toLowerCase().includes(searchTerm)) ||
+          (property.address &&
+            property.address.toLowerCase().includes(searchTerm)) ||
           property.city.toLowerCase().includes(searchTerm)
       );
     }
@@ -421,15 +415,13 @@ const ManagerPanel: React.FC = () => {
             typeof property.price === "string"
               ? parseFloat(property.price)
               : property.price || 0,
-          street: property.street || "",
-          streetNumber: property.streetNumber || "",
-          neighborhood: property.neighborhood || "",
-          locality: property.locality || "",
+          address: property.address || "",
           city: property.city || "Marcos Juárez",
           type: property.type || "casa",
           bedrooms: property.bedrooms || 0,
           bathrooms: property.bathrooms || 0,
           area: property.area || 0,
+          coveredArea: property.coveredArea || 0,
           patio: property.patio || "No Tiene",
           garage: property.garage || "No Tiene",
           images: property.images || [],
@@ -509,18 +501,16 @@ const ManagerPanel: React.FC = () => {
 
   const handleAdd = () => {
     setEditingProperty({
-      title: "",
+      title: "", // Opcional, se generará automáticamente si está vacío
       description: "",
       price: 0,
-      street: "",
-      streetNumber: "",
-      neighborhood: "",
-      locality: "",
+      address: "",
       city: "Marcos Juárez",
       type: "casa",
       bedrooms: 1,
       bathrooms: 1,
       area: 0,
+      coveredArea: 0,
       patio: "No Tiene" as PatioType,
       garage: "No Tiene" as GarageType,
     });

@@ -80,9 +80,7 @@ function App() {
         property =>
           property.title.toLowerCase().includes(term) ||
           property.description.toLowerCase().includes(term) ||
-          (property.street && property.street.toLowerCase().includes(term)) ||
-          (property.neighborhood && property.neighborhood.toLowerCase().includes(term)) ||
-          (property.locality && property.locality.toLowerCase().includes(term)) ||
+          (property.address && property.address.toLowerCase().includes(term)) ||
           property.city.toLowerCase().includes(term) ||
           (property.province && property.province.toLowerCase().includes(term))
       );

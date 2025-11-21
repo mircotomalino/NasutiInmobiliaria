@@ -48,8 +48,8 @@ export const validateCoordinates = (latitude, longitude) => {
 export const validatePropertyData = data => {
   const errors = [];
 
-  // Campos requeridos
-  const requiredFields = ["title", "description", "price", "city", "type"];
+  // Campos requeridos (title y description ya no son requeridos, title se genera automáticamente si falta)
+  const requiredFields = ["price", "city", "type"];
   requiredFields.forEach(field => {
     if (
       !data[field] ||
@@ -68,7 +68,7 @@ export const validatePropertyData = data => {
   }
 
   // Validar números enteros
-  const integerFields = ["bedrooms", "bathrooms", "area"];
+  const integerFields = ["bedrooms", "bathrooms", "area", "coveredArea"];
   integerFields.forEach(field => {
     if (
       data[field] !== undefined &&
@@ -103,6 +103,7 @@ export const validatePropertyData = data => {
       bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
       bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
       area: data.area ? parseInt(data.area) : null,
+      coveredArea: data.coveredArea ? parseInt(data.coveredArea) : null,
     },
   };
 };

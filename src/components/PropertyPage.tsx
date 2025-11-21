@@ -189,15 +189,15 @@ const PropertyPage: React.FC = () => {
                     property.status === "disponible"
                       ? "bg-green-100 text-green-800"
                       : property.status === "reservada"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
                   }`}
                 >
                   {property.status === "disponible"
                     ? "Disponible"
                     : property.status === "reservada"
-                      ? "Reservada"
-                      : "Vendida"}
+                    ? "Reservada"
+                    : "Vendida"}
                 </div>
               </div>
             </div>
@@ -224,22 +224,17 @@ const PropertyPage: React.FC = () => {
                   <div className="flex items-start gap-3 text-gray-700 mb-4">
                     <MapPin className="w-5 h-5 mt-1 text-[#f0782c]" />
                     <div>
-                      {property.street && property.streetNumber && (
-                        <p className="font-medium">
-                          {property.street} {property.streetNumber}
-                        </p>
-                      )}
-                      {property.neighborhood && (
-                        <p className="text-sm text-gray-600">Barrio: {property.neighborhood}</p>
+                      {property.address && (
+                        <p className="font-medium">{property.address}</p>
                       )}
                       <p className="font-medium">
-                        {property.locality || property.city}
-                        {property.city && property.locality && property.locality !== property.city && `, ${property.city}`}
+                        {property.city}
                         {property.province && `, ${property.province}`}
                       </p>
                       {property.latitude && property.longitude && (
                         <p className="text-sm text-gray-500 mt-1">
-                          Coordenadas: {property.latitude.toFixed(6)}, {property.longitude.toFixed(6)}
+                          Coordenadas: {property.latitude.toFixed(6)},{" "}
+                          {property.longitude.toFixed(6)}
                         </p>
                       )}
                     </div>
@@ -256,7 +251,9 @@ const PropertyPage: React.FC = () => {
                   ) : (
                     <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <p className="text-sm text-yellow-800">
-                        Esta propiedad no tiene coordenadas configuradas. Por favor, agrega las coordenadas desde el panel de administración.
+                        Esta propiedad no tiene coordenadas configuradas. Por
+                        favor, agrega las coordenadas desde el panel de
+                        administración.
                       </p>
                     </div>
                   )}
@@ -301,9 +298,23 @@ const PropertyPage: React.FC = () => {
                         <p className="font-medium text-gray-900">
                           {property.area} m²
                         </p>
-                        <p className="text-sm text-gray-600">Superficie</p>
+                        <p className="text-sm text-gray-600">Terreno</p>
                       </div>
                     </div>
+
+                    {property.coveredArea && property.coveredArea > 0 && (
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Square className="w-5 h-5 text-[#f0782c]" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {property.coveredArea} m²
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Superficie Cubierta
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     {property.patio && property.patio !== "No Tiene" && (
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">

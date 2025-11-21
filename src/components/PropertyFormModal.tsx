@@ -74,15 +74,13 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
       current.title !== initial.title ||
       current.description !== initial.description ||
       current.price !== initial.price ||
-      current.street !== initial.street ||
-      current.streetNumber !== initial.streetNumber ||
-      current.neighborhood !== initial.neighborhood ||
-      current.locality !== initial.locality ||
+      current.address !== initial.address ||
       current.city !== initial.city ||
       current.type !== initial.type ||
       current.bedrooms !== initial.bedrooms ||
       current.bathrooms !== initial.bathrooms ||
       current.area !== initial.area ||
+      current.coveredArea !== initial.coveredArea ||
       current.patio !== initial.patio ||
       current.garage !== initial.garage ||
       current.latitude !== initial.latitude ||
@@ -175,17 +173,17 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
             {/* Primera fila: Título */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título *
+                Título
               </label>
               <input
                 type="text"
-                required
                 value={editingProperty?.title || ""}
                 onChange={e =>
                   setEditingProperty(prev =>
                     prev ? { ...prev, title: e.target.value } : null
                   )
                 }
+                placeholder="Si no se especifica, se generará automáticamente"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -223,17 +221,24 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                   type="number"
                   required
                   min="0"
-                  value={editingProperty?.price ?? 0}
-                  onChange={e =>
+                  step="0.01"
+                  value={
+                    editingProperty?.price && editingProperty.price > 0
+                      ? editingProperty.price
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
                     setEditingProperty(prev =>
                       prev
                         ? {
                             ...prev,
-                            price: parseFloat(e.target.value) || 0,
+                            price: value === "" ? 0 : parseFloat(value) || 0,
                           }
                         : null
-                    )
-                  }
+                    );
+                  }}
+                  placeholder="0"
                   className="w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -261,81 +266,22 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
               </div>
             </div>
 
-            {/* Campos de Dirección */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            {/* Dirección */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Dirección
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Calle
-                  </label>
-                  <input
-                    type="text"
-                    value={editingProperty?.street || ""}
-                    onChange={e =>
-                      setEditingProperty(prev =>
-                        prev ? { ...prev, street: e.target.value } : null
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ej: Av. San Martín"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Número
-                  </label>
-                  <input
-                    type="text"
-                    value={editingProperty?.streetNumber || ""}
-                    onChange={e =>
-                      setEditingProperty(prev =>
-                        prev ? { ...prev, streetNumber: e.target.value } : null
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ej: 1234"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Barrio
-                  </label>
-                  <input
-                    type="text"
-                    value={editingProperty?.neighborhood || ""}
-                    onChange={e =>
-                      setEditingProperty(prev =>
-                        prev ? { ...prev, neighborhood: e.target.value } : null
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ej: Centro"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Localidad
-                  </label>
-                  <input
-                    type="text"
-                    value={editingProperty?.locality || ""}
-                    onChange={e =>
-                      setEditingProperty(prev =>
-                        prev ? { ...prev, locality: e.target.value } : null
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ej: Marcos Juárez"
-                  />
-                </div>
-              </div>
+              </label>
+              <input
+                type="text"
+                value={editingProperty?.address || ""}
+                onChange={e =>
+                  setEditingProperty(prev =>
+                    prev ? { ...prev, address: e.target.value } : null
+                  )
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Ej: Av. San Martín 1234, Centro"
+              />
             </div>
 
             {/* Coordenadas */}
@@ -370,7 +316,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Habitaciones
@@ -417,23 +363,64 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Área (m²)
+                  Terreno (m²)
                 </label>
                 <input
                   type="number"
                   min="0"
-                  value={editingProperty?.area ?? 0}
-                  onChange={e =>
+                  value={
+                    editingProperty?.area && editingProperty.area > 0
+                      ? editingProperty.area
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
                     setEditingProperty(prev =>
                       prev
-                        ? { ...prev, area: parseInt(e.target.value) || 0 }
+                        ? {
+                            ...prev,
+                            area: value === "" ? 0 : parseInt(value) || 0,
+                          }
                         : null
-                    )
-                  }
+                    );
+                  }}
+                  placeholder="0"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Superficie Cubierta (m²)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={
+                    editingProperty?.coveredArea &&
+                    editingProperty.coveredArea > 0
+                      ? editingProperty.coveredArea
+                      : ""
+                  }
+                  onChange={e => {
+                    const value = e.target.value;
+                    setEditingProperty(prev =>
+                      prev
+                        ? {
+                            ...prev,
+                            coveredArea:
+                              value === "" ? 0 : parseInt(value) || 0,
+                          }
+                        : null
+                    );
+                  }}
+                  placeholder="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Patio
@@ -483,10 +470,9 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descripción *
+                Descripción
               </label>
               <textarea
-                required
                 rows={4}
                 value={editingProperty?.description || ""}
                 onChange={e =>

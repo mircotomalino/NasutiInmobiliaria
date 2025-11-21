@@ -18,10 +18,10 @@ const initDatabase = async () => {
       CREATE TABLE IF NOT EXISTS properties (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
-        description TEXT NOT NULL,
+        description TEXT,
         price DECIMAL(12,2) NOT NULL,
         city VARCHAR(100) NOT NULL,
-        province VARCHAR(100) NOT NULL,
+        province VARCHAR(100),
         type VARCHAR(50) NOT NULL,
         bedrooms INTEGER,
         bathrooms INTEGER,
@@ -55,30 +55,26 @@ const initDatabase = async () => {
       console.log("Patio and garage columns may already exist:", error.message);
     }
 
-    // Agregar columnas de dirección separadas si no existen
+    // Agregar columna de superficie cubierta si no existe
     try {
       await pool.query(`
         ALTER TABLE properties 
-        ADD COLUMN IF NOT EXISTS street VARCHAR(255),
-        ADD COLUMN IF NOT EXISTS street_number VARCHAR(50),
-        ADD COLUMN IF NOT EXISTS neighborhood VARCHAR(255),
-        ADD COLUMN IF NOT EXISTS locality VARCHAR(255)
+        ADD COLUMN IF NOT EXISTS covered_area INTEGER
       `);
-      console.log("Added address fields columns if they did not exist");
+      console.log("Added covered_area column if it did not exist");
     } catch (error) {
-      console.log("Address fields columns may already exist:", error.message);
+      console.log("Covered_area column may already exist:", error.message);
     }
 
-    // Crear índices para campos de dirección
+    // Agregar columna de dirección simple si no existe
     try {
       await pool.query(`
-        CREATE INDEX IF NOT EXISTS idx_properties_street ON properties(street);
-        CREATE INDEX IF NOT EXISTS idx_properties_neighborhood ON properties(neighborhood);
-        CREATE INDEX IF NOT EXISTS idx_properties_locality ON properties(locality)
+        ALTER TABLE properties 
+        ADD COLUMN IF NOT EXISTS address VARCHAR(500)
       `);
-      console.log("Created address fields indexes if they did not exist");
+      console.log("Added address column if it did not exist");
     } catch (error) {
-      console.log("Address fields indexes may already exist:", error.message);
+      console.log("Address column may already exist:", error.message);
     }
 
     // Hacer la columna province opcional (nullable)
@@ -102,6 +98,27 @@ const initDatabase = async () => {
       console.log("Added latitude and longitude columns if they did not exist");
     } catch (error) {
       console.log("Geolocation columns may already exist:", error.message);
+    }
+
+    // Hacer las coordenadas obligatorias (NOT NULL)
+    try {
+      // Primero verificar si hay registros sin coordenadas y eliminarlos o actualizarlos
+      // (En producción, esto debería manejarse con cuidado)
+      await pool.query(`
+        ALTER TABLE properties 
+        ALTER COLUMN latitude SET NOT NULL
+      `);
+      await pool.query(`
+        ALTER TABLE properties 
+        ALTER COLUMN longitude SET NOT NULL
+      `);
+      console.log("Made latitude and longitude columns NOT NULL");
+    } catch (error) {
+      // Si falla, puede ser que ya sean NOT NULL o que haya registros sin coordenadas
+      console.log(
+        "Could not make coordinates NOT NULL (may already be NOT NULL or have NULL values):",
+        error.message
+      );
     }
 
     // Crear índices para coordenadas si no existen
@@ -135,6 +152,17 @@ const initDatabase = async () => {
         "Coordinate validation constraints may already exist:",
         error.message
       );
+    }
+
+    // Hacer la columna description opcional (nullable)
+    try {
+      await pool.query(`
+        ALTER TABLE properties 
+        ALTER COLUMN description DROP NOT NULL
+      `);
+      console.log("Made description column nullable");
+    } catch (error) {
+      console.log("Description column may already be nullable:", error.message);
     }
 
     // Agregar columna featured para propiedades destacadas en el carrusel

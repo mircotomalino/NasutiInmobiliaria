@@ -17,9 +17,8 @@ router.get("/nearby", async (req, res) => {
     // Consulta simplificada usando la función calculate_distance
     const result = await pool.query(
       `
-      SELECT id, title, description, price, street, street_number as "streetNumber", 
-             neighborhood, locality, city, province, 
-             type, bedrooms, bathrooms, area, patio, garage, status,
+      SELECT id, title, description, price, address, city, province, 
+             type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at,
@@ -43,9 +42,8 @@ router.get("/nearby", async (req, res) => {
 router.get("/with-coordinates", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT id, title, description, price, street, street_number as "streetNumber", 
-             neighborhood, locality, city, province, 
-             type, bedrooms, bathrooms, area, patio, garage, status,
+      SELECT id, title, description, price, address, city, province, 
+             type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
              created_at, updated_at

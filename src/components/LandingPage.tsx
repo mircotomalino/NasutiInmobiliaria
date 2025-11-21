@@ -236,19 +236,19 @@ Mensaje: ${formData.mensaje}`;
                                     property.status === "disponible"
                                       ? "bg-green-500/90"
                                       : property.status === "reservada"
-                                        ? "bg-yellow-500/90"
-                                        : property.status === "vendida"
-                                          ? "bg-red-500/90"
-                                          : "bg-gray-500/90"
+                                      ? "bg-yellow-500/90"
+                                      : property.status === "vendida"
+                                      ? "bg-red-500/90"
+                                      : "bg-gray-500/90"
                                   }`}
                                 >
                                   {property.status === "disponible"
                                     ? "Disponible"
                                     : property.status === "reservada"
-                                      ? "Reservada"
-                                      : property.status === "vendida"
-                                        ? "Vendida"
-                                        : property.status}
+                                    ? "Reservada"
+                                    : property.status === "vendida"
+                                    ? "Vendida"
+                                    : property.status}
                                 </div>
                               </div>
                             </div>
@@ -272,13 +272,13 @@ Mensaje: ${formData.mensaje}`;
                               <div className="flex items-start gap-2 mb-3 lg:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
                                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#f0782c] flex-shrink-0 mt-0.5" />
                                 <div>
-                                  {property.street && property.streetNumber && (
+                                  {property.address && (
                                     <div className="font-semibold text-sm sm:text-base text-[#1F2937]">
-                                      {property.street} {property.streetNumber}
+                                      {property.address}
                                     </div>
                                   )}
                                   <div className="font-semibold text-sm sm:text-base text-[#1F2937]">
-                                    {property.locality || property.city}
+                                    {property.city}
                                   </div>
                                   {property.province && (
                                     <div className="text-xs sm:text-sm text-gray-600">
