@@ -535,10 +535,17 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     Imágenes actuales
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {existingImages.map((image, index) => (
+                    {existingImages.map((image, index) => {
+                      // Si la URL ya es absoluta (empieza con http:// o https://), usarla directamente
+                      // Si es relativa (empieza con /), concatenar con SERVER_BASE
+                      const imageUrl = image.url.startsWith("http://") || image.url.startsWith("https://")
+                        ? image.url
+                        : `${SERVER_BASE}${image.url}`;
+                      
+                      return (
                       <div key={`existing-${index}`} className="relative group">
                         <img
-                          src={`${SERVER_BASE}${image.url}`}
+                          src={imageUrl}
                           alt={`Imagen ${index + 1}`}
                           className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
                         />
@@ -553,7 +560,8 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

@@ -319,14 +319,22 @@ router.post("/", upload.array("images", 10), async (req, res) => {
           req.files.map(file => uploadToSupabase(file, property.id))
         );
 
-        // Insertar URLs de imágenes en la base de datos
-        const imageValues = imageUrls
-          .map(url => `(${property.id}, '${url}')`)
-          .join(", ");
-        await pool.query(`
-          INSERT INTO property_images (property_id, image_url)
-          VALUES ${imageValues}
-        `);
+        // Log para debugging
+        console.log("🔗 URLs generadas para guardar:", imageUrls);
+
+        // Insertar URLs de imágenes en la base de datos usando parámetros preparados
+        for (const url of imageUrls) {
+          // Validar que la URL sea absoluta antes de guardar
+          if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("/")) {
+            console.error("❌ URL inválida detectada:", url);
+            continue; // Saltar URLs inválidas
+          }
+          
+          await pool.query(
+            `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
+            [property.id, url]
+          );
+        }
       }
 
       // Obtener imágenes para la respuesta
@@ -558,14 +566,22 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         req.files.map(file => uploadToSupabase(file, propertyId))
       );
 
-      // Insertar URLs de imágenes en la base de datos
-      const imageValues = imageUrls
-        .map(url => `(${propertyId}, '${url}')`)
-        .join(", ");
-      await pool.query(`
-        INSERT INTO property_images (property_id, image_url)
-        VALUES ${imageValues}
-      `);
+      // Log para debugging
+      console.log("🔗 URLs generadas para actualizar:", imageUrls);
+
+      // Insertar URLs de imágenes en la base de datos usando parámetros preparados
+      for (const url of imageUrls) {
+        // Validar que la URL sea absoluta antes de guardar
+        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("/")) {
+          console.error("❌ URL inválida detectada:", url);
+          continue; // Saltar URLs inválidas
+        }
+        
+        await pool.query(
+          `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
+          [propertyId, url]
+        );
+      }
     }
 
     // Obtener todas las imágenes para la respuesta
