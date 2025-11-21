@@ -159,7 +159,9 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">
-              {isAdding ? "Agregar Nueva Propiedad" : "Editar Propiedad"}
+              {isAdding
+                ? "Agregar Nueva Propiedad"
+                : `Editar Propiedad #${editingProperty?.id || ""}`}
             </h2>
             <button
               onClick={handleCancel}

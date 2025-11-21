@@ -184,11 +184,44 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       status,
     } = validation.validatedData;
 
+    // Validar que los campos NOT NULL tengan valores válidos
+    if (price === null || price === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["El precio es obligatorio"],
+      });
+    }
+    if (!city || city.trim() === "") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La ciudad es obligatoria"],
+      });
+    }
+    if (!type || type.trim() === "") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["El tipo de propiedad es obligatorio"],
+      });
+    }
+    if (latitude === null || latitude === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La latitud es obligatoria"],
+      });
+    }
+    if (longitude === null || longitude === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La longitud es obligatoria"],
+      });
+    }
+
     const finalStatus = status || "disponible";
+    const finalAddress = address || "";
 
     // Generar título automático si no se proporciona
-    let finalTitle = title;
-    if (!finalTitle || finalTitle.trim() === "") {
+    let finalTitle = title && title.trim() !== "" ? title.trim() : null;
+    if (!finalTitle) {
       // Contar propiedades existentes para generar el número
       const countResult = await pool.query(
         "SELECT COUNT(*) as count FROM properties"
@@ -241,23 +274,23 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       console.error("❌ ERROR: coveredArea fuera de rango:", coveredArea);
     }
 
-    // Insertar la propiedad
+    // Insertar la propiedad - asegurar que campos NOT NULL nunca sean null
     const queryParams = [
-      finalTitle,
-      description && description.trim() !== "" ? description : null,
-      price,
-      address && address.trim() !== "" ? address.trim() : "",
-      city,
-      type,
-      bedrooms,
-      bathrooms,
-      area,
-      coveredArea || null,
-      patio,
-      garage,
-      latitude,
-      longitude,
-      finalStatus,
+      finalTitle, // NOT NULL - siempre tiene valor (generado si falta)
+      description && description.trim() !== "" ? description.trim() : null, // nullable
+      price, // NOT NULL - validado arriba
+      finalAddress, // DEFAULT '' - siempre string
+      city.trim(), // NOT NULL - validado arriba
+      type.trim(), // NOT NULL - validado arriba
+      bedrooms || null, // nullable
+      bathrooms || null, // nullable
+      area || null, // nullable
+      coveredArea || null, // nullable
+      patio || null, // nullable
+      garage || null, // nullable
+      latitude, // NOT NULL - validado arriba
+      longitude, // NOT NULL - validado arriba
+      finalStatus, // DEFAULT 'disponible' - siempre tiene valor
     ];
     console.log("🔍 DEBUGGING - Parámetros de la query:");
     queryParams.forEach((param, index) => {
@@ -304,19 +337,34 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       console.error("🔍 Error code:", dbError.code);
       console.error("🔍 Error message:", dbError.message);
       console.error("🔍 Error detail:", dbError.detail);
-      console.error("🔍 Error hint:", dbError.hint);
-      console.error("🔍 Error position:", dbError.position);
-      console.error("🔍 Error internalPosition:", dbError.internalPosition);
-      console.error("🔍 Error internalQuery:", dbError.internalQuery);
-      console.error("🔍 Error where:", dbError.where);
-      console.error("🔍 Error schema:", dbError.schema);
-      console.error("🔍 Error table:", dbError.table);
       console.error("🔍 Error column:", dbError.column);
-      console.error("🔍 Error dataType:", dbError.dataType);
-      console.error("🔍 Error constraint:", dbError.constraint);
-      console.error("🔍 Error file:", dbError.file);
-      console.error("🔍 Error line:", dbError.line);
-      console.error("🔍 Error routine:", dbError.routine);
+
+      // Manejar errores específicos de NOT NULL
+      if (dbError.code === "23502") {
+        // NOT NULL constraint violation
+        const columnName = dbError.column || "campo desconocido";
+        return res.status(400).json({
+          error: "Error de validación",
+          details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+        });
+      }
+
+      // Manejar otros errores de constraint
+      if (dbError.code === "23505") {
+        // Unique constraint violation
+        return res.status(400).json({
+          error: "Error de validación",
+          details: ["Ya existe una propiedad con estos datos"],
+        });
+      }
+      
+      if (dbError.code === "23514") {
+        // Check constraint violation
+        return res.status(400).json({
+          error: "Error de validación",
+          details: ["Datos inválidos: violación de restricción", dbError.message],
+        });
+      }
 
       res
         .status(500)
@@ -326,16 +374,28 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     console.error("Error creating property:", error);
 
     // Manejar errores específicos de base de datos
+    if (error.code === "23502") {
+      // NOT NULL constraint violation
+      const columnName = error.column || "campo desconocido";
+      return res.status(400).json({
+        error: "Error de validación",
+        details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+      });
+    }
+    
     if (error.code === "23505") {
       // Unique constraint violation
-      return res
-        .status(400)
-        .json({ error: "Ya existe una propiedad con estos datos" });
-    } else if (error.code === "23514") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["Ya existe una propiedad con estos datos"],
+      });
+    }
+    
+    if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Datos inválidos: violación de restricción",
-        details: error.message,
+        error: "Error de validación",
+        details: ["Datos inválidos: violación de restricción", error.message],
       });
     }
 
@@ -384,11 +444,44 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       status,
     } = validation.validatedData;
 
+    // Validar que los campos NOT NULL tengan valores válidos
+    if (price === null || price === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["El precio es obligatorio"],
+      });
+    }
+    if (!city || city.trim() === "") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La ciudad es obligatoria"],
+      });
+    }
+    if (!type || type.trim() === "") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["El tipo de propiedad es obligatorio"],
+      });
+    }
+    if (latitude === null || latitude === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La latitud es obligatoria"],
+      });
+    }
+    if (longitude === null || longitude === undefined) {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["La longitud es obligatoria"],
+      });
+    }
+
     const finalStatus = status || "disponible";
+    const finalAddress = address || "";
 
     // Generar título automático si no se proporciona
-    let finalTitle = title;
-    if (!finalTitle || finalTitle.trim() === "") {
+    let finalTitle = title && title.trim() !== "" ? title.trim() : null;
+    if (!finalTitle) {
       // Contar propiedades existentes para generar el número
       const countResult = await pool.query(
         "SELECT COUNT(*) as count FROM properties"
@@ -409,7 +502,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
-    // Actualizar la propiedad
+    // Actualizar la propiedad - asegurar que campos NOT NULL nunca sean null
     const propertyResult = await pool.query(
       `
       UPDATE properties 
@@ -423,21 +516,21 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
                 created_at, updated_at
     `,
       [
-        finalTitle,
-        description && description.trim() !== "" ? description : null,
-        price,
-        address && address.trim() !== "" ? address.trim() : "",
-        city,
-        type,
-        bedrooms,
-        bathrooms,
-        area,
-        coveredArea || null,
-        patio,
-        garage,
-        latitude,
-        longitude,
-        finalStatus,
+        finalTitle, // NOT NULL - siempre tiene valor (generado si falta)
+        description && description.trim() !== "" ? description.trim() : null, // nullable
+        price, // NOT NULL - validado arriba
+        finalAddress, // DEFAULT '' - siempre string
+        city.trim(), // NOT NULL - validado arriba
+        type.trim(), // NOT NULL - validado arriba
+        bedrooms || null, // nullable
+        bathrooms || null, // nullable
+        area || null, // nullable
+        coveredArea || null, // nullable
+        patio || null, // nullable
+        garage || null, // nullable
+        latitude, // NOT NULL - validado arriba
+        longitude, // NOT NULL - validado arriba
+        finalStatus, // DEFAULT 'disponible' - siempre tiene valor
         propertyId,
       ]
     );
@@ -467,16 +560,28 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     console.error("Error updating property:", error);
 
     // Manejar errores específicos de base de datos
+    if (error.code === "23502") {
+      // NOT NULL constraint violation
+      const columnName = error.column || "campo desconocido";
+      return res.status(400).json({
+        error: "Error de validación",
+        details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+      });
+    }
+    
     if (error.code === "23505") {
       // Unique constraint violation
-      return res
-        .status(400)
-        .json({ error: "Ya existe una propiedad con estos datos" });
-    } else if (error.code === "23514") {
+      return res.status(400).json({
+        error: "Error de validación",
+        details: ["Ya existe una propiedad con estos datos"],
+      });
+    }
+    
+    if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Datos inválidos: violación de restricción",
-        details: error.message,
+        error: "Error de validación",
+        details: ["Datos inválidos: violación de restricción", error.message],
       });
     }
 
