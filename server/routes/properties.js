@@ -1,7 +1,7 @@
 import express from "express";
 import { pool } from "../db.js";
 import { validatePropertyData } from "../middleware/validation.js";
-import { upload } from "../middleware/upload.js";
+import { upload, uploadToSupabase } from "../middleware/upload.js";
 import imagesRouter from "./images.js";
 
 const router = express.Router();
@@ -314,8 +314,14 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
       // Insertar las imágenes si se subieron
       if (req.files && req.files.length > 0) {
-        const imageValues = req.files
-          .map(file => `(${property.id}, '/uploads/${file.filename}')`)
+        // Subir imágenes a Supabase Storage o usar ruta local
+        const imageUrls = await Promise.all(
+          req.files.map(file => uploadToSupabase(file, property.id))
+        );
+
+        // Insertar URLs de imágenes en la base de datos
+        const imageValues = imageUrls
+          .map(url => `(${property.id}, '${url}')`)
           .join(", ");
         await pool.query(`
           INSERT INTO property_images (property_id, image_url)
@@ -371,12 +377,10 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         });
       }
 
-      res
-        .status(500)
-        .json({
-          error: "Error interno del servidor",
-          details: dbError.message,
-        });
+      res.status(500).json({
+        error: "Error interno del servidor",
+        details: dbError.message,
+      });
     }
   } catch (error) {
     console.error("Error creating property:", error);
@@ -503,20 +507,6 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       );
     }
 
-    // Generar título automático si no se proporciona
-    let finalTitle = title;
-    if (!finalTitle || finalTitle.trim() === "") {
-      // Contar propiedades existentes para generar el número
-      const countResult = await pool.query(
-        "SELECT COUNT(*) as count FROM properties"
-      );
-      const propertyCount = parseInt(countResult.rows[0].count) || 0;
-      finalTitle = `Propiedad ${propertyCount + 1}`;
-      console.log(
-        `📝 Título generado automáticamente en UPDATE: ${finalTitle}`
-      );
-    }
-
     // Verificar que la propiedad existe
     const existingProperty = await pool.query(
       "SELECT id FROM properties WHERE id = $1",
@@ -563,8 +553,14 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 
     // Si se subieron nuevas imágenes, agregarlas
     if (req.files && req.files.length > 0) {
-      const imageValues = req.files
-        .map(file => `(${propertyId}, '/uploads/${file.filename}')`)
+      // Subir imágenes a Supabase Storage o usar ruta local
+      const imageUrls = await Promise.all(
+        req.files.map(file => uploadToSupabase(file, propertyId))
+      );
+
+      // Insertar URLs de imágenes en la base de datos
+      const imageValues = imageUrls
+        .map(url => `(${propertyId}, '${url}')`)
         .join(", ");
       await pool.query(`
         INSERT INTO property_images (property_id, image_url)
