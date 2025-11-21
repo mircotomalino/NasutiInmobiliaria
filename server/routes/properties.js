@@ -325,11 +325,15 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         // Insertar URLs de imágenes en la base de datos usando parámetros preparados
         for (const url of imageUrls) {
           // Validar que la URL sea absoluta antes de guardar
-          if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("/")) {
+          if (
+            !url.startsWith("http://") &&
+            !url.startsWith("https://") &&
+            !url.startsWith("/")
+          ) {
             console.error("❌ URL inválida detectada:", url);
             continue; // Saltar URLs inválidas
           }
-          
+
           await pool.query(
             `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
             [property.id, url]
@@ -572,11 +576,15 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       // Insertar URLs de imágenes en la base de datos usando parámetros preparados
       for (const url of imageUrls) {
         // Validar que la URL sea absoluta antes de guardar
-        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("/")) {
+        if (
+          !url.startsWith("http://") &&
+          !url.startsWith("https://") &&
+          !url.startsWith("/")
+        ) {
           console.error("❌ URL inválida detectada:", url);
           continue; // Saltar URLs inválidas
         }
-        
+
         await pool.query(
           `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
           [propertyId, url]
@@ -631,16 +639,66 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Obtener todas las imágenes de la propiedad antes de borrarla
+    const imagesResult = await pool.query(
+      "SELECT image_url FROM property_images WHERE property_id = $1",
+      [id]
+    );
+
+    // Verificar que la propiedad existe
+    const propertyCheck = await pool.query(
+      "SELECT id FROM properties WHERE id = $1",
+      [id]
+    );
+
+    if (propertyCheck.rows.length === 0) {
+      return res.status(404).json({ error: "Propiedad no encontrada" });
+    }
+
+    // Eliminar imágenes de Supabase Storage si están configuradas
+    if (imagesResult.rows.length > 0) {
+      const { supabase, STORAGE_BUCKET } = await import("../config/supabase.js");
+      
+      if (supabase) {
+        const deletePromises = imagesResult.rows.map(async (img) => {
+          try {
+            // Extraer el path del archivo de la URL completa
+            // La URL tiene formato: https://...supabase.co/storage/v1/object/public/PropertyImages/14/1763693736222-332094349.jpeg
+            const url = img.image_url;
+            const pathMatch = url.match(/\/storage\/v1\/object\/public\/[^/]+\/(.+)$/);
+            
+            if (pathMatch && pathMatch[1]) {
+              const filePath = pathMatch[1];
+              const { error } = await supabase.storage
+                .from(STORAGE_BUCKET)
+                .remove([filePath]);
+              
+              if (error) {
+                console.error(`Error eliminando imagen ${filePath} de Supabase:`, error);
+              } else {
+                console.log(`✅ Imagen eliminada de Supabase Storage: ${filePath}`);
+              }
+            }
+          } catch (imgError) {
+            console.error("Error procesando eliminación de imagen:", imgError);
+          }
+        });
+
+        await Promise.all(deletePromises);
+      }
+    }
+
+    // Borrar la propiedad (las imágenes en BD se eliminan automáticamente por CASCADE)
     const result = await pool.query(
       "DELETE FROM properties WHERE id = $1 RETURNING *",
       [id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Propiedad no encontrada" });
-    }
-
-    res.json({ message: "Property deleted successfully" });
+    res.json({ 
+      message: "Property deleted successfully",
+      deletedImages: imagesResult.rows.length 
+    });
   } catch (error) {
     console.error("Error deleting property:", error);
     res.status(500).json({ error: "Error interno del servidor" });
