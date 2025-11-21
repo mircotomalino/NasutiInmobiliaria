@@ -76,7 +76,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             <span className="truncate">
               {property.address || property.city}
               {property.city && property.address && `, ${property.city}`}
-              {property.province && `, ${property.province}`}
             </span>
           </div>
         </div>

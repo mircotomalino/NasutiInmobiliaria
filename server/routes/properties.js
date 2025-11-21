@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, 
              p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area as "coveredArea", p.patio, p.garage, p.status,
              p.latitude, p.longitude, p.featured,
              p.published_date as "publishedDate",
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
              array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL) as images
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, 
                p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area, p.patio, p.garage, p.status,
                p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at DESC
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 router.get("/featured", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+      SELECT p.id, p.title, p.description, p.price, p.address, p.city, 
              p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area as "coveredArea", p.patio, p.garage, p.status,
              p.latitude, p.longitude, p.featured,
              p.published_date as "publishedDate",
@@ -44,7 +44,7 @@ router.get("/featured", async (req, res) => {
       FROM properties p
       LEFT JOIN property_images pi ON p.id = pi.property_id
       WHERE p.featured = TRUE
-      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, p.province, 
+      GROUP BY p.id, p.title, p.description, p.price, p.address, p.city, 
                p.type, p.bedrooms, p.bathrooms, p.area, p.covered_area, p.patio, p.garage, p.status,
                p.latitude, p.longitude, p.featured, p.published_date, p.created_at, p.updated_at
       ORDER BY p.created_at ASC
@@ -123,7 +123,7 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const propertyResult = await pool.query(
       `
-      SELECT id, title, description, price, address, city, province, 
+      SELECT id, title, description, price, address, city, 
              type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, status,
              latitude, longitude, featured,
              published_date as "publishedDate",
@@ -157,7 +157,6 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     // Validar datos de entrada
     const validation = validatePropertyData({
       ...req.body,
-      province: req.body.province || "Córdoba", // Valor por defecto
     });
 
     if (!validation.isValid) {
@@ -173,7 +172,6 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       price,
       address,
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
@@ -212,7 +210,6 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     console.log("💰 price:", price, "type:", typeof price);
     console.log("🛣️ address:", address, "type:", typeof address);
     console.log("🏙️ city:", city, "type:", typeof city);
-    console.log("🌍 province:", province, "type:", typeof province);
     console.log("🏘️ type:", type, "type:", typeof type);
     console.log("🛏️ bedrooms:", bedrooms, "type:", typeof bedrooms);
     console.log("🚿 bathrooms:", bathrooms, "type:", typeof bathrooms);
@@ -251,7 +248,6 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       price,
       address || null,
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
@@ -271,9 +267,9 @@ router.post("/", upload.array("images", 10), async (req, res) => {
     try {
       const propertyResult = await pool.query(
         `
-        INSERT INTO properties (title, description, price, address, city, province, type, bedrooms, bathrooms, area, covered_area, patio, garage, latitude, longitude, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-        RETURNING id, title, description, price, address, city, province, 
+        INSERT INTO properties (title, description, price, address, city, type, bedrooms, bathrooms, area, covered_area, patio, garage, latitude, longitude, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        RETURNING id, title, description, price, address, city, 
                   type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, latitude, longitude, status, featured,
                   published_date as "publishedDate",
                   created_at, updated_at
@@ -361,7 +357,6 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     // Validar datos de entrada
     const validation = validatePropertyData({
       ...req.body,
-      province: req.body.province || "Córdoba", // Valor por defecto
     });
 
     if (!validation.isValid) {
@@ -377,7 +372,6 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       price,
       address,
       city,
-      province,
       type,
       bedrooms,
       bathrooms,
@@ -420,10 +414,10 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       `
       UPDATE properties 
       SET title = $1, description = $2, price = $3, address = $4, city = $5, 
-          province = $6, type = $7, bedrooms = $8, bathrooms = $9, area = $10, 
-          covered_area = $11, patio = $12, garage = $13, latitude = $14, longitude = $15, status = $16, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $17
-      RETURNING id, title, description, price, address, city, province, 
+          type = $6, bedrooms = $7, bathrooms = $8, area = $9, 
+          covered_area = $10, patio = $11, garage = $12, latitude = $13, longitude = $14, status = $15, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $16
+      RETURNING id, title, description, price, address, city, 
                 type, bedrooms, bathrooms, area, covered_area as "coveredArea", patio, garage, latitude, longitude, status, featured,
                 published_date as "publishedDate",
                 created_at, updated_at
@@ -434,7 +428,6 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         price,
         address || null,
         city,
-        province,
         type,
         bedrooms,
         bathrooms,

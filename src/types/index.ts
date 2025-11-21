@@ -4,7 +4,6 @@ export interface Property {
   description: string;
   address?: string; // Dirección completa
   city: string; // Ciudad
-  province: string;
   price: number;
   type: PropertyType;
   status: PropertyStatus;

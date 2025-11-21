@@ -229,7 +229,6 @@ const PropertyPage: React.FC = () => {
                       )}
                       <p className="font-medium">
                         {property.city}
-                        {property.province && `, ${property.province}`}
                       </p>
                       {property.latitude && property.longitude && (
                         <p className="text-sm text-gray-500 mt-1">

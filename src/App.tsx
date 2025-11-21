@@ -81,8 +81,7 @@ function App() {
           property.title.toLowerCase().includes(term) ||
           property.description.toLowerCase().includes(term) ||
           (property.address && property.address.toLowerCase().includes(term)) ||
-          property.city.toLowerCase().includes(term) ||
-          (property.province && property.province.toLowerCase().includes(term))
+          property.city.toLowerCase().includes(term)
       );
     }
 

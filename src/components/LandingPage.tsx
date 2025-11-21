@@ -280,11 +280,6 @@ Mensaje: ${formData.mensaje}`;
                                   <div className="font-semibold text-sm sm:text-base text-[#1F2937]">
                                     {property.city}
                                   </div>
-                                  {property.province && (
-                                    <div className="text-xs sm:text-sm text-gray-600">
-                                      {property.province}
-                                    </div>
-                                  )}
                                 </div>
                               </div>
 

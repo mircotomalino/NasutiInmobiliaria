@@ -159,7 +159,6 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                 <div className="modal-location-text">
                   {property.address && <h5>{property.address}</h5>}
                   <h5>{property.city}</h5>
-                  {property.province && <p>{property.province}</p>}
                   {property.latitude && property.longitude && (
                     <p className="text-xs text-gray-500 mt-1">
                       {property.latitude.toFixed(6)},{" "}
