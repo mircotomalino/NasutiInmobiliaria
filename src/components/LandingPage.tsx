@@ -236,19 +236,19 @@ Mensaje: ${formData.mensaje}`;
                                     property.status === "disponible"
                                       ? "bg-green-500/90"
                                       : property.status === "reservada"
-                                      ? "bg-yellow-500/90"
-                                      : property.status === "vendida"
-                                      ? "bg-red-500/90"
-                                      : "bg-gray-500/90"
+                                        ? "bg-yellow-500/90"
+                                        : property.status === "vendida"
+                                          ? "bg-red-500/90"
+                                          : "bg-gray-500/90"
                                   }`}
                                 >
                                   {property.status === "disponible"
                                     ? "Disponible"
                                     : property.status === "reservada"
-                                    ? "Reservada"
-                                    : property.status === "vendida"
-                                    ? "Vendida"
-                                    : property.status}
+                                      ? "Reservada"
+                                      : property.status === "vendida"
+                                        ? "Vendida"
+                                        : property.status}
                                 </div>
                               </div>
                             </div>

@@ -35,8 +35,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               property.status === "disponible"
                 ? "status-available"
                 : property.status === "reservada"
-                ? "status-reserved"
-                : "status-sold"
+                  ? "status-reserved"
+                  : "status-sold"
             }`}
           >
             {property.status.charAt(0).toUpperCase() + property.status.slice(1)}

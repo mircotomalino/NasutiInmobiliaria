@@ -189,15 +189,15 @@ const PropertyPage: React.FC = () => {
                     property.status === "disponible"
                       ? "bg-green-100 text-green-800"
                       : property.status === "reservada"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
                   }`}
                 >
                   {property.status === "disponible"
                     ? "Disponible"
                     : property.status === "reservada"
-                    ? "Reservada"
-                    : "Vendida"}
+                      ? "Reservada"
+                      : "Vendida"}
                 </div>
               </div>
             </div>
@@ -227,9 +227,7 @@ const PropertyPage: React.FC = () => {
                       {property.address && (
                         <p className="font-medium">{property.address}</p>
                       )}
-                      <p className="font-medium">
-                        {property.city}
-                      </p>
+                      <p className="font-medium">{property.city}</p>
                       {property.latitude && property.longitude && (
                         <p className="text-sm text-gray-500 mt-1">
                           Coordenadas: {property.latitude.toFixed(6)},{" "}

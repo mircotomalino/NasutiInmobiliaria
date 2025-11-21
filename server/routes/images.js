@@ -22,7 +22,7 @@ router.get("/images", async (req, res) => {
 router.delete("/images/:imageId", async (req, res) => {
   try {
     const { id, imageId } = req.params; // id viene del router padre (properties)
-    
+
     // Obtener la URL de la imagen antes de borrarla
     const imageResult = await pool.query(
       "SELECT image_url FROM property_images WHERE id = $1 AND property_id = $2",
@@ -37,7 +37,7 @@ router.delete("/images/:imageId", async (req, res) => {
 
     // Eliminar imagen de Supabase Storage si está configurado
     const { supabase, STORAGE_BUCKET } = await import("../config/supabase.js");
-    
+
     if (supabase && imageUrl) {
       try {
         // Extraer el path del archivo de la URL completa
@@ -59,13 +59,14 @@ router.delete("/images/:imageId", async (req, res) => {
             );
             // Continuar con la eliminación de BD aunque falle la eliminación de Storage
           } else {
-            console.log(
-              `✅ Imagen eliminada de Supabase Storage: ${filePath}`
-            );
+            console.log(`✅ Imagen eliminada de Supabase Storage: ${filePath}`);
           }
         }
       } catch (storageError) {
-        console.error("Error procesando eliminación de imagen de Storage:", storageError);
+        console.error(
+          "Error procesando eliminación de imagen de Storage:",
+          storageError
+        );
         // Continuar con la eliminación de BD aunque falle la eliminación de Storage
       }
     }

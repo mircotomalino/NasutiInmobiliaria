@@ -5,7 +5,6 @@
 1. Ve al **Dashboard de Supabase** → **Storage**
 2. Haz clic en **"New bucket"**
 3. Configura el bucket:
-
    - **Name**: `PropertyImages` (o el nombre que prefieras)
    - **Public bucket**: ✅ **Marcar como público** (para que las imágenes sean accesibles públicamente)
    - **File size limit**: 5 MB (o el tamaño máximo que quieras)

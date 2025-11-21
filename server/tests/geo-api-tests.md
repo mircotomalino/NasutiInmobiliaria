@@ -5,6 +5,7 @@
 ### ✅ POST /api/properties (Crear Propiedad con Coordenadas)
 
 #### Test 1: Crear propiedad con coordenadas válidas (Córdoba Capital)
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -28,6 +29,7 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 **Respuesta esperada:**
+
 ```json
 {
   "success": true,
@@ -58,6 +60,7 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 #### Test 2: Crear propiedad con coordenadas de Marcos Juárez
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -80,6 +83,7 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 #### Test 3: Crear propiedad SIN coordenadas (válido)
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -100,6 +104,7 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 #### Test 4: ❌ Error - Solo latitud (sin longitud)
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -121,16 +126,16 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Validation failed",
-  "details": [
-    "Both latitude and longitude must be provided together"
-  ]
+  "details": ["Both latitude and longitude must be provided together"]
 }
 ```
 
 #### Test 5: ❌ Error - Latitud inválida (> 90)
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -153,16 +158,16 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Validation failed",
-  "details": [
-    "Latitude must be between -90 and 90 degrees"
-  ]
+  "details": ["Latitude must be between -90 and 90 degrees"]
 }
 ```
 
 #### Test 6: ❌ Error - Longitud inválida (< -180)
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -185,16 +190,16 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Validation failed",
-  "details": [
-    "Longitude must be between -180 and 180 degrees"
-  ]
+  "details": ["Longitude must be between -180 and 180 degrees"]
 }
 ```
 
 #### Test 7: ❌ Error - Coordenadas no numéricas
+
 ```bash
 curl -X POST http://localhost:3001/api/properties \
   -H "Content-Type: application/json" \
@@ -217,6 +222,7 @@ curl -X POST http://localhost:3001/api/properties \
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Validation failed",
@@ -232,6 +238,7 @@ curl -X POST http://localhost:3001/api/properties \
 ### ✅ PUT /api/properties/:id (Actualizar Propiedad con Coordenadas)
 
 #### Test 8: Actualizar propiedad con nuevas coordenadas
+
 ```bash
 curl -X PUT http://localhost:3001/api/properties/1 \
   -H "Content-Type: application/json" \
@@ -255,6 +262,7 @@ curl -X PUT http://localhost:3001/api/properties/1 \
 ```
 
 **Respuesta esperada:**
+
 ```json
 {
   "success": true,
@@ -285,6 +293,7 @@ curl -X PUT http://localhost:3001/api/properties/1 \
 ```
 
 #### Test 9: Actualizar propiedad removiendo coordenadas (establecer en null)
+
 ```bash
 curl -X PUT http://localhost:3001/api/properties/2 \
   -H "Content-Type: application/json" \
@@ -307,6 +316,7 @@ curl -X PUT http://localhost:3001/api/properties/2 \
 ```
 
 #### Test 10: ❌ Error - ID de propiedad inválido
+
 ```bash
 curl -X PUT http://localhost:3001/api/properties/invalid \
   -H "Content-Type: application/json" \
@@ -324,6 +334,7 @@ curl -X PUT http://localhost:3001/api/properties/invalid \
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Invalid property ID"
@@ -331,6 +342,7 @@ curl -X PUT http://localhost:3001/api/properties/invalid \
 ```
 
 #### Test 11: ❌ Error - Propiedad no encontrada
+
 ```bash
 curl -X PUT http://localhost:3001/api/properties/99999 \
   -H "Content-Type: application/json" \
@@ -348,6 +360,7 @@ curl -X PUT http://localhost:3001/api/properties/99999 \
 ```
 
 **Respuesta esperada (Error 404):**
+
 ```json
 {
   "error": "Property not found"
@@ -359,11 +372,13 @@ curl -X PUT http://localhost:3001/api/properties/99999 \
 ### ✅ GET /api/properties (Verificar Coordenadas en Respuesta)
 
 #### Test 12: Verificar que las propiedades incluyen coordenadas
+
 ```bash
 curl -X GET http://localhost:3001/api/properties
 ```
 
 **Respuesta esperada (parcial):**
+
 ```json
 [
   {
@@ -412,11 +427,13 @@ curl -X GET http://localhost:3001/api/properties
 ### ✅ GET /api/properties/with-coordinates (Propiedades con Coordenadas)
 
 #### Test 13: Obtener solo propiedades con coordenadas
+
 ```bash
 curl -X GET http://localhost:3001/api/properties/with-coordinates
 ```
 
 **Respuesta esperada:**
+
 ```json
 [
   {
@@ -447,11 +464,13 @@ curl -X GET http://localhost:3001/api/properties/with-coordinates
 ### ✅ GET /api/properties/nearby (Búsqueda por Proximidad)
 
 #### Test 14: Buscar propiedades cerca de Córdoba Capital (radio 10km)
+
 ```bash
 curl -X GET "http://localhost:3001/api/properties/nearby?lat=-31.4201&lng=-64.1888&radius=10000"
 ```
 
 **Respuesta esperada:**
+
 ```json
 [
   {
@@ -478,6 +497,7 @@ curl -X GET "http://localhost:3001/api/properties/nearby?lat=-31.4201&lng=-64.18
 ```
 
 #### Test 15: Buscar propiedades cerca de Córdoba Capital (radio 1km - más restrictivo)
+
 ```bash
 curl -X GET "http://localhost:3001/api/properties/nearby?lat=-31.4201&lng=-64.1888&radius=1000"
 ```
@@ -485,11 +505,13 @@ curl -X GET "http://localhost:3001/api/properties/nearby?lat=-31.4201&lng=-64.18
 **Respuesta esperada:** Array vacío `[]` si no hay propiedades en ese radio.
 
 #### Test 16: ❌ Error - Parámetros de coordenadas faltantes
+
 ```bash
 curl -X GET "http://localhost:3001/api/properties/nearby"
 ```
 
 **Respuesta esperada (Error 400):**
+
 ```json
 {
   "error": "Latitude and longitude are required"
@@ -501,11 +523,12 @@ curl -X GET "http://localhost:3001/api/properties/nearby"
 ## 🎯 Coordenadas de Referencia para Tests
 
 ### Ciudades de Argentina
+
 ```bash
 # Córdoba Capital
 LAT: -31.4201, LNG: -64.1888
 
-# Marcos Juárez  
+# Marcos Juárez
 LAT: -32.6986, LNG: -62.1019
 
 # Leones
@@ -516,6 +539,7 @@ LAT: -32.9442, LNG: -60.6505
 ```
 
 ### Coordenadas de Test
+
 ```bash
 # Punto cerca de Córdoba (para pruebas de distancia)
 LAT: -31.4215, LNG: -64.1892  # ~125 metros de distancia
@@ -530,11 +554,13 @@ LAT: -31.4201, LNG: -200.0    # Longitud < -180
 ## 🚀 Ejecutar Tests
 
 ### 1. Iniciar el servidor
+
 ```bash
 npm run server
 ```
 
 ### 2. Ejecutar tests secuencialmente
+
 ```bash
 # Test 1: Crear propiedad con coordenadas
 curl -X POST http://localhost:3001/api/properties -H "Content-Type: application/json" -d '{...}'
@@ -550,6 +576,7 @@ curl -X GET "http://localhost:3001/api/properties/nearby?lat=-31.4201&lng=-64.18
 ```
 
 ### 3. Script automatizado (opcional)
+
 ```bash
 # Crear script de test
 chmod +x run-tests.sh

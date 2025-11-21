@@ -592,7 +592,9 @@ router.put("/:id", upload.any(), async (req, res) => {
 
     // Si se subieron nuevas imágenes, agregarlas
     // Filtrar solo los archivos (req.files puede contener todos los campos)
-    const imageFiles = req.files ? req.files.filter(file => file.fieldname === "images") : [];
+    const imageFiles = req.files
+      ? req.files.filter(file => file.fieldname === "images")
+      : [];
     if (imageFiles.length > 0) {
       // Subir imágenes a Supabase Storage o usar ruta local
       const imageUrls = await Promise.all(

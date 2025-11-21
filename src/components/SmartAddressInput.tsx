@@ -118,10 +118,10 @@ const SmartAddressInput: React.FC<SmartAddressInputProps> = ({
             disabled
               ? "bg-gray-100 cursor-not-allowed border-gray-300"
               : inputValue.trim() && !isValid
-              ? "border-red-300 focus:ring-red-500"
-              : inputValue.trim() && isValid && parsedCoordinates
-              ? "border-green-300 focus:ring-green-500"
-              : "border-gray-300 focus:ring-blue-500"
+                ? "border-red-300 focus:ring-red-500"
+                : inputValue.trim() && isValid && parsedCoordinates
+                  ? "border-green-300 focus:ring-green-500"
+                  : "border-gray-300 focus:ring-blue-500"
           }`}
         />
 

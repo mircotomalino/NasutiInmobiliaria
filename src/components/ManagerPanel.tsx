@@ -280,23 +280,19 @@ const ManagerPanel: React.FC = () => {
       errors.push("Las coordenadas son obligatorias");
     } else {
       // Validar rango de coordenadas
-      if (
-        editingProperty.latitude < -90 ||
-        editingProperty.latitude > 90
-      ) {
+      if (editingProperty.latitude < -90 || editingProperty.latitude > 90) {
         errors.push("La latitud debe estar entre -90 y 90 grados");
       }
-      if (
-        editingProperty.longitude < -180 ||
-        editingProperty.longitude > 180
-      ) {
+      if (editingProperty.longitude < -180 || editingProperty.longitude > 180) {
         errors.push("La longitud debe estar entre -180 y 180 grados");
       }
     }
 
     // Mostrar errores si hay alguno
     if (errors.length > 0) {
-      alert("Por favor, corrige los siguientes errores:\n\n" + errors.join("\n"));
+      alert(
+        "Por favor, corrige los siguientes errores:\n\n" + errors.join("\n")
+      );
       return;
     }
 
@@ -378,7 +374,7 @@ const ManagerPanel: React.FC = () => {
       } else {
         const errorText = await response.text();
         console.error("❌ Error del servidor:", response.status, errorText);
-        
+
         // Intentar parsear el error como JSON para mostrar mensajes más claros
         try {
           const errorData = JSON.parse(errorText);
@@ -397,7 +393,9 @@ const ManagerPanel: React.FC = () => {
       }
     } catch (error) {
       console.error("💥 Error de red:", error);
-      alert(`Error de conexión: No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.`);
+      alert(
+        `Error de conexión: No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -774,24 +772,24 @@ const ManagerPanel: React.FC = () => {
           </div>
         )}
 
-          <PropertyFormModal
-            isOpen={isAdding || !!editingProperty}
-            isAdding={isAdding}
-            editingProperty={editingProperty}
-            setEditingProperty={setEditingProperty}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            onFileChange={handleFileChange}
-            onDeleteExistingImage={handleDeleteExistingImage}
-            onRemoveNewImage={handleRemoveNewImage}
-            existingImages={existingImages}
-            previewUrls={previewUrls}
-            propertyTypes={propertyTypes}
-            cities={cities}
-            patioOptions={patioOptions}
-            garageOptions={garageOptions}
-            isSubmitting={isSubmitting}
-          />
+        <PropertyFormModal
+          isOpen={isAdding || !!editingProperty}
+          isAdding={isAdding}
+          editingProperty={editingProperty}
+          setEditingProperty={setEditingProperty}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onFileChange={handleFileChange}
+          onDeleteExistingImage={handleDeleteExistingImage}
+          onRemoveNewImage={handleRemoveNewImage}
+          existingImages={existingImages}
+          previewUrls={previewUrls}
+          propertyTypes={propertyTypes}
+          cities={cities}
+          patioOptions={patioOptions}
+          garageOptions={garageOptions}
+          isSubmitting={isSubmitting}
+        />
 
         {/* Lista de propiedades */}
         <div className="bg-white rounded-lg shadow-md">
@@ -852,10 +850,10 @@ const ManagerPanel: React.FC = () => {
                           property.status === "disponible"
                             ? "bg-green-100 text-green-800"
                             : property.status === "vendida"
-                            ? "bg-red-100 text-red-800"
-                            : property.status === "reservada"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
+                              ? "bg-red-100 text-red-800"
+                              : property.status === "reservada"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {property.status}
