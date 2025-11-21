@@ -43,7 +43,14 @@ export const upload = multer({
 export const uploadToSupabase = async (file, propertyId) => {
   if (!supabase) {
     // Fallback: retornar ruta local
-    return `/uploads/${file.filename}`;
+    // Si el archivo tiene filename (diskStorage), usarlo; si no, generar uno
+    const filename = file.filename || `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+    return `/uploads/${filename}`;
+  }
+  
+  // Verificar que el archivo tenga buffer (necesario para Supabase Storage)
+  if (!file.buffer) {
+    throw new Error(`File ${file.originalname} does not have buffer. Make sure multer is using memoryStorage when Supabase is configured.`);
   }
 
   try {

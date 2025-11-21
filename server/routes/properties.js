@@ -314,30 +314,49 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
       // Insertar las imágenes si se subieron
       if (req.files && req.files.length > 0) {
-        // Subir imágenes a Supabase Storage o usar ruta local
-        const imageUrls = await Promise.all(
-          req.files.map(file => uploadToSupabase(file, property.id))
-        );
-
-        // Log para debugging
-        console.log("🔗 URLs generadas para guardar:", imageUrls);
-
-        // Insertar URLs de imágenes en la base de datos usando parámetros preparados
-        for (const url of imageUrls) {
-          // Validar que la URL sea absoluta antes de guardar
-          if (
-            !url.startsWith("http://") &&
-            !url.startsWith("https://") &&
-            !url.startsWith("/")
-          ) {
-            console.error("❌ URL inválida detectada:", url);
-            continue; // Saltar URLs inválidas
-          }
-
-          await pool.query(
-            `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
-            [property.id, url]
+        try {
+          // Subir imágenes a Supabase Storage o usar ruta local
+          const imageUrls = await Promise.all(
+            req.files.map(async (file) => {
+              try {
+                return await uploadToSupabase(file, property.id);
+              } catch (uploadError) {
+                console.error(`❌ Error subiendo imagen ${file.originalname}:`, uploadError);
+                throw uploadError; // Re-lanzar para que se maneje arriba
+              }
+            })
           );
+
+          // Log para debugging
+          console.log("🔗 URLs generadas para guardar:", imageUrls);
+
+          // Insertar URLs de imágenes en la base de datos usando parámetros preparados
+          for (const url of imageUrls) {
+            // Validar que la URL sea absoluta antes de guardar
+            if (
+              !url.startsWith("http://") &&
+              !url.startsWith("https://") &&
+              !url.startsWith("/")
+            ) {
+              console.error("❌ URL inválida detectada:", url);
+              continue; // Saltar URLs inválidas
+            }
+
+            await pool.query(
+              `INSERT INTO property_images (property_id, image_url) VALUES ($1, $2)`,
+              [property.id, url]
+            );
+          }
+        } catch (imageError) {
+          console.error("❌ Error procesando imágenes:", imageError);
+          // Si falla la subida de imágenes, eliminar la propiedad creada
+          try {
+            await pool.query("DELETE FROM properties WHERE id = $1", [property.id]);
+            console.log("🗑️ Propiedad eliminada debido a error en imágenes");
+          } catch (deleteError) {
+            console.error("❌ Error eliminando propiedad después de fallo en imágenes:", deleteError);
+          }
+          throw imageError; // Re-lanzar para que se maneje en el catch externo
         }
       }
 
