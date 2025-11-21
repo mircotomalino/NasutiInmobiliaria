@@ -204,11 +204,13 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     const target = e.target as HTMLSelectElement;
-                    target.setCustomValidity("El tipo de propiedad es obligatorio");
+                    target.setCustomValidity(
+                      "El tipo de propiedad es obligatorio"
+                    );
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}
@@ -249,7 +251,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     );
                   }}
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     const target = e.target as HTMLInputElement;
                     if (target.validity.valueMissing) {
                       target.setCustomValidity("El precio es obligatorio");
@@ -259,7 +261,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                       target.setCustomValidity("");
                     }
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     const target = e.target as HTMLInputElement;
                     target.setCustomValidity("");
                   }}
@@ -281,11 +283,11 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                       prev ? { ...prev, city: e.target.value } : null
                     )
                   }
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("La ciudad es obligatoria");
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}

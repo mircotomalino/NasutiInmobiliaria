@@ -20,7 +20,7 @@ const initDatabase = async () => {
         title VARCHAR(255) NOT NULL,
         description TEXT,
         price DECIMAL(12,2) NOT NULL,
-        address VARCHAR(500),
+        address VARCHAR(500) DEFAULT '',
         city VARCHAR(100) NOT NULL,
         type VARCHAR(50) NOT NULL,
         bedrooms INTEGER,
