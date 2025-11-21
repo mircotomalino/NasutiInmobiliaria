@@ -493,6 +493,20 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       );
     }
 
+    // Generar título automático si no se proporciona
+    let finalTitle = title;
+    if (!finalTitle || finalTitle.trim() === "") {
+      // Contar propiedades existentes para generar el número
+      const countResult = await pool.query(
+        "SELECT COUNT(*) as count FROM properties"
+      );
+      const propertyCount = parseInt(countResult.rows[0].count) || 0;
+      finalTitle = `Propiedad ${propertyCount + 1}`;
+      console.log(
+        `📝 Título generado automáticamente en UPDATE: ${finalTitle}`
+      );
+    }
+
     // Verificar que la propiedad existe
     const existingProperty = await pool.query(
       "SELECT id FROM properties WHERE id = $1",
