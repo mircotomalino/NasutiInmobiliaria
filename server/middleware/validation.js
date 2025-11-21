@@ -54,9 +54,9 @@ export const validatePropertyData = data => {
     city: "La ciudad",
     type: "El tipo de propiedad",
     latitude: "La latitud",
-    longitude: "La longitud"
+    longitude: "La longitud",
   };
-  
+
   Object.entries(requiredFields).forEach(([field, label]) => {
     if (
       data[field] === undefined ||
@@ -101,9 +101,9 @@ export const validatePropertyData = data => {
     bedrooms: "Las habitaciones",
     bathrooms: "Los baños",
     area: "El área",
-    coveredArea: "La superficie cubierta"
+    coveredArea: "La superficie cubierta",
   };
-  
+
   Object.entries(integerFields).forEach(([field, label]) => {
     if (
       data[field] !== undefined &&
@@ -126,57 +126,76 @@ export const validatePropertyData = data => {
   // Preparar datos validados con valores por defecto para campos NOT NULL
   const validatedData = {
     // Campos NOT NULL - siempre deben tener valores válidos
-    price: data.price !== undefined && data.price !== null && data.price !== "" 
-      ? parseFloat(data.price) 
-      : null, // null causará error si no se validó antes
-    city: data.city !== undefined && data.city !== null 
-      ? String(data.city).trim() 
-      : "", // string vacío causará error si no se validó antes
-    type: data.type !== undefined && data.type !== null 
-      ? String(data.type).trim() 
-      : "", // string vacío causará error si no se validó antes
-    latitude: coordValidation.latitude !== null 
-      ? coordValidation.latitude 
-      : null, // null causará error si no se validó antes
-    longitude: coordValidation.longitude !== null 
-      ? coordValidation.longitude 
-      : null, // null causará error si no se validó antes
-    
+    price:
+      data.price !== undefined && data.price !== null && data.price !== ""
+        ? parseFloat(data.price)
+        : null, // null causará error si no se validó antes
+    city:
+      data.city !== undefined && data.city !== null
+        ? String(data.city).trim()
+        : "", // string vacío causará error si no se validó antes
+    type:
+      data.type !== undefined && data.type !== null
+        ? String(data.type).trim()
+        : "", // string vacío causará error si no se validó antes
+    latitude:
+      coordValidation.latitude !== null ? coordValidation.latitude : null, // null causará error si no se validó antes
+    longitude:
+      coordValidation.longitude !== null ? coordValidation.longitude : null, // null causará error si no se validó antes
+
     // Campos opcionales
-    title: data.title !== undefined && data.title !== null 
-      ? String(data.title).trim() 
-      : "", // Se generará automáticamente si está vacío
-    description: data.description !== undefined && data.description !== null && data.description !== ""
-      ? String(data.description).trim()
-      : null,
-    address: data.address !== undefined && data.address !== null
-      ? String(data.address).trim()
-      : "", // DEFAULT '' en la DB
-    status: data.status !== undefined && data.status !== null && data.status !== ""
-      ? String(data.status).trim()
-      : "disponible", // DEFAULT 'disponible' en la DB
-    
+    title:
+      data.title !== undefined && data.title !== null
+        ? String(data.title).trim()
+        : "", // Se generará automáticamente si está vacío
+    description:
+      data.description !== undefined &&
+      data.description !== null &&
+      data.description !== ""
+        ? String(data.description).trim()
+        : null,
+    address:
+      data.address !== undefined && data.address !== null
+        ? String(data.address).trim()
+        : "", // DEFAULT '' en la DB
+    status:
+      data.status !== undefined && data.status !== null && data.status !== ""
+        ? String(data.status).trim()
+        : "disponible", // DEFAULT 'disponible' en la DB
+
     // Campos numéricos opcionales
-    bedrooms: data.bedrooms !== undefined && data.bedrooms !== null && data.bedrooms !== ""
-      ? parseInt(data.bedrooms)
-      : null,
-    bathrooms: data.bathrooms !== undefined && data.bathrooms !== null && data.bathrooms !== ""
-      ? parseInt(data.bathrooms)
-      : null,
-    area: data.area !== undefined && data.area !== null && data.area !== ""
-      ? parseInt(data.area)
-      : null,
-    coveredArea: data.coveredArea !== undefined && data.coveredArea !== null && data.coveredArea !== ""
-      ? parseInt(data.coveredArea)
-      : null,
-    
+    bedrooms:
+      data.bedrooms !== undefined &&
+      data.bedrooms !== null &&
+      data.bedrooms !== ""
+        ? parseInt(data.bedrooms)
+        : null,
+    bathrooms:
+      data.bathrooms !== undefined &&
+      data.bathrooms !== null &&
+      data.bathrooms !== ""
+        ? parseInt(data.bathrooms)
+        : null,
+    area:
+      data.area !== undefined && data.area !== null && data.area !== ""
+        ? parseInt(data.area)
+        : null,
+    coveredArea:
+      data.coveredArea !== undefined &&
+      data.coveredArea !== null &&
+      data.coveredArea !== ""
+        ? parseInt(data.coveredArea)
+        : null,
+
     // Campos de texto opcionales
-    patio: data.patio !== undefined && data.patio !== null && data.patio !== ""
-      ? String(data.patio).trim()
-      : null,
-    garage: data.garage !== undefined && data.garage !== null && data.garage !== ""
-      ? String(data.garage).trim()
-      : null,
+    patio:
+      data.patio !== undefined && data.patio !== null && data.patio !== ""
+        ? String(data.patio).trim()
+        : null,
+    garage:
+      data.garage !== undefined && data.garage !== null && data.garage !== ""
+        ? String(data.garage).trim()
+        : null,
   };
 
   return {

@@ -345,7 +345,9 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         const columnName = dbError.column || "campo desconocido";
         return res.status(400).json({
           error: "Error de validación",
-          details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+          details: [
+            `El campo '${columnName}' es obligatorio y no puede estar vacío`,
+          ],
         });
       }
 
@@ -357,18 +359,24 @@ router.post("/", upload.array("images", 10), async (req, res) => {
           details: ["Ya existe una propiedad con estos datos"],
         });
       }
-      
+
       if (dbError.code === "23514") {
         // Check constraint violation
         return res.status(400).json({
           error: "Error de validación",
-          details: ["Datos inválidos: violación de restricción", dbError.message],
+          details: [
+            "Datos inválidos: violación de restricción",
+            dbError.message,
+          ],
         });
       }
 
       res
         .status(500)
-        .json({ error: "Error interno del servidor", details: dbError.message });
+        .json({
+          error: "Error interno del servidor",
+          details: dbError.message,
+        });
     }
   } catch (error) {
     console.error("Error creating property:", error);
@@ -379,10 +387,12 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       const columnName = error.column || "campo desconocido";
       return res.status(400).json({
         error: "Error de validación",
-        details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+        details: [
+          `El campo '${columnName}' es obligatorio y no puede estar vacío`,
+        ],
       });
     }
-    
+
     if (error.code === "23505") {
       // Unique constraint violation
       return res.status(400).json({
@@ -390,7 +400,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
         details: ["Ya existe una propiedad con estos datos"],
       });
     }
-    
+
     if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
@@ -579,10 +589,12 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       const columnName = error.column || "campo desconocido";
       return res.status(400).json({
         error: "Error de validación",
-        details: [`El campo '${columnName}' es obligatorio y no puede estar vacío`],
+        details: [
+          `El campo '${columnName}' es obligatorio y no puede estar vacío`,
+        ],
       });
     }
-    
+
     if (error.code === "23505") {
       // Unique constraint violation
       return res.status(400).json({
@@ -590,7 +602,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         details: ["Ya existe una propiedad con estos datos"],
       });
     }
-    
+
     if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
