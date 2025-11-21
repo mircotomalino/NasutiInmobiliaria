@@ -71,7 +71,33 @@ export const uploadToSupabase = async (file, propertyId) => {
       data: { publicUrl },
     } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
-    return publicUrl;
+    // Asegurar que la URL sea absoluta (completa)
+    if (!publicUrl) {
+      throw new Error("Failed to get public URL from Supabase");
+    }
+
+    // Log para debugging
+    console.log("🔗 Generated Supabase public URL:", publicUrl);
+
+    // Verificar que la URL sea absoluta (empiece con http:// o https://)
+    if (!publicUrl.startsWith("http://") && !publicUrl.startsWith("https://")) {
+      // Si es relativa, construir la URL absoluta usando supabaseUrl
+      const supabaseUrl = process.env.SUPABASE_URL;
+      if (supabaseUrl) {
+        const fullUrl = `${supabaseUrl}${publicUrl.startsWith("/") ? "" : "/"}${publicUrl}`;
+        console.log("🔗 Constructed absolute URL:", fullUrl);
+        return fullUrl;
+      }
+      throw new Error("Supabase URL not configured and publicUrl is relative");
+    }
+
+    // Asegurar que la URL tenga el formato correcto (https://)
+    const finalUrl = publicUrl.startsWith("https://") 
+      ? publicUrl 
+      : publicUrl.replace(/^http:\/\//, "https://");
+
+    console.log("🔗 Final URL to save:", finalUrl);
+    return finalUrl;
   } catch (error) {
     console.error("Error in uploadToSupabase:", error);
     throw error;
