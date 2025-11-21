@@ -11,7 +11,7 @@ router.get("/nearby", async (req, res) => {
     if (!lat || !lng) {
       return res
         .status(400)
-        .json({ error: "Latitude and longitude are required" });
+        .json({ error: "La latitud y la longitud son obligatorias" });
     }
 
     // Consulta simplificada usando la función calculate_distance
@@ -34,7 +34,7 @@ router.get("/nearby", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching nearby properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -54,7 +54,7 @@ router.get("/with-coordinates", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching properties with coordinates:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

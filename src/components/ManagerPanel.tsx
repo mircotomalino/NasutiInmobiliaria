@@ -375,13 +375,26 @@ const ManagerPanel: React.FC = () => {
       } else {
         const errorText = await response.text();
         console.error("❌ Error del servidor:", response.status, errorText);
-        alert(
-          `Error al guardar la propiedad: ${response.status} - ${errorText}`
-        );
+        
+        // Intentar parsear el error como JSON para mostrar mensajes más claros
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.details && Array.isArray(errorData.details)) {
+            alert(
+              `Error al guardar la propiedad:\n\n${errorData.details.join("\n")}`
+            );
+          } else {
+            alert(
+              `Error al guardar la propiedad: ${errorData.error || errorText}`
+            );
+          }
+        } catch {
+          alert(`Error al guardar la propiedad: ${errorText}`);
+        }
       }
     } catch (error) {
       console.error("💥 Error de red:", error);
-      alert(`Error de conexión: ${error}`);
+      alert(`Error de conexión: No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.`);
     }
   };
 

@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -53,7 +53,7 @@ router.get("/featured", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching featured properties:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -69,7 +69,7 @@ router.patch("/:id/featured", async (req, res) => {
     const propertyId = parseInt(id);
 
     if (isNaN(propertyId)) {
-      return res.status(400).json({ error: "Invalid property ID" });
+      return res.status(400).json({ error: "ID de propiedad inválido" });
     }
 
     // Obtener el estado actual de la propiedad
@@ -79,7 +79,7 @@ router.patch("/:id/featured", async (req, res) => {
     );
 
     if (currentProperty.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     const isFeatured = currentProperty.rows[0].featured;
@@ -113,7 +113,7 @@ router.patch("/:id/featured", async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Error toggling featured status:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -138,7 +138,7 @@ router.get("/:id", async (req, res) => {
     );
 
     if (propertyResult.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     const property = propertyResult.rows[0];
@@ -147,7 +147,7 @@ router.get("/:id", async (req, res) => {
     res.json(property);
   } catch (error) {
     console.error("Error fetching property:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -161,7 +161,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
     if (!validation.isValid) {
       return res.status(400).json({
-        error: "Validation failed",
+        error: "Error de validación",
         details: validation.errors,
       });
     }
@@ -320,7 +320,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 
       res
         .status(500)
-        .json({ error: "Internal server error", details: dbError.message });
+        .json({ error: "Error interno del servidor", details: dbError.message });
     }
   } catch (error) {
     console.error("Error creating property:", error);
@@ -330,16 +330,16 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       // Unique constraint violation
       return res
         .status(400)
-        .json({ error: "Property with this data already exists" });
+        .json({ error: "Ya existe una propiedad con estos datos" });
     } else if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Invalid data: constraint violation",
+        error: "Datos inválidos: violación de restricción",
         details: error.message,
       });
     }
 
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -351,7 +351,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
     // Validar que el ID sea un número válido
     const propertyId = parseInt(id);
     if (isNaN(propertyId)) {
-      return res.status(400).json({ error: "Invalid property ID" });
+      return res.status(400).json({ error: "ID de propiedad inválido" });
     }
 
     // Validar datos de entrada
@@ -361,7 +361,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 
     if (!validation.isValid) {
       return res.status(400).json({
-        error: "Validation failed",
+        error: "Error de validación",
         details: validation.errors,
       });
     }
@@ -406,7 +406,7 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       [propertyId]
     );
     if (existingProperty.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     // Actualizar la propiedad
@@ -471,16 +471,16 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       // Unique constraint violation
       return res
         .status(400)
-        .json({ error: "Property with this data already exists" });
+        .json({ error: "Ya existe una propiedad con estos datos" });
     } else if (error.code === "23514") {
       // Check constraint violation
       return res.status(400).json({
-        error: "Invalid data: constraint violation",
+        error: "Datos inválidos: violación de restricción",
         details: error.message,
       });
     }
 
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -494,13 +494,13 @@ router.delete("/:id", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Propiedad no encontrada" });
     }
 
     res.json({ message: "Property deleted successfully" });
   } catch (error) {
     console.error("Error deleting property:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 

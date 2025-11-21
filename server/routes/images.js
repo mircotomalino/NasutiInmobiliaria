@@ -14,7 +14,7 @@ router.get("/images", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching property images:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
@@ -28,13 +28,13 @@ router.delete("/images/:imageId", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Image not found" });
+      return res.status(404).json({ error: "Imagen no encontrada" });
     }
 
-    res.json({ message: "Image deleted successfully" });
+    res.json({ message: "Imagen eliminada exitosamente" });
   } catch (error) {
     console.error("Error deleting image:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
