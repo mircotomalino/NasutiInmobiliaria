@@ -27,7 +27,8 @@ export type PropertyType =
   | "terreno"
   | "oficina"
   | "local"
-  | "quinta";
+  | "quinta"
+  | "galpon";
 
 export type PropertyStatus = "disponible" | "reservada" | "vendida";
 

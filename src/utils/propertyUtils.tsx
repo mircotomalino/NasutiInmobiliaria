@@ -6,6 +6,7 @@ import {
   Briefcase,
   TreePine,
   Square,
+  Warehouse,
 } from "lucide-react";
 import { PropertyType } from "../types";
 
@@ -24,6 +25,8 @@ export const getPropertyTypeIcon = (type: PropertyType) => {
       return <TreePine className="w-5 h-5" />;
     case "terreno":
       return <Square className="w-5 h-5" />;
+    case "galpon":
+      return <Warehouse className="w-5 h-5" />;
     default:
       return <Home className="w-5 h-5" />;
   }
@@ -44,6 +47,8 @@ export const getPropertyTypeIconSmall = (type: PropertyType) => {
       return <TreePine className="w-4 h-4" />;
     case "terreno":
       return <Square className="w-4 h-4" />;
+    case "galpon":
+      return <Warehouse className="w-4 h-4" />;
     default:
       return <Home className="w-4 h-4" />;
   }

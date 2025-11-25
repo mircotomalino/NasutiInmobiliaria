@@ -11,6 +11,7 @@ import {
   Briefcase,
   TreePine,
   Square,
+  Warehouse,
   Search,
   ExternalLink,
   Star,
@@ -97,6 +98,11 @@ const ManagerPanel: React.FC = () => {
       value: "terreno",
       label: "Terreno",
       icon: <Square className="w-4 h-4" />,
+    },
+    {
+      value: "galpon",
+      label: "Galpón",
+      icon: <Warehouse className="w-4 h-4" />,
     },
   ];
 

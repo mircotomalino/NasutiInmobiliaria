@@ -7,6 +7,7 @@ export const propertyTypes = [
   "oficina",
   "local",
   "quinta",
+  "galpon",
 ];
 export const propertyStatuses = ["disponible", "reservada", "vendida"];
 
