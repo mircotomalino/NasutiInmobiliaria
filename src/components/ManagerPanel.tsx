@@ -11,6 +11,7 @@ import {
   Briefcase,
   TreePine,
   Square,
+  Warehouse,
   Search,
   ExternalLink,
   Star,
@@ -44,6 +45,8 @@ export interface Property
     | "status"
   > {
   id?: number;
+  address?: string;
+  coveredArea?: number;
   latitude?: number | null;
   longitude?: number | null;
   featured?: boolean;
@@ -56,6 +59,7 @@ const ManagerPanel: React.FC = () => {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<
     Array<{ id?: number; url: string }>
@@ -95,6 +99,11 @@ const ManagerPanel: React.FC = () => {
       label: "Terreno",
       icon: <Square className="w-4 h-4" />,
     },
+    {
+      value: "galpon",
+      label: "Galpón",
+      icon: <Warehouse className="w-4 h-4" />,
+    },
   ];
 
   const API_BASE = getApiBase();
@@ -113,13 +122,14 @@ const ManagerPanel: React.FC = () => {
   useEffect(() => {
     let filtered = [...properties];
 
-    // Filtro por búsqueda (nombre/título)
+    // Filtro por búsqueda (nombre/título/dirección)
     if (managerFilters.search.trim()) {
       const searchTerm = managerFilters.search.toLowerCase();
       filtered = filtered.filter(
         property =>
           property.title.toLowerCase().includes(searchTerm) ||
-          property.address.toLowerCase().includes(searchTerm) ||
+          (property.address &&
+            property.address.toLowerCase().includes(searchTerm)) ||
           property.city.toLowerCase().includes(searchTerm)
       );
     }
@@ -246,6 +256,52 @@ const ManagerPanel: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
+    // Validaciones de campos obligatorios
+    const errors: string[] = [];
+
+    // Validar tipo
+    if (!editingProperty.type || editingProperty.type.trim() === "") {
+      errors.push("El tipo de propiedad es obligatorio");
+    }
+
+    // Validar ciudad
+    if (!editingProperty.city || editingProperty.city.trim() === "") {
+      errors.push("La ciudad es obligatoria");
+    }
+
+    // Validar precio
+    if (!editingProperty.price || editingProperty.price <= 0) {
+      errors.push("El precio es obligatorio y debe ser mayor a 0");
+    }
+
+    // Validar coordenadas
+    if (
+      !editingProperty.latitude ||
+      !editingProperty.longitude ||
+      isNaN(editingProperty.latitude) ||
+      isNaN(editingProperty.longitude)
+    ) {
+      errors.push("Las coordenadas son obligatorias");
+    } else {
+      // Validar rango de coordenadas
+      if (editingProperty.latitude < -90 || editingProperty.latitude > 90) {
+        errors.push("La latitud debe estar entre -90 y 90 grados");
+      }
+      if (editingProperty.longitude < -180 || editingProperty.longitude > 180) {
+        errors.push("La longitud debe estar entre -180 y 180 grados");
+      }
+    }
+
+    // Mostrar errores si hay alguno
+    if (errors.length > 0) {
+      alert(
+        "Por favor, corrige los siguientes errores:\n\n" + errors.join("\n")
+      );
+      return;
+    }
+
     console.log(
       "🚀 Iniciando creación/actualización de propiedad:",
       editingProperty
@@ -324,13 +380,30 @@ const ManagerPanel: React.FC = () => {
       } else {
         const errorText = await response.text();
         console.error("❌ Error del servidor:", response.status, errorText);
-        alert(
-          `Error al guardar la propiedad: ${response.status} - ${errorText}`
-        );
+
+        // Intentar parsear el error como JSON para mostrar mensajes más claros
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.details && Array.isArray(errorData.details)) {
+            alert(
+              `Error al guardar la propiedad:\n\n${errorData.details.join("\n")}`
+            );
+          } else {
+            alert(
+              `Error al guardar la propiedad: ${errorData.error || errorText}`
+            );
+          }
+        } catch {
+          alert(`Error al guardar la propiedad: ${errorText}`);
+        }
       }
     } catch (error) {
       console.error("💥 Error de red:", error);
-      alert(`Error de conexión: ${error}`);
+      alert(
+        `Error de conexión: No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.`
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -410,6 +483,7 @@ const ManagerPanel: React.FC = () => {
           bedrooms: property.bedrooms || 0,
           bathrooms: property.bathrooms || 0,
           area: property.area || 0,
+          coveredArea: property.coveredArea || 0,
           patio: property.patio || "No Tiene",
           garage: property.garage || "No Tiene",
           images: property.images || [],
@@ -489,7 +563,7 @@ const ManagerPanel: React.FC = () => {
 
   const handleAdd = () => {
     setEditingProperty({
-      title: "",
+      title: "", // Opcional, se generará automáticamente si está vacío
       description: "",
       price: 0,
       address: "",
@@ -498,6 +572,7 @@ const ManagerPanel: React.FC = () => {
       bedrooms: 1,
       bathrooms: 1,
       area: 0,
+      coveredArea: 0,
       patio: "No Tiene" as PatioType,
       garage: "No Tiene" as GarageType,
     });
@@ -591,7 +666,7 @@ const ManagerPanel: React.FC = () => {
               {/* Buscador */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Buscar por nombre/dirección
+                  Buscar por nombre o ciudad
                 </label>
                 <input
                   type="text"
@@ -719,6 +794,7 @@ const ManagerPanel: React.FC = () => {
           cities={cities}
           patioOptions={patioOptions}
           garageOptions={garageOptions}
+          isSubmitting={isSubmitting}
         />
 
         {/* Lista de propiedades */}
@@ -780,10 +856,10 @@ const ManagerPanel: React.FC = () => {
                           property.status === "disponible"
                             ? "bg-green-100 text-green-800"
                             : property.status === "vendida"
-                            ? "bg-red-100 text-red-800"
-                            : property.status === "reservada"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
+                              ? "bg-red-100 text-red-800"
+                              : property.status === "reservada"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {property.status}

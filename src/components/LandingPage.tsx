@@ -272,10 +272,12 @@ ${formData.mensaje}`;
                               <div className="flex items-start gap-2 mb-3 lg:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
                                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#f0782c] flex-shrink-0 mt-0.5" />
                                 <div>
+                                  {property.address && (
+                                    <div className="font-semibold text-sm sm:text-base text-[#1F2937]">
+                                      {property.address}
+                                    </div>
+                                  )}
                                   <div className="font-semibold text-sm sm:text-base text-[#1F2937]">
-                                    {property.address}
-                                  </div>
-                                  <div className="text-xs sm:text-sm text-gray-600">
                                     {property.city}
                                   </div>
                                 </div>

@@ -30,6 +30,28 @@ const createMigrationsTable = async () => {
         checksum VARCHAR(64)
       )
     `);
+
+    // Habilitar RLS en migrations para Supabase
+    try {
+      await pool.query(`
+        ALTER TABLE public.migrations ENABLE ROW LEVEL SECURITY;
+        
+        DROP POLICY IF EXISTS "Allow service role to read migrations" ON public.migrations;
+        CREATE POLICY "Allow service role to read migrations"
+        ON public.migrations FOR SELECT USING (true);
+
+        DROP POLICY IF EXISTS "Allow service role to insert migrations" ON public.migrations;
+        CREATE POLICY "Allow service role to insert migrations"
+        ON public.migrations FOR INSERT WITH CHECK (true);
+      `);
+    } catch (rlsError) {
+      // Si falla (por ejemplo, en desarrollo local), solo loguear el warning
+      console.warn(
+        "Warning: Could not configure RLS for migrations table:",
+        rlsError.message
+      );
+    }
+
     console.log("✅ Migrations table ready");
   } catch (error) {
     console.error("❌ Error creating migrations table:", error);

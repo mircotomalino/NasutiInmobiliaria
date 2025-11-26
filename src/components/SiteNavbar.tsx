@@ -52,31 +52,32 @@ const SiteNavbar: React.FC = () => {
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
-          <nav className="hidden md:flex space-x-8">
-            <NavLink
-              to="/"
-              className={classes(isInicio)}
-              onClick={() => {
-                // Desplazar al tope siempre que se haga click en Inicio
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-            >
-              Inicio
-            </NavLink>
-            <NavLink to="/catalogo" className={classes(isCatalogo)}>
-              Propiedades
-            </NavLink>
-            <a href="/#quienes-somos" className={classes(isQuienes)}>
-              Quiénes Somos
-            </a>
-            <a href="/#contacto" className={classes(isContacto)}>
-              Contacto
-            </a>
-          </nav>
+            <nav className="hidden md:flex space-x-8">
+              <NavLink
+                to="/"
+                className={classes(isInicio)}
+                onClick={() => {
+                  // Desplazar al tope siempre que se haga click en Inicio
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Inicio
+              </NavLink>
+              <NavLink to="/catalogo" className={classes(isCatalogo)}>
+                Propiedades
+              </NavLink>
+              <a href="/#quienes-somos" className={classes(isQuienes)}>
+                Quiénes Somos
+              </a>
+              <a href="/#contacto" className={classes(isContacto)}>
+                Contacto
+              </a>
+            </nav>
           )}
 
           {/* Botón hamburguesa móvil - Ocultar en página de login */}
           {!isLoginPage && (
+<<<<<<< HEAD
           <button
             className="md:hidden p-2 rounded-lg hover:bg-[#e06a1f] transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -88,12 +89,26 @@ const SiteNavbar: React.FC = () => {
               <Menu className="w-6 h-6 text-white" />
             )}
           </button>
+=======
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Abrir menú"
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6 text-gray-600" />
+              ) : (
+                <Menu className="w-6 h-6 text-gray-600" />
+              )}
+            </button>
+>>>>>>> c16f63724e36497d3436f8ecf89b8affb376f040
           )}
         </div>
       </div>
 
       {/* Menú móvil - Ocultar en página de login */}
       {!isLoginPage && (
+<<<<<<< HEAD
       <div
         className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
           isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
@@ -133,6 +148,47 @@ const SiteNavbar: React.FC = () => {
           </a>
         </nav>
       </div>
+=======
+        <div
+          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+            isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <nav className="px-4 pt-2 pb-4 space-y-3 bg-white border-t border-gray-100">
+            <NavLink
+              to="/"
+              className={`block py-2 px-4 rounded-lg ${classes(isInicio)}`}
+              onClick={() => {
+                handleLinkClick();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Inicio
+            </NavLink>
+            <NavLink
+              to="/catalogo"
+              className={`block py-2 px-4 rounded-lg ${classes(isCatalogo)}`}
+              onClick={handleLinkClick}
+            >
+              Propiedades
+            </NavLink>
+            <a
+              href="/#quienes-somos"
+              className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
+              onClick={handleLinkClick}
+            >
+              Quiénes Somos
+            </a>
+            <a
+              href="/#contacto"
+              className={`block py-2 px-4 rounded-lg ${classes(isContacto)}`}
+              onClick={handleLinkClick}
+            >
+              Contacto
+            </a>
+          </nav>
+        </div>
+>>>>>>> c16f63724e36497d3436f8ecf89b8affb376f040
       )}
     </header>
   );

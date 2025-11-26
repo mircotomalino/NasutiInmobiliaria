@@ -46,7 +46,7 @@ const migrateProperties = async () => {
 
     // Obtener todas las propiedades de la BD local
     const localProperties = await localPool.query(`
-      SELECT id, title, description, price, address, city, province, 
+      SELECT id, title, description, price, city, 
              type, bedrooms, bathrooms, area, patio, garage, status,
              latitude, longitude, featured,
              published_date, created_at, updated_at
@@ -70,19 +70,17 @@ const migrateProperties = async () => {
         await productionPool.query(
           `
           INSERT INTO properties (
-            id, title, description, price, address, city, province,
+            id, title, description, price, city,
             type, bedrooms, bathrooms, area, patio, garage, status,
             latitude, longitude, featured,
             published_date, created_at, updated_at
           )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
           ON CONFLICT (id) DO UPDATE SET
             title = EXCLUDED.title,
             description = EXCLUDED.description,
             price = EXCLUDED.price,
-            address = EXCLUDED.address,
             city = EXCLUDED.city,
-            province = EXCLUDED.province,
             type = EXCLUDED.type,
             bedrooms = EXCLUDED.bedrooms,
             bathrooms = EXCLUDED.bathrooms,
@@ -100,9 +98,7 @@ const migrateProperties = async () => {
             property.title,
             property.description,
             property.price,
-            property.address,
             property.city,
-            property.province,
             property.type,
             property.bedrooms,
             property.bathrooms,

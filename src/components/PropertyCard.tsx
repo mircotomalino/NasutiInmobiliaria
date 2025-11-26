@@ -52,14 +52,30 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             {property.title}
           </h3>
         </div>
-        {/* Precio oculto en cards del listado */}
+
+        {/* Precio */}
+        <div className="mb-2 flex-shrink-0">
+          <p className="text-xl font-bold text-[#f0782c]">
+            ${property.price.toLocaleString("es-AR")}
+          </p>
+        </div>
+
+        {/* Descripción */}
+        {property.description && (
+          <div className="mb-2 flex-shrink-0">
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {property.description}
+            </p>
+          </div>
+        )}
 
         {/* Ubicación */}
         <div className="property-location mb-3 flex-shrink-0">
           <div className="flex items-center gap-1 text-sm text-gray-600">
             <MapPin className="w-4 h-4" />
             <span className="truncate">
-              {property.address}, {property.city}
+              {property.address || property.city}
+              {property.city && property.address && `, ${property.city}`}
             </span>
           </div>
         </div>
@@ -72,26 +88,70 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               <span>{property.bedrooms} hab.</span>
             </div>
           )}
+          {property.bedrooms === 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Bed className="w-3 h-3" />
+              <span>0 hab.</span>
+            </div>
+          )}
           {property.bathrooms > 0 && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
               <Bath className="w-3 h-3" />
               <span>{property.bathrooms} baños</span>
             </div>
           )}
-          <div className="property-feature flex items-center gap-1 text-gray-600">
-            <Square className="w-3 h-3" />
-            <span>{property.area}m²</span>
-          </div>
+          {property.bathrooms === 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Bath className="w-3 h-3" />
+              <span>0 baños</span>
+            </div>
+          )}
+          {property.area > 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Square className="w-3 h-3" />
+              <span>Terreno: {property.area}m²</span>
+            </div>
+          )}
+          {property.area === 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Square className="w-3 h-3" />
+              <span>Terreno: 0m²</span>
+            </div>
+          )}
+          {property.coveredArea && property.coveredArea > 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-600">
+              <Square className="w-3 h-3" />
+              <span>Cubierta: {property.coveredArea}m²</span>
+            </div>
+          )}
+          {property.coveredArea === 0 && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Square className="w-3 h-3" />
+              <span>Cubierta: 0m²</span>
+            </div>
+          )}
           {property.patio && property.patio !== "No Tiene" && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
               <Trees className="w-3 h-3" />
               <span>Patio {property.patio.toLowerCase()}</span>
             </div>
           )}
+          {(!property.patio || property.patio === "No Tiene") && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Trees className="w-3 h-3" />
+              <span>Sin patio</span>
+            </div>
+          )}
           {property.garage && property.garage !== "No Tiene" && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
               <Car className="w-3 h-3 flex-shrink-0" />
               <span className="whitespace-nowrap">{property.garage}</span>
+            </div>
+          )}
+          {(!property.garage || property.garage === "No Tiene") && (
+            <div className="property-feature flex items-center gap-1 text-gray-400">
+              <Car className="w-3 h-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">Sin garage</span>
             </div>
           )}
         </div>

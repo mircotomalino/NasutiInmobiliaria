@@ -2,15 +2,15 @@ export interface Property {
   id: string;
   title: string;
   description: string;
-  address: string;
-  city: string;
-  province: string;
+  address?: string; // Dirección completa
+  city: string; // Ciudad
   price: number;
   type: PropertyType;
   status: PropertyStatus;
   bedrooms: number;
   bathrooms: number;
-  area: number; // en m²
+  area: number; // Superficie del terreno en m²
+  coveredArea?: number; // Superficie cubierta en m²
   patio?: PatioType;
   garage?: GarageType;
   latitude?: number; // Coordenada de latitud (decimal)
@@ -27,13 +27,18 @@ export type PropertyType =
   | "terreno"
   | "oficina"
   | "local"
-  | "quinta";
+  | "quinta"
+  | "galpon";
 
 export type PropertyStatus = "disponible" | "reservada" | "vendida";
 
 export type PatioType = "No Tiene" | "Chico" | "Mediano" | "Grande";
 
-export type GarageType = "No Tiene" | "1 Vehiculo" | "2 Vehiculos";
+export type GarageType =
+  | "No Tiene"
+  | "1 Vehiculo"
+  | "2 Vehiculos"
+  | "3 Vehiculos";
 
 export interface FilterOptions {
   searchTerm: string;

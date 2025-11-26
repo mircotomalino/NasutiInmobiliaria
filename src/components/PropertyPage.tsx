@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Property } from "../types";
 import PropertyMap from "./PropertyMap";
-import PropertyMapEmbed from "./PropertyMapEmbed";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
@@ -225,10 +224,16 @@ const PropertyPage: React.FC = () => {
                   <div className="flex items-start gap-3 text-gray-700 mb-4">
                     <MapPin className="w-5 h-5 mt-1 text-[#f0782c]" />
                     <div>
-                      <p className="font-medium">{property.address}</p>
-                      <p>
-                        {property.city}, {property.province}
-                      </p>
+                      {property.address && (
+                        <p className="font-medium">{property.address}</p>
+                      )}
+                      <p className="font-medium">{property.city}</p>
+                      {property.latitude && property.longitude && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Coordenadas: {property.latitude.toFixed(6)},{" "}
+                          {property.longitude.toFixed(6)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -237,24 +242,15 @@ const PropertyPage: React.FC = () => {
                     <PropertyMap
                       latitude={property.latitude}
                       longitude={property.longitude}
-                      address={property.address}
                       title={property.title}
                       className="mt-4"
                     />
                   ) : (
-                    <div className="mt-4">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-3">
-                        Ubicación en el mapa
-                      </h4>
-                      <PropertyMapEmbed
-                        address={`${property.address}, ${property.city}, ${property.province}`}
-                        height="300px"
-                        zoom={15}
-                        className="rounded-lg overflow-hidden shadow-md"
-                      />
-                      <p className="text-sm text-gray-600 mt-2">
-                        Mapa aproximado basado en la dirección. Para coordenadas
-                        exactas, contacta con nosotros.
+                    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        Esta propiedad no tiene coordenadas configuradas. Por
+                        favor, agrega las coordenadas desde el panel de
+                        administración.
                       </p>
                     </div>
                   )}
@@ -299,9 +295,23 @@ const PropertyPage: React.FC = () => {
                         <p className="font-medium text-gray-900">
                           {property.area} m²
                         </p>
-                        <p className="text-sm text-gray-600">Superficie</p>
+                        <p className="text-sm text-gray-600">Terreno</p>
                       </div>
                     </div>
+
+                    {property.coveredArea && property.coveredArea > 0 && (
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Square className="w-5 h-5 text-[#f0782c]" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {property.coveredArea} m²
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Superficie Cubierta
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     {property.patio && property.patio !== "No Tiene" && (
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
