@@ -2,12 +2,12 @@ import React from "react";
 import { Filter, RotateCcw } from "lucide-react";
 import { FilterOptions } from "../types";
 import {
-  propertyTypes,
   propertyStatuses,
   cities,
   patioOptions,
   garageOptions,
 } from "../data/properties";
+import { propertyTypes, getPropertyTypeLabel } from "../utils/propertyUtils";
 
 interface PropertyFiltersProps {
   filters: FilterOptions;
@@ -88,7 +88,7 @@ const PropertyFilters: React.FC<PropertyFiltersProps> = ({
             <option value="">Todos los tipos</option>
             {propertyTypes.map(type => (
               <option key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
+                {getPropertyTypeLabel(type)}
               </option>
             ))}
           </select>

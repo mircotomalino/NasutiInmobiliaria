@@ -5,13 +5,6 @@ import {
   Edit,
   Trash2,
   X,
-  Home,
-  Building,
-  Store,
-  Briefcase,
-  TreePine,
-  Square,
-  Warehouse,
   Search,
   ExternalLink,
   Star,
@@ -29,6 +22,7 @@ import {
   PatioType,
   GarageType,
 } from "../types";
+import { propertyTypesWithLabels } from "../utils/propertyUtils";
 import PropertyFormModal from "./PropertyFormModal";
 import { getApiBase } from "../utils/api";
 
@@ -76,35 +70,8 @@ const ManagerPanel: React.FC = () => {
     status: "",
   });
 
-  const propertyTypes = [
-    { value: "casa", label: "Casa", icon: <Home className="w-4 h-4" /> },
-    {
-      value: "departamento",
-      label: "Departamento",
-      icon: <Building className="w-4 h-4" />,
-    },
-    {
-      value: "oficina",
-      label: "Oficina",
-      icon: <Briefcase className="w-4 h-4" />,
-    },
-    { value: "local", label: "Local", icon: <Store className="w-4 h-4" /> },
-    {
-      value: "quinta",
-      label: "Quinta",
-      icon: <TreePine className="w-4 h-4" />,
-    },
-    {
-      value: "terreno",
-      label: "Terreno",
-      icon: <Square className="w-4 h-4" />,
-    },
-    {
-      value: "galpon",
-      label: "Galpón",
-      icon: <Warehouse className="w-4 h-4" />,
-    },
-  ];
+  // Usar la configuración centralizada de tipos de propiedad
+  const propertyTypes = propertyTypesWithLabels("small");
 
   const API_BASE = getApiBase();
 
@@ -386,7 +353,9 @@ const ManagerPanel: React.FC = () => {
           const errorData = JSON.parse(errorText);
           if (errorData.details && Array.isArray(errorData.details)) {
             alert(
-              `Error al guardar la propiedad:\n\n${errorData.details.join("\n")}`
+              `Error al guardar la propiedad:\n\n${errorData.details.join(
+                "\n"
+              )}`
             );
           } else {
             alert(
@@ -856,10 +825,10 @@ const ManagerPanel: React.FC = () => {
                           property.status === "disponible"
                             ? "bg-green-100 text-green-800"
                             : property.status === "vendida"
-                              ? "bg-red-100 text-red-800"
-                              : property.status === "reservada"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-gray-100 text-gray-800"
+                            ? "bg-red-100 text-red-800"
+                            : property.status === "reservada"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {property.status}

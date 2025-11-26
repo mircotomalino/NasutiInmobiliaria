@@ -7,49 +7,64 @@ import {
   TreePine,
   Square,
   Warehouse,
+  LucideIcon,
 } from "lucide-react";
 import { PropertyType } from "../types";
+import React from "react";
+
+export const PROPERTY_TYPE_CONFIG: Record<
+  PropertyType,
+  { label: string; icon: LucideIcon }
+> = {
+  casa: { label: "Casa", icon: Home },
+  departamento: { label: "Departamento", icon: Building },
+  terreno: { label: "Terreno", icon: Square },
+  oficina: { label: "Oficina", icon: Briefcase },
+  local: { label: "Local", icon: Store },
+  quinta: { label: "Quinta", icon: TreePine },
+  galpon: { label: "Galpón", icon: Warehouse },
+};
+
+export const propertyTypes: PropertyType[] = Object.keys(
+  PROPERTY_TYPE_CONFIG
+) as PropertyType[];
+
+export const propertyTypesWithLabels = (
+  iconSize: "small" | "large" = "small"
+): Array<{ value: PropertyType; label: string; icon: React.ReactElement }> => {
+  return propertyTypes.map(type => {
+    const config = PROPERTY_TYPE_CONFIG[type];
+    const IconComponent = config.icon;
+    const size = iconSize === "small" ? "w-4 h-4" : "w-5 h-5";
+    return {
+      value: type,
+      label: config.label,
+      icon: <IconComponent className={size} />,
+    };
+  });
+};
 
 // Función centralizada para obtener el ícono según el tipo de propiedad
 export const getPropertyTypeIcon = (type: PropertyType) => {
-  switch (type) {
-    case "casa":
-      return <Home className="w-5 h-5" />;
-    case "departamento":
-      return <Building className="w-5 h-5" />;
-    case "oficina":
-      return <Briefcase className="w-5 h-5" />;
-    case "local":
-      return <Store className="w-5 h-5" />;
-    case "quinta":
-      return <TreePine className="w-5 h-5" />;
-    case "terreno":
-      return <Square className="w-5 h-5" />;
-    case "galpon":
-      return <Warehouse className="w-5 h-5" />;
-    default:
-      return <Home className="w-5 h-5" />;
+  const config = PROPERTY_TYPE_CONFIG[type];
+  if (!config) {
+    return <Home className="w-5 h-5" />;
   }
+  const IconComponent = config.icon;
+  return <IconComponent className="w-5 h-5" />;
 };
 
 // Función para obtener el ícono pequeño (para cards)
 export const getPropertyTypeIconSmall = (type: PropertyType) => {
-  switch (type) {
-    case "casa":
-      return <Home className="w-4 h-4" />;
-    case "departamento":
-      return <Building className="w-4 h-4" />;
-    case "oficina":
-      return <Briefcase className="w-4 h-4" />;
-    case "local":
-      return <Store className="w-4 h-4" />;
-    case "quinta":
-      return <TreePine className="w-4 h-4" />;
-    case "terreno":
-      return <Square className="w-4 h-4" />;
-    case "galpon":
-      return <Warehouse className="w-4 h-4" />;
-    default:
-      return <Home className="w-4 h-4" />;
+  const config = PROPERTY_TYPE_CONFIG[type];
+  if (!config) {
+    return <Home className="w-4 h-4" />;
   }
+  const IconComponent = config.icon;
+  return <IconComponent className="w-4 h-4" />;
+};
+
+// Función para obtener el label de un tipo
+export const getPropertyTypeLabel = (type: PropertyType): string => {
+  return PROPERTY_TYPE_CONFIG[type]?.label || type;
 };
