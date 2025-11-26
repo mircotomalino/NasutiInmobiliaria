@@ -159,12 +159,22 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                 <div className="modal-location-text">
                   {property.address && <h5>{property.address}</h5>}
                   <h5>{property.city}</h5>
-                  {property.latitude && property.longitude && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {property.latitude.toFixed(6)},{" "}
-                      {property.longitude.toFixed(6)}
-                    </p>
-                  )}
+                  {property.latitude != null &&
+                    property.longitude != null && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {typeof property.latitude === "number"
+                          ? property.latitude.toFixed(6)
+                          : parseFloat(
+                              String(property.latitude).trim()
+                            ).toFixed(6)}
+                        ,{" "}
+                        {typeof property.longitude === "number"
+                          ? property.longitude.toFixed(6)
+                          : parseFloat(
+                              String(property.longitude).trim()
+                            ).toFixed(6)}
+                      </p>
+                    )}
                 </div>
               </div>
 

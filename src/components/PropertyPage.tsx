@@ -71,6 +71,15 @@ const PropertyPage: React.FC = () => {
     );
   }
 
+  // Helper para formatear coordenadas que pueden venir como string o number
+  const formatCoordinate = (value: number | string | undefined | null) => {
+    if (value === null || value === undefined) return null;
+    const num =
+      typeof value === "number" ? value : parseFloat(String(value).trim());
+    if (Number.isNaN(num)) return null;
+    return num.toFixed(6);
+  };
+
   if (!property) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -93,6 +102,10 @@ const PropertyPage: React.FC = () => {
   }
 
   const images = property.images || [];
+  const latitudeFormatted = formatCoordinate(property.latitude);
+  const longitudeFormatted = formatCoordinate(property.longitude);
+  const hasValidCoordinates =
+    latitudeFormatted !== null && longitudeFormatted !== null;
   const hasMultipleImages = images.length > 1;
 
   return (
@@ -228,17 +241,16 @@ const PropertyPage: React.FC = () => {
                         <p className="font-medium">{property.address}</p>
                       )}
                       <p className="font-medium">{property.city}</p>
-                      {property.latitude && property.longitude && (
+                      {hasValidCoordinates && (
                         <p className="text-sm text-gray-500 mt-1">
-                          Coordenadas: {property.latitude.toFixed(6)},{" "}
-                          {property.longitude.toFixed(6)}
+                          Coordenadas: {latitudeFormatted}, {longitudeFormatted}
                         </p>
                       )}
                     </div>
                   </div>
 
                   {/* Mapa de la propiedad */}
-                  {property.latitude && property.longitude ? (
+                  {hasValidCoordinates ? (
                     <PropertyMap
                       latitude={property.latitude}
                       longitude={property.longitude}
