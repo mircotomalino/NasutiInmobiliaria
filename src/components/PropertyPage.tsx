@@ -252,8 +252,8 @@ const PropertyPage: React.FC = () => {
                   {/* Mapa de la propiedad */}
                   {hasValidCoordinates ? (
                     <PropertyMap
-                      latitude={property.latitude}
-                      longitude={property.longitude}
+                      latitude={latitudeFormatted!}
+                      longitude={longitudeFormatted!}
                       title={property.title}
                       className="mt-4"
                     />
