@@ -7,6 +7,8 @@ import {
   TreePine,
   Square,
   Warehouse,
+  Car,
+  Wheat,
   LucideIcon,
 } from "lucide-react";
 import { PropertyType } from "../types";
@@ -23,6 +25,8 @@ export const PROPERTY_TYPE_CONFIG: Record<
   local: { label: "Local", icon: Store },
   quinta: { label: "Quinta", icon: TreePine },
   galpon: { label: "Galpón", icon: Warehouse },
+  cochera: { label: "Cochera", icon: Car },
+  campo: { label: "Campo", icon: Wheat },
 };
 
 export const propertyTypes: PropertyType[] = Object.keys(

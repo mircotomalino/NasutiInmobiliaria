@@ -28,7 +28,9 @@ export type PropertyType =
   | "oficina"
   | "local"
   | "quinta"
-  | "galpon";
+  | "galpon"
+  | "cochera"
+  | "campo";
 
 export type PropertyStatus = "disponible" | "reservada" | "vendida";
 
