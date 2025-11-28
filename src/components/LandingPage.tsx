@@ -455,7 +455,7 @@ ${formData.mensaje}`;
               <div className="text-center">
                 <div className="mb-6">
                   <img
-                    src="/img/institucionales/camilaBuzzi.jpg"
+                    src="/img/institucionales/CamilaBuzzi.jpg"
                     alt="Camila - Equipo"
                     className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
                   />
@@ -483,9 +483,8 @@ ${formData.mensaje}`;
           </div>
         </section>
 
-        {/* Sección Historia */}
         <section className="py-20 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">
                 Nuestra Historia
@@ -530,91 +529,92 @@ ${formData.mensaje}`;
               </div>
             </div>
 
-            {/* Contenido principal */}
-            <div className="relative bg-white p-28 lg:p-32 rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              {/* Fondo con imagen */}
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
-                style={{
-                  backgroundImage:
-                    "url(/img/institucionales/GastonYSergio1.jpg)",
-                }}
-              ></div>
-              {/* Contenido con z-index para estar encima */}
-              <div className="relative z-10">
-                <div className="text-center mb-8">
-                  <h3 className="text-[#1F2937] text-2xl font-bold mb-4">
-                    El Legado de Erminio Nasuti
-                  </h3>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 h-[26rem] lg:h-[550px]">
+                <div className="relative">
+                  <img
+                    src="/img/institucionales/InmobiliariaLateral1.jpg"
+                    alt="Inmobiliaria Nasuti"
+                    className="w-full h-full object-cover rounded-l-xl"
+                  />
                 </div>
 
-                <div className="space-y-6">
-                  <p className="text-base text-[#374151] leading-relaxed">
-                    La inmobiliaria Nasuti nació de la visión y el compromiso de
-                    un hombre con valores inquebrantables: el{" "}
-                    <span className="text-[#f0782c] font-semibold">
-                      Sr. Erminio Nasuti
-                    </span>
-                    . Fundador de la inmobiliaria con mayor trayectoria y
-                    experiencia en Marcos Juárez y la región, Erminio marcó un
-                    hito en el sector desde{" "}
-                    <span className="text-[#f0782c] font-semibold">1964</span>.
-                    Con un carácter decidido y un enfoque centrado en las
-                    <span className="text-[#1F2937] font-semibold">
-                      {" "}
-                      relaciones personales
-                    </span>{" "}
-                    por encima de cualquier negocio, se ganó el respeto y el
-                    prestigio de toda la comunidad.
-                  </p>
+                <div className="pt-6 pb-8 px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start">
+                  <div className="mb-2">
+                    <h3 className="text-[#1F2937] text-xl lg:text-2xl font-bold mb-1">
+                      El Legado de Erminio Nasuti
+                    </h3>
+                  </div>
 
-                  <p className="text-base text-[#374151] leading-relaxed">
-                    Su legado de{" "}
-                    <span className="text-[#1F2937] font-semibold">
-                      integridad
-                    </span>{" "}
-                    y{" "}
-                    <span className="text-[#1F2937] font-semibold">
-                      profesionalismo
-                    </span>{" "}
-                    continúa vivo en la ciudad y ha sido heredado de manera
-                    innata por su hijo,
-                    <span className="text-[#f0782c] font-semibold">
-                      {" "}
-                      Sergio Nasuti
-                    </span>
-                    , actual socio de la inmobiliaria. Sergio mantiene con
-                    orgullo la identidad que distingue a la empresa,
-                    consolidando su reputación como un referente en el mercado.
-                  </p>
+                  <div className="space-y-4">
+                    <p className="text-sm text-[#374151] leading-relaxed">
+                      La inmobiliaria Nasuti nació de la visión y el compromiso
+                      de un hombre con valores inquebrantables: el{" "}
+                      <span className="text-[#f0782c] font-semibold">
+                        Sr. Erminio Nasuti
+                      </span>
+                      . Fundador de la inmobiliaria con mayor trayectoria y
+                      experiencia en Marcos Juárez y la región, Erminio marcó un
+                      hito en el sector desde{" "}
+                      <span className="text-[#f0782c] font-semibold">1964</span>
+                      . Con un carácter decidido y un enfoque centrado en las
+                      <span className="text-[#1F2937] font-semibold">
+                        {" "}
+                        relaciones personales
+                      </span>{" "}
+                      por encima de cualquier negocio, se ganó el respeto y el
+                      prestigio de toda la comunidad.
+                    </p>
 
-                  <p className="text-base text-[#374151] leading-relaxed">
-                    A lo largo de los años, gracias al esfuerzo y la dedicación
-                    de ambos, Inmobiliaria Nasuti ha concretado
-                    <span className="text-[#f0782c] font-semibold">
-                      {" "}
-                      más de 750 operaciones inmobiliarias
-                    </span>
-                    , alcanzando un nivel de cierre de ventas sin precedentes.
-                    Cada transacción se realiza con la máxima profesionalidad,
-                    asegurando el cumplimiento de todas las formalidades legales
-                    correspondientes.
-                  </p>
+                    <p className="text-sm text-[#374151] leading-relaxed">
+                      Su legado de{" "}
+                      <span className="text-[#1F2937] font-semibold">
+                        integridad
+                      </span>{" "}
+                      y{" "}
+                      <span className="text-[#1F2937] font-semibold">
+                        profesionalismo
+                      </span>{" "}
+                      continúa vivo en la ciudad y ha sido heredado de manera
+                      innata por su hijo,
+                      <span className="text-[#f0782c] font-semibold">
+                        {" "}
+                        Sergio Nasuti
+                      </span>
+                      , actual socio de la inmobiliaria. Sergio mantiene con
+                      orgullo la identidad que distingue a la empresa,
+                      consolidando su reputación como un referente en el
+                      mercado.
+                    </p>
 
-                  <p className="text-base text-[#374151] leading-relaxed">
-                    Con sólidos cimientos basados en el{" "}
-                    <span className="text-[#1F2937] font-semibold">
-                      profesionalismo
-                    </span>{" "}
-                    y la{" "}
-                    <span className="text-[#1F2937] font-semibold">
-                      integridad
-                    </span>
-                    , Inmobiliaria Nasuti se proyecta hacia el futuro con el
-                    compromiso de concretar operaciones fructíferas y
-                    satisfactorias para sus clientes, manteniendo siempre los
-                    valores que la han definido.
-                  </p>
+                    <p className="text-sm text-[#374151] leading-relaxed">
+                      A lo largo de los años, gracias al esfuerzo y la
+                      dedicación de ambos, Inmobiliaria Nasuti ha concretado
+                      <span className="text-[#f0782c] font-semibold">
+                        {" "}
+                        más de 750 operaciones inmobiliarias
+                      </span>
+                      , alcanzando un nivel de cierre de ventas sin precedentes.
+                      Cada transacción se realiza con la máxima profesionalidad,
+                      asegurando el cumplimiento de todas las formalidades
+                      legales correspondientes.
+                    </p>
+
+                    <p className="text-sm text-[#374151] leading-relaxed">
+                      Con sólidos cimientos basados en el{" "}
+                      <span className="text-[#1F2937] font-semibold">
+                        profesionalismo
+                      </span>{" "}
+                      y la{" "}
+                      <span className="text-[#1F2937] font-semibold">
+                        integridad
+                      </span>
+                      , Inmobiliaria Nasuti se proyecta hacia el futuro con el
+                      compromiso de concretar operaciones fructíferas y
+                      satisfactorias para sus clientes, manteniendo siempre los
+                      valores que la han definido.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -863,7 +863,7 @@ ${formData.mensaje}`;
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <p className="text-gray-300">
-                © 2024 Nasuti Inmobiliaria. Todos los derechos reservados. | 60
+                © 2025 Nasuti Inmobiliaria. Todos los derechos reservados. | 60
                 años de experiencia en el mercado inmobiliario.
               </p>
             </div>
