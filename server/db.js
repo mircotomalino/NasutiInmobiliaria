@@ -188,7 +188,7 @@ const initDatabase = async () => {
         ON public.property_images FOR DELETE USING (true);
       `);
 
-      console.log("RLS policies configured successfully");
+      console.log("🔒 RLS policies configured successfully");
     } catch (rlsError) {
       // Si falla (por ejemplo, en desarrollo local sin Supabase), solo loguear el error
       // pero no fallar la inicialización completa
@@ -198,7 +198,7 @@ const initDatabase = async () => {
       );
     }
 
-    console.log("Database tables initialized successfully");
+    console.log("🗃️ Database tables initialized successfully");
   } catch (error) {
     console.error("Error initializing database:", error);
   }

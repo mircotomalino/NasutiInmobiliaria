@@ -8,6 +8,11 @@ yarn-error.log*
 dist/
 build/
 
+# Uploads (ahora se usa Supabase Storage)
+uploads/
+server/public/uploads/
+public/uploads/
+
 # Environment variables
 .env
 .env.local

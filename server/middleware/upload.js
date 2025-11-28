@@ -1,35 +1,12 @@
 import multer from "multer";
 import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import fs from "fs";
 import { supabase, STORAGE_BUCKET } from "../config/supabase.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Configuración de multer para almacenamiento en memoria (necesario para Supabase Storage)
 const memoryStorage = multer.memoryStorage();
 
-// Configuración de multer para almacenamiento en disco (fallback si no hay Supabase)
-const diskStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
-});
-
-// Usar almacenamiento en memoria si Supabase está configurado, sino usar disco
-const storage = supabase ? memoryStorage : diskStorage;
-
 export const upload = multer({
-  storage: storage,
+  storage: memoryStorage,
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
@@ -42,20 +19,15 @@ export const upload = multer({
 // Función para subir imagen a Supabase Storage
 export const uploadToSupabase = async (file, propertyId) => {
   if (!supabase) {
-    // Fallback: retornar ruta local
-    // Si el archivo tiene filename (diskStorage), usarlo; si no, generar uno
-    const filename =
-      file.filename ||
-      `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(
-        file.originalname
-      )}`;
-    return `/uploads/${filename}`;
+    throw new Error(
+      "Supabase Storage no está configurado. Configura SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en las variables de entorno."
+    );
   }
 
   // Verificar que el archivo tenga buffer (necesario para Supabase Storage)
   if (!file.buffer) {
     throw new Error(
-      `File ${file.originalname} does not have buffer. Make sure multer is using memoryStorage when Supabase is configured.`
+      `File ${file.originalname} does not have buffer. Make sure multer is using memoryStorage.`
     );
   }
 
@@ -118,11 +90,3 @@ export const uploadToSupabase = async (file, propertyId) => {
     throw error;
   }
 };
-
-// Crear directorio de uploads si no existe (solo para fallback local)
-if (!supabase) {
-  const uploadsDir = path.join(__dirname, "../public/uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-}

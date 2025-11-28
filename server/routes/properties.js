@@ -319,7 +319,6 @@ router.post("/", upload.any(), async (req, res) => {
         : [];
       if (imageFiles.length > 0) {
         try {
-          // Subir imágenes a Supabase Storage o usar ruta local
           const imageUrls = await Promise.all(
             imageFiles.map(async file => {
               try {
@@ -600,7 +599,6 @@ router.put("/:id", upload.any(), async (req, res) => {
       ? req.files.filter(file => file.fieldname === "images")
       : [];
     if (imageFiles.length > 0) {
-      // Subir imágenes a Supabase Storage o usar ruta local
       const imageUrls = await Promise.all(
         imageFiles.map(file => uploadToSupabase(file, propertyId))
       );

@@ -9,13 +9,6 @@ export default defineConfig({
     open: true,
     // Configuración para manejar rutas de SPA en desarrollo
     historyApiFallback: true,
-    // Proxy para servir imágenes desde el backend
-    proxy: {
-      "/uploads": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-      },
-    },
   },
   build: {
     outDir: "dist",

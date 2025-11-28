@@ -6,20 +6,17 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Service rol
 const supabaseBucket = process.env.SUPABASE_STORAGE_BUCKET || "PropertyImages";
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.warn(
-    "⚠️  Supabase Storage no configurado. Las imágenes se guardarán localmente."
+  throw new Error(
+    "❌ Supabase Storage es obligatorio. Configura SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en las variables de entorno."
   );
 }
 
 // Cliente de Supabase con service role key (bypass RLS para operaciones del servidor)
-export const supabase =
-  supabaseUrl && supabaseServiceKey
-    ? createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      })
-    : null;
+export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
 
 export const STORAGE_BUCKET = supabaseBucket;

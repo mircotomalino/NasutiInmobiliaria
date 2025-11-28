@@ -8,6 +8,15 @@ import healthRouter from "./routes/health.js";
 import propertiesRouter from "./routes/properties.js";
 import geographicRouter from "./routes/geographic.js";
 
+// Verificar configuración de Supabase Storage
+let supabaseStorageConfigured = false;
+try {
+  const { supabase } = await import("./config/supabase.js");
+  supabaseStorageConfigured = !!supabase;
+} catch (error) {
+  console.warn("⚠️ Error al configurar Supabase Storage:", error.message);
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -41,5 +50,11 @@ app.use("/api/properties", geographicRouter); // Rutas geográficas bajo /api/pr
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log("✅ Supabase Storage configured:", !!process.env.SUPABASE_URL);
+  if (supabaseStorageConfigured) {
+    console.log("📦 Supabase Storage configured successfully");
+  } else {
+    console.warn(
+      "⚠️ Supabase Storage no está configurado. Las imágenes no funcionarán."
+    );
+  }
 });
