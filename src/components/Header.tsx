@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ searchTerm, onSearchChange }) => {
           <div className="header-logo-section">
             <div className="logo-container">
               <img
-                src="/img/LogoNasuti.png"
+                src="/img/logos/LogoNasuti.png"
                 alt="Logo Nasuti Inmobiliaria"
                 className="header-logo"
               />

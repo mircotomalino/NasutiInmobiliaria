@@ -151,8 +151,8 @@ ${formData.mensaje}`;
 
               <div className="relative">
                 <img
-                  src="/img/institucionales/inmobiliariaFrenteAmplia.jpg"
-                  alt="Inmobiliaria Durio"
+                  src="/img/institucionales/GastonYSergio1.jpg"
+                  alt="Gastón y Sergio - Nasuti Inmobiliaria"
                   className="w-full h-96 lg:h-[500px] object-cover rounded-lg shadow-lg"
                 />
               </div>

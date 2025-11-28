@@ -41,7 +41,7 @@ const SiteNavbar: React.FC = () => {
             }}
           >
             <img
-              src="/img/LogoNasuti.png"
+              src="/img/logos/LogoNasuti.png"
               alt="Nasuti Inmobiliaria Logo"
               className="h-12 w-auto"
             />
@@ -50,45 +50,45 @@ const SiteNavbar: React.FC = () => {
             </h1>
           </div>
 
-        {/* Navegación desktop - Ocultar en página de login */}
-        {!isLoginPage && (
-          <nav className="hidden md:flex space-x-8">
-            <NavLink
-              to="/"
-              className={classes(isInicio)}
-              onClick={() => {
-                // Desplazar al tope siempre que se haga click en Inicio
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-            >
-              Inicio
-            </NavLink>
-            <NavLink to="/catalogo" className={classes(isCatalogo)}>
-              Propiedades
-            </NavLink>
-            <a href="/#quienes-somos" className={classes(isQuienes)}>
-              Quiénes Somos
-            </a>
-            <a href="/#contacto" className={classes(isContacto)}>
-              Contacto
-            </a>
-          </nav>
-        )}
+          {/* Navegación desktop - Ocultar en página de login */}
+          {!isLoginPage && (
+            <nav className="hidden md:flex space-x-8">
+              <NavLink
+                to="/"
+                className={classes(isInicio)}
+                onClick={() => {
+                  // Desplazar al tope siempre que se haga click en Inicio
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Inicio
+              </NavLink>
+              <NavLink to="/catalogo" className={classes(isCatalogo)}>
+                Propiedades
+              </NavLink>
+              <a href="/#quienes-somos" className={classes(isQuienes)}>
+                Quiénes Somos
+              </a>
+              <a href="/#contacto" className={classes(isContacto)}>
+                Contacto
+              </a>
+            </nav>
+          )}
 
-        {/* Botón hamburguesa móvil - Ocultar en página de login */}
-        {!isLoginPage && (
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-[#e06a1f] transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Abrir menú"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-white" />
-            ) : (
-              <Menu className="w-6 h-6 text-white" />
-            )}
-          </button>
-        )}
+          {/* Botón hamburguesa móvil - Ocultar en página de login */}
+          {!isLoginPage && (
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-[#e06a1f] transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Abrir menú"
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6 text-white" />
+              ) : (
+                <Menu className="w-6 h-6 text-white" />
+              )}
+            </button>
+          )}
         </div>
       </div>
 
