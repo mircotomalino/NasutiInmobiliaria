@@ -151,7 +151,7 @@ ${formData.mensaje}`;
 
               <div className="relative">
                 <img
-                  src="/img/fotosInstitusionales/inmobiliariaFrenteAmplia.jpg"
+                  src="/img/institucionales/inmobiliariaFrenteAmplia.jpg"
                   alt="Inmobiliaria Durio"
                   className="w-full h-96 lg:h-[500px] object-cover rounded-lg shadow-lg"
                 />
@@ -236,19 +236,19 @@ ${formData.mensaje}`;
                                     property.status === "disponible"
                                       ? "bg-green-500/90"
                                       : property.status === "reservada"
-                                        ? "bg-yellow-500/90"
-                                        : property.status === "vendida"
-                                          ? "bg-red-500/90"
-                                          : "bg-gray-500/90"
+                                      ? "bg-yellow-500/90"
+                                      : property.status === "vendida"
+                                      ? "bg-red-500/90"
+                                      : "bg-gray-500/90"
                                   }`}
                                 >
                                   {property.status === "disponible"
                                     ? "Disponible"
                                     : property.status === "reservada"
-                                      ? "Reservada"
-                                      : property.status === "vendida"
-                                        ? "Vendida"
-                                        : property.status}
+                                    ? "Reservada"
+                                    : property.status === "vendida"
+                                    ? "Vendida"
+                                    : property.status}
                                 </div>
                               </div>
                             </div>
@@ -427,21 +427,7 @@ ${formData.mensaje}`;
               <div className="text-center">
                 <div className="mb-6">
                   <img
-                    src="/img/fotosInstitusionales/GastonDurio.jpg"
-                    alt="Gastón - Socio"
-                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
-                  />
-                </div>
-                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
-                  Gastón
-                </h3>
-                <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
-              </div>
-
-              <div className="text-center">
-                <div className="mb-6">
-                  <img
-                    src="/img/fotosInstitusionales/SerigioNasuti.jpg"
+                    src="/img/institucionales/SergioNasuti.jpg"
                     alt="Sergio - Socio"
                     className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
                   />
@@ -455,7 +441,21 @@ ${formData.mensaje}`;
               <div className="text-center">
                 <div className="mb-6">
                   <img
-                    src="/img/fotosInstitusionales/camilaBuzzi.jpg"
+                    src="/img/institucionales/GastonDurio.jpg"
+                    alt="Gastón - Socio"
+                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
+                  Gastón
+                </h3>
+                <p className="text-[#6B7280] text-sm">Socio y Gerente</p>
+              </div>
+
+              <div className="text-center">
+                <div className="mb-6">
+                  <img
+                    src="/img/institucionales/camilaBuzzi.jpg"
                     alt="Camila - Equipo"
                     className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
                   />
@@ -469,7 +469,7 @@ ${formData.mensaje}`;
               <div className="text-center">
                 <div className="mb-6">
                   <img
-                    src="/img/fotosInstitusionales/AliciaNasuti.jpg"
+                    src="/img/institucionales/AliciaNasuti.jpg"
                     alt="Alicia - Equipo"
                     className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
                   />
@@ -537,7 +537,7 @@ ${formData.mensaje}`;
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
                 style={{
                   backgroundImage:
-                    "url(/img/fotosInstitusionales/GastonYSergio1.jpg)",
+                    "url(/img/institucionales/GastonYSergio1.jpg)",
                 }}
               ></div>
               {/* Contenido con z-index para estar encima */}
