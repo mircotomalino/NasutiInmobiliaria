@@ -59,6 +59,8 @@ const ManagerPanel: React.FC = () => {
     Array<{ id?: number; url: string }>
   >([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [editingStatusId, setEditingStatusId] = useState<number | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   // Estados para filtros del manager
   const [managerFilters, setManagerFilters] = useState({
@@ -84,6 +86,24 @@ const ManagerPanel: React.FC = () => {
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (editingStatusId !== null) {
+        const target = event.target as HTMLElement;
+        if (!target.closest(`[data-status-dropdown="${editingStatusId}"]`)) {
+          setEditingStatusId(null);
+        }
+      }
+    };
+
+    if (editingStatusId !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [editingStatusId]);
 
   // Efecto para aplicar filtros del manager
   useEffect(() => {
@@ -223,8 +243,6 @@ const ManagerPanel: React.FC = () => {
       return;
     }
 
-    setIsSubmitting(true);
-
     // Validaciones de campos obligatorios
     const errors: string[] = [];
 
@@ -261,7 +279,6 @@ const ManagerPanel: React.FC = () => {
       }
     }
 
-    // Mostrar errores si hay alguno
     if (errors.length > 0) {
       alert(
         "Por favor, corrige los siguientes errores:\n\n" + errors.join("\n")
@@ -269,10 +286,7 @@ const ManagerPanel: React.FC = () => {
       return;
     }
 
-    console.log(
-      "🚀 Iniciando creación/actualización de propiedad:",
-      editingProperty
-    );
+    setIsSubmitting(true);
 
     const formData = new FormData();
 
@@ -286,23 +300,15 @@ const ManagerPanel: React.FC = () => {
       // Para valores null o undefined, enviar string vacío
       if (value === null || value === undefined) {
         formData.append(key, "");
-        console.log(`📝 Agregando campo vacío: ${key} = ""`);
       } else {
         formData.append(key, value.toString());
-        console.log(`📝 Agregando campo: ${key} = ${value}`);
       }
     });
 
     // Agregar archivos
     if (selectedFiles.length > 0) {
-      console.log(`📸 Agregando ${selectedFiles.length} nueva(s) imagen(es)`);
       selectedFiles.forEach(file => {
         formData.append("images", file);
-        console.log(
-          `📁 Agregando archivo: ${file.name} (${(file.size / 1024).toFixed(
-            2
-          )} KB)`
-        );
       });
     } else {
       console.log("ℹ️ No hay nuevas imágenes para agregar");
@@ -314,17 +320,10 @@ const ManagerPanel: React.FC = () => {
         : `${API_BASE}/properties`;
 
       const method = editingProperty.id ? "PUT" : "POST";
-
-      console.log(`🌐 Enviando ${method} a: ${url}`);
-
       const response = await fetch(url, {
         method,
         body: formData,
       });
-
-      console.log(
-        `📡 Respuesta del servidor: ${response.status} ${response.statusText}`
-      );
 
       if (response.ok) {
         const result = await response.json();
@@ -424,9 +423,67 @@ const ManagerPanel: React.FC = () => {
     }
   };
 
-  const handleEdit = async (property: Property) => {
-    console.log("🔧 Iniciando edición de propiedad:", property);
+  const handleStatusChange = async (
+    propertyId: number,
+    newStatus: PropertyStatus
+  ) => {
+    const previousProperties = [...properties];
+    const previousFilteredProperties = [...filteredProperties];
 
+    setProperties(prev =>
+      prev.map(prop =>
+        prop.id === propertyId ? { ...prop, status: newStatus } : prop
+      )
+    );
+    setFilteredProperties(prev =>
+      prev.map(prop =>
+        prop.id === propertyId ? { ...prop, status: newStatus } : prop
+      )
+    );
+    setEditingStatusId(null);
+    setIsUpdatingStatus(true);
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/properties/${propertyId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
+      if (!response.ok) {
+        // Revertir cambios si falla
+        setProperties(previousProperties);
+        setFilteredProperties(previousFilteredProperties);
+
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Error desconocido" }));
+        console.error("Error actualizando estado:", errorData);
+        alert(
+          `Error al actualizar el estado: ${
+            errorData.error ||
+            errorData.details?.join(", ") ||
+            "Error desconocido"
+          }`
+        );
+      }
+    } catch (error) {
+      setProperties(previousProperties);
+      setFilteredProperties(previousFilteredProperties);
+
+      console.error("Error de red al actualizar estado:", error);
+      alert("Error de conexión al actualizar el estado");
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  const handleEdit = async (property: Property) => {
     // Limpiar estado primero
     setEditingProperty(null);
     setIsAdding(false);
@@ -464,8 +521,6 @@ const ManagerPanel: React.FC = () => {
             : null,
         };
 
-        console.log("✅ Propiedad preparada para editar:", propertyToEdit);
-
         // Cargar imágenes existentes con sus IDs desde el servidor
         if (property.id) {
           try {
@@ -476,7 +531,6 @@ const ManagerPanel: React.FC = () => {
             if (imageResponse.ok) {
               const imagesData = await imageResponse.json();
               setExistingImages(imagesData);
-              console.log("📸 Imágenes cargadas:", imagesData);
             } else {
               // Fallback: usar las URLs sin IDs
               const images =
@@ -544,6 +598,7 @@ const ManagerPanel: React.FC = () => {
       coveredArea: 0,
       patio: "No Tiene" as PatioType,
       garage: "No Tiene" as GarageType,
+      status: "disponible" as PropertyStatus,
     });
     setIsAdding(true);
     setSelectedFiles([]);
@@ -820,19 +875,66 @@ const ManagerPanel: React.FC = () => {
                       {formatPrice(property.price)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          property.status === "disponible"
-                            ? "bg-green-100 text-green-800"
-                            : property.status === "vendida"
-                            ? "bg-red-100 text-red-800"
-                            : property.status === "reservada"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                      <div
+                        data-status-dropdown={property.id}
+                        className="relative inline-block"
                       >
-                        {property.status}
-                      </span>
+                        <button
+                          onClick={() =>
+                            property.id && setEditingStatusId(property.id)
+                          }
+                          disabled={isUpdatingStatus}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${
+                            property.status === "disponible"
+                              ? "bg-green-100 text-green-800"
+                              : property.status === "vendida"
+                              ? "bg-red-100 text-red-800"
+                              : property.status === "reservada"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-gray-100 text-gray-800"
+                          } ${
+                            isUpdatingStatus
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          title="Click para cambiar el estado"
+                        >
+                          {property.status
+                            ? property.status.charAt(0).toUpperCase() +
+                              property.status.slice(1)
+                            : "Disponible"}
+                        </button>
+                        {editingStatusId === property.id && (
+                          <div className="absolute left-0 top-full mt-1 z-50 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[120px] flex flex-col">
+                            {propertyStatuses.map(status => (
+                              <button
+                                key={status}
+                                onClick={() => {
+                                  handleStatusChange(
+                                    property.id!,
+                                    status as PropertyStatus
+                                  );
+                                  setEditingStatusId(null);
+                                }}
+                                type="button"
+                                disabled={isUpdatingStatus}
+                                className={`block w-full text-left px-3 py-2 text-xs font-medium hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg transition-colors ${
+                                  property.status === status
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "text-gray-700"
+                                } ${
+                                  isUpdatingStatus
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`}
+                              >
+                                {status.charAt(0).toUpperCase() +
+                                  status.slice(1)}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">

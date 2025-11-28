@@ -2,9 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { X, Save, ImagePlus, Trash2, Loader2 } from "lucide-react";
 import SmartAddressInput from "./SmartAddressInput";
 import ConfirmDialog from "./ConfirmDialog";
-import { PropertyType as PropType, PatioType, GarageType } from "../types";
+import {
+  PropertyType as PropType,
+  PatioType,
+  GarageType,
+  PropertyStatus,
+} from "../types";
 import { getServerBase } from "../utils/api";
 import { Property } from "./ManagerPanel";
+import { propertyStatuses } from "../data/properties";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -86,7 +92,8 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
       current.patio !== initial.patio ||
       current.garage !== initial.garage ||
       current.latitude !== initial.latitude ||
-      current.longitude !== initial.longitude
+      current.longitude !== initial.longitude ||
+      current.status !== initial.status
     ) {
       return true;
     }
@@ -182,25 +189,51 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
           </div>
 
           <form onSubmit={onSubmit} className="space-y-6" noValidate>
-            {/* Primera fila: Título */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título
-              </label>
-              <input
-                type="text"
-                value={editingProperty?.title || ""}
-                onChange={e =>
-                  setEditingProperty(prev =>
-                    prev ? { ...prev, title: e.target.value } : null
-                  )
-                }
-                disabled={isSubmitting}
-                placeholder="Si no se especifica, se generará automáticamente"
-                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
-                }`}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="md:col-span-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Título
+                </label>
+                <input
+                  type="text"
+                  value={editingProperty?.title || ""}
+                  onChange={e =>
+                    setEditingProperty(prev =>
+                      prev ? { ...prev, title: e.target.value } : null
+                    )
+                  }
+                  disabled={isSubmitting}
+                  placeholder="Si no se especifica, se generará automáticamente"
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Estado
+                </label>
+                <select
+                  value={editingProperty?.status || "disponible"}
+                  disabled={isSubmitting}
+                  onChange={e =>
+                    setEditingProperty(prev =>
+                      prev
+                        ? { ...prev, status: e.target.value as PropertyStatus }
+                        : null
+                    )
+                  }
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
+                    isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {propertyStatuses.map(status => (
+                    <option key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -230,7 +263,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 >
@@ -285,7 +318,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     target.setCustomValidity("");
                   }}
                   placeholder="0"
-                  className={`w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-[150px] h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
@@ -313,7 +346,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     const target = e.target as HTMLSelectElement;
                     target.setCustomValidity("");
                   }}
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 >
@@ -340,7 +373,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                   )
                 }
                 disabled={isSubmitting}
-                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                 }`}
                 placeholder="Ej: Av. San Martín 1234, Centro"
@@ -400,7 +433,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
@@ -425,7 +458,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
@@ -456,7 +489,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     );
                   }}
                   placeholder="0"
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
@@ -489,7 +522,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                     );
                   }}
                   placeholder="0"
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
@@ -511,7 +544,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 >
@@ -537,7 +570,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({
                         : null
                     )
                   }
-                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
+                  className={`w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 relative z-10 ${
                     isSubmitting ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 >

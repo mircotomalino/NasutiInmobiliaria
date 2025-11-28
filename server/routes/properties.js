@@ -61,6 +61,49 @@ router.get("/featured", async (req, res) => {
 // IMPORTANTE: Debe estar después de /featured pero antes de GET /:id
 router.use("/:id", imagesRouter);
 
+// Endpoint para actualizar solo el estado de una propiedad
+router.patch("/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const propertyId = parseInt(id);
+    const { status } = req.body;
+
+    if (isNaN(propertyId)) {
+      return res.status(400).json({ error: "ID de propiedad inválido" });
+    }
+
+    // Validar que el estado sea válido
+    const validStatuses = ["disponible", "reservada", "vendida"];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({
+        error: "Estado inválido",
+        details: [`El estado debe ser uno de: ${validStatuses.join(", ")}`],
+      });
+    }
+
+    // Verificar que la propiedad existe
+    const existingProperty = await pool.query(
+      "SELECT id FROM properties WHERE id = $1",
+      [propertyId]
+    );
+
+    if (existingProperty.rows.length === 0) {
+      return res.status(404).json({ error: "Propiedad no encontrada" });
+    }
+
+    // Actualizar solo el estado
+    const result = await pool.query(
+      "UPDATE properties SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, status",
+      [status, propertyId]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating property status:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 // Endpoint para toggle el estado featured de una propiedad
 // IMPORTANTE: Este endpoint debe estar ANTES de GET /:id
 router.patch("/:id/featured", async (req, res) => {
