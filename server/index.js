@@ -8,6 +8,30 @@ import healthRouter from "./routes/health.js";
 import propertiesRouter from "./routes/properties.js";
 import geographicRouter from "./routes/geographic.js";
 
+// Manejar errores no capturados para evitar que el servidor se caiga
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  // No cerrar el proceso, solo loguear el error
+});
+
+process.on("uncaughtException", error => {
+  console.error("Uncaught Exception:", error);
+  // Si es un error de conexión a la base de datos, no cerrar el proceso
+  if (
+    error.code === "XX000" ||
+    error.message?.includes("shutdown") ||
+    error.message?.includes("db_termination")
+  ) {
+    console.warn(
+      "Database connection error handled, server will continue running"
+    );
+    return;
+  }
+  // Para otros errores críticos, cerrar el proceso después de loguear
+  console.error("Critical error, shutting down gracefully");
+  process.exit(1);
+});
+
 // Verificar configuración de Supabase Storage
 let supabaseStorageConfigured = false;
 try {

@@ -8,6 +8,29 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || "password",
   port: process.env.DB_PORT || 5432,
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+  // Configuración del pool para manejar desconexiones
+  max: 20, // máximo de clientes en el pool
+  idleTimeoutMillis: 30000, // cerrar clientes inactivos después de 30 segundos
+  connectionTimeoutMillis: 10000, // timeout de conexión de 10 segundos
+  // Permitir que el pool maneje errores sin cerrar el proceso
+  allowExitOnIdle: false,
+});
+
+// Manejar errores del pool sin cerrar el proceso
+pool.on("error", (err, client) => {
+  console.error("Unexpected error on idle client:", err.message);
+  // No lanzar el error, solo loguearlo
+  // El pool se encargará de reconectar automáticamente
+  // Evitar que el error cierre el proceso
+  if (
+    err.code === "XX000" ||
+    err.message.includes("shutdown") ||
+    err.message.includes("db_termination")
+  ) {
+    console.warn(
+      "Database connection terminated, pool will reconnect automatically"
+    );
+  }
 });
 
 // Crear las tablas con estructura completa desde cero
@@ -201,7 +224,36 @@ const initDatabase = async () => {
     console.log("🗃️ Database tables initialized successfully");
   } catch (error) {
     console.error("Error initializing database:", error);
+    // No lanzar el error, permitir que el servidor continúe
+    // El pool intentará reconectar automáticamente
   }
 };
 
-export { pool, initDatabase };
+// Función helper para ejecutar queries con manejo de errores y reintentos
+const queryWithRetry = async (text, params, retries = 3) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await pool.query(text, params);
+    } catch (error) {
+      // Si es un error de conexión y quedan reintentos, esperar y reintentar
+      if (
+        (error.code === "XX000" ||
+          error.message?.includes("shutdown") ||
+          error.message?.includes("db_termination") ||
+          error.code === "ECONNRESET" ||
+          error.code === "ETIMEDOUT") &&
+        i < retries - 1
+      ) {
+        console.warn(
+          `Database connection error, retrying... (${i + 1}/${retries})`
+        );
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Backoff exponencial
+        continue;
+      }
+      // Si no es un error de conexión o se agotaron los reintentos, lanzar el error
+      throw error;
+    }
+  }
+};
+
+export { pool, initDatabase, queryWithRetry };
