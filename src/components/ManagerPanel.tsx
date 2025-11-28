@@ -937,12 +937,12 @@ const ManagerPanel: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() =>
                             property.id && handleToggleFeatured(property.id)
                           }
-                          className={`${
+                          className={`flex items-center justify-center ${
                             property.featured
                               ? "text-yellow-500"
                               : "text-gray-400"
@@ -961,26 +961,26 @@ const ManagerPanel: React.FC = () => {
                         </button>
                         <Link
                           to={`/propiedad/${property.id}`}
-                          className="text-green-600 hover:text-green-900"
+                          className="flex items-center justify-center text-green-600 hover:text-green-900"
                           title="Ver página de la propiedad"
                         >
-                          <ExternalLink className="w-4 h-4" />
+                          <ExternalLink className="w-5 h-5" />
                         </Link>
                         <button
                           onClick={() => handleEdit(property)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="flex items-center justify-center text-blue-600 hover:text-blue-900"
                           title="Editar propiedad"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() =>
                             property.id && handleDelete(property.id)
                           }
-                          className="text-red-600 hover:text-red-900"
+                          className="flex items-center justify-center text-red-600 hover:text-red-900"
                           title="Eliminar propiedad"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                     </td>
