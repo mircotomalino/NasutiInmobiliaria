@@ -530,16 +530,16 @@ ${formData.mensaje}`;
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 h-[26rem] lg:h-[550px]">
+              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 min-h-[26rem] lg:h-[550px]">
                 <div className="relative">
                   <img
                     src="/img/institucionales/InmobiliariaLateral1.jpg"
                     alt="Inmobiliaria Nasuti"
-                    className="w-full h-full object-cover rounded-l-xl"
+                    className="w-full h-full object-cover rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
                   />
                 </div>
 
-                <div className="pt-6 pb-8 px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start">
+                <div className="pt-6 pb-8 px-4 sm:px-6 md:px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start overflow-y-auto">
                   <div className="mb-2">
                     <h3 className="text-[#1F2937] text-xl lg:text-2xl font-bold mb-1">
                       El Legado de Erminio Nasuti
