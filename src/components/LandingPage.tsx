@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   MapPin,
   Bed,
@@ -12,6 +13,11 @@ import { Property } from "../types";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
+import SEOHead from "./SEOHead";
+import {
+  generateLocalBusinessSchema,
+  generateRealEstateAgentSchema,
+} from "../utils/schemaMarkup";
 
 const LandingPage: React.FC = () => {
   // Número de WhatsApp del propietario (configurable)
@@ -111,8 +117,81 @@ ${formData.mensaje}`;
     setCurrentSlide(index);
   };
 
+  // Datos para schemas JSON-LD
+  const BASE_URL = "https://inmobiliarianasuti.com.ar";
+
+  const localBusinessSchema = generateLocalBusinessSchema({
+    name: "Nasuti Inmobiliaria",
+    description:
+      "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Más de 750 operaciones concretadas con profesionalismo e integridad.",
+    url: BASE_URL,
+    telephone: "+543472521436",
+    address: {
+      streetAddress: "25 de Mayo nro. 347, esquina 1ro. de Mayo",
+      addressLocality: "Marcos Juárez",
+      addressRegion: "Córdoba",
+      postalCode: "2580",
+      addressCountry: "AR",
+    },
+    image: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    priceRange: "$$",
+  });
+
+  const sergioSchema = generateRealEstateAgentSchema({
+    name: "Sergio Nasuti",
+    jobTitle: "Socio y Gerente",
+    image: `${BASE_URL}/img/institucionales/SergioNasuti.jpg`,
+    worksFor: {
+      name: "Nasuti Inmobiliaria",
+      url: BASE_URL,
+    },
+  });
+
+  const gastonSchema = generateRealEstateAgentSchema({
+    name: "Gastón Durio",
+    jobTitle: "Socio y Gerente",
+    image: `${BASE_URL}/img/institucionales/GastonDurio.jpg`,
+    worksFor: {
+      name: "Nasuti Inmobiliaria",
+      url: BASE_URL,
+    },
+  });
+
   return (
     <div>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Nasuti Inmobiliaria - 60 Años de Experiencia en Marcos Juárez"
+        description="Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Casas, departamentos, terrenos y más. Más de 750 operaciones concretadas con profesionalismo e integridad."
+        canonicalUrl="/"
+        keywords={[
+          "inmobiliaria",
+          "propiedades",
+          "casas",
+          "departamentos",
+          "terrenos",
+          "Marcos Juárez",
+          "Córdoba",
+          "venta",
+          "alquiler",
+          "inmobiliaria Nasuti",
+        ]}
+        ogImage="/img/logos/NombreYLogoNasutiInmobiliaria.png"
+      />
+
+      {/* Structured Data JSON-LD */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(localBusinessSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(sergioSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(gastonSchema)}
+        </script>
+      </Helmet>
+
       {/* Esta será la landing page que actualmente está en index.html */}
       <div className="min-h-screen bg-gray-50">
         {/* Header removido: ahora lo provee SiteNavbar dentro del Layout */}
