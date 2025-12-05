@@ -205,6 +205,7 @@ const PropertyPage: React.FC = () => {
         canonicalUrl={`/propiedad/${property.id}`}
         keywords={seoKeywords}
         ogImage={propertyImage}
+        ogImageAlt={`${property.title} - ${property.type} en ${property.city}`}
         ogType="product"
       />
 

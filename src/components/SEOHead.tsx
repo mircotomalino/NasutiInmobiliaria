@@ -5,6 +5,7 @@ interface SEOHeadProps {
   description: string;
   canonicalUrl?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   ogType?: string;
   keywords?: string[];
   noindex?: boolean;
@@ -19,11 +20,31 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   description,
   canonicalUrl,
   ogImage = DEFAULT_OG_IMAGE,
+  ogImageAlt,
   ogType = "website",
   keywords = [],
   noindex = false,
   nofollow = false,
 }) => {
+  // Validación de longitudes para SEO (solo en desarrollo)
+  if (import.meta.env.DEV) {
+    if (title.length > 60) {
+      console.warn(
+        `⚠️ SEO Warning: Title is too long (${title.length} chars). Recommended: max 60 characters.`
+      );
+    }
+    if (description.length > 160) {
+      console.warn(
+        `⚠️ SEO Warning: Description is too long (${description.length} chars). Recommended: max 160 characters.`
+      );
+    }
+    if (description.length < 120) {
+      console.warn(
+        `⚠️ SEO Warning: Description is too short (${description.length} chars). Recommended: 120-160 characters.`
+      );
+    }
+  }
+
   const fullCanonicalUrl = canonicalUrl
     ? `${BASE_URL}${canonicalUrl}`
     : BASE_URL;
@@ -31,6 +52,9 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   const fullOgImage = ogImage.startsWith("http")
     ? ogImage
     : `${BASE_URL}${ogImage}`;
+
+  // Generar alt text para imagen OG si no se proporciona
+  const ogImageAltText = ogImageAlt || title;
 
   const robotsContent = [
     noindex ? "noindex" : "index",
@@ -54,8 +78,10 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullOgImage} />
+      <meta property="og:image:alt" content={ogImageAltText} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:type" content="image/png" />
       <meta property="og:site_name" content="Nasuti Inmobiliaria" />
       <meta property="og:locale" content="es_AR" />
 
@@ -65,6 +91,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullOgImage} />
+      <meta name="twitter:image:alt" content={ogImageAltText} />
 
       {/* Additional meta tags */}
       <meta name="author" content="Nasuti Inmobiliaria" />
