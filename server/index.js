@@ -72,6 +72,66 @@ app.use("/api/health", healthRouter);
 app.use("/api/properties", propertiesRouter);
 app.use("/api/properties", geographicRouter); // Rutas geográficas bajo /api/properties
 
+// Sitemap XML - Generado dinámicamente
+app.get("/sitemap.xml", async (req, res) => {
+  try {
+    const { pool } = await import("./db.js");
+    const BASE_URL = "https://inmobiliarianasuti.com.ar";
+    
+    // Obtener todas las propiedades
+    const result = await pool.query(`
+      SELECT id, updated_at 
+      FROM properties 
+      WHERE status != 'vendida' OR status IS NULL
+      ORDER BY updated_at DESC
+    `);
+    
+    // Fecha actual en formato ISO para lastmod
+    const currentDate = new Date().toISOString().split('T')[0];
+    
+    // Construir XML del sitemap
+    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página principal -->
+  <url>
+    <loc>${BASE_URL}/</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Catálogo -->
+  <url>
+    <loc>${BASE_URL}/catalogo</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`;
+    
+    // Agregar cada propiedad
+    for (const property of result.rows) {
+      const lastmod = property.updated_at 
+        ? new Date(property.updated_at).toISOString().split('T')[0]
+        : currentDate;
+      sitemap += `
+  <url>
+    <loc>${BASE_URL}/propiedad/${property.id}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    }
+    
+    sitemap += `
+</urlset>`;
+    
+    res.set('Content-Type', 'text/xml');
+    res.send(sitemap);
+  } catch (error) {
+    console.error("Error generating sitemap:", error);
+    res.status(500).send("Error generating sitemap");
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   if (supabaseStorageConfigured) {

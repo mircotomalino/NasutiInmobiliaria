@@ -18,7 +18,8 @@ import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
 import SEOHead from "./SEOHead";
-import { generatePropertySchema } from "../utils/schemaMarkup";
+import { generatePropertySchema, generateBreadcrumbSchema } from "../utils/schemaMarkup";
+import { Link } from "react-router-dom";
 
 const PropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -186,6 +187,15 @@ const PropertyPage: React.FC = () => {
     }),
   });
 
+  // Generar schema JSON-LD para Breadcrumbs
+  const breadcrumbSchema = generateBreadcrumbSchema({
+    items: [
+      { name: "Inicio", url: "https://inmobiliarianasuti.com.ar/" },
+      { name: "Catálogo", url: "https://inmobiliarianasuti.com.ar/catalogo" },
+      { name: property.title, url: propertyUrl },
+    ],
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* SEO Meta Tags */}
@@ -203,7 +213,40 @@ const PropertyPage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify(propertySchema)}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
       </Helmet>
+
+      {/* Breadcrumbs visuales */}
+      <nav className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+        <div className="max-w-6xl mx-auto">
+          <ol className="flex items-center space-x-2 text-sm">
+            <li>
+              <Link
+                to="/"
+                className="text-gray-500 hover:text-[#f0782c] transition-colors"
+              >
+                Inicio
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <Link
+                to="/catalogo"
+                className="text-gray-500 hover:text-[#f0782c] transition-colors"
+              >
+                Catálogo
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li className="text-gray-900 font-medium truncate max-w-xs" aria-current="page">
+              {property.title}
+            </li>
+          </ol>
+        </div>
+      </nav>
+
       {/* Botón de navegación */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <button
