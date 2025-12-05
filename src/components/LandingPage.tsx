@@ -302,6 +302,8 @@ ${formData.mensaje}`;
                                 }
                                 alt={property.title}
                                 className="w-full h-[19rem] object-cover"
+                                loading="lazy"
+                                decoding="async"
                               />
                               {/* Badges - Responsive */}
                               <div className="absolute top-3 left-3 lg:top-4 lg:left-4 flex flex-col gap-2">
