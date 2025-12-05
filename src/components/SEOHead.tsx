@@ -96,6 +96,16 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       {/* Additional meta tags */}
       <meta name="author" content="Nasuti Inmobiliaria" />
       <meta name="theme-color" content="#f0782c" />
+      
+      {/* Geo-location meta tags for local SEO */}
+      <meta name="geo.region" content="AR-X" />
+      <meta name="geo.placename" content="Marcos Juárez, Córdoba" />
+      <meta name="geo.position" content="-32.6978;-62.1067" />
+      <meta name="ICBM" content="-32.6978, -62.1067" />
+      
+      {/* Additional SEO meta tags */}
+      <meta name="format-detection" content="telephone=yes" />
+      <meta name="mobile-web-app-capable" content="yes" />
     </Helmet>
   );
 };
