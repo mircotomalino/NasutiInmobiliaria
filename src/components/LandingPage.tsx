@@ -43,6 +43,9 @@ const LandingPage: React.FC = () => {
       try {
         // Usar el nuevo endpoint específico para propiedades destacadas
         const response = await fetch(`${API_BASE}/properties/featured`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         // Asegurarse de que data sea un array
@@ -62,7 +65,7 @@ const LandingPage: React.FC = () => {
     };
 
     fetchFeaturedProperties();
-  }, []);
+  }, [API_BASE]);
 
   // Funciones para manejar el formulario de contacto
   const handleInputChange = (

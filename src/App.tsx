@@ -39,18 +39,23 @@ function App() {
     const fetchProperties = async () => {
       try {
         const response = await fetch(`${API_BASE}/properties`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setProperties(data);
         setFilteredProperties(data);
       } catch (error) {
         console.error("Error fetching properties:", error);
+        setProperties([]);
+        setFilteredProperties([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperties();
-  }, []);
+  }, [API_BASE]);
 
   // Cargar filtros desde URL al montar el componente
   useEffect(() => {
