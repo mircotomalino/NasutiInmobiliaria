@@ -188,3 +188,152 @@ export const generateCollectionPageSchema = (): object => {
   };
 };
 
+// Additional Schemas
+
+export interface ReviewSchema {
+  author: {
+    name: string;
+    type?: string; // e.g., "Person" or "Organization"
+  };
+  datePublished: string; // ISO 8601 format
+  reviewBody: string;
+  reviewRating?: {
+    ratingValue: number; // 1-5
+    bestRating?: number; // usually 5
+    worstRating?: number; // usually 1
+  };
+}
+
+export interface AggregateRatingSchema {
+  ratingValue: number; // Average rating (1-5)
+  reviewCount: number;
+  bestRating?: number; // usually 5
+  worstRating?: number; // usually 1
+}
+
+export interface FAQPageSchema {
+  questions: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
+export interface OrganizationSchema {
+  name: string;
+  url: string;
+  logo?: string;
+  description?: string;
+  address?: {
+    streetAddress: string;
+    addressLocality: string;
+    addressRegion: string;
+    postalCode: string;
+    addressCountry: string;
+  };
+  contactPoint?: {
+    telephone: string;
+    contactType: string; // e.g., "customer service", "sales"
+    areaServed?: string; // e.g., "AR" or "Córdoba"
+    availableLanguage?: string; // e.g., "Spanish"
+  };
+  sameAs?: string[]; // Social media profiles URLs
+  foundingDate?: string; // ISO 8601 format or year
+  numberOfEmployees?: {
+    min?: number;
+    max?: number;
+  };
+}
+
+export const generateReviewSchema = (data: ReviewSchema): object => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    author: {
+      "@type": data.author.type || "Person",
+      name: data.author.name,
+    },
+    datePublished: data.datePublished,
+    reviewBody: data.reviewBody,
+    ...(data.reviewRating && {
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: data.reviewRating.ratingValue,
+        bestRating: data.reviewRating.bestRating || 5,
+        worstRating: data.reviewRating.worstRating || 1,
+      },
+    }),
+  };
+};
+
+export const generateAggregateRatingSchema = (
+  data: AggregateRatingSchema
+): object => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    ratingValue: data.ratingValue,
+    reviewCount: data.reviewCount,
+    bestRating: data.bestRating || 5,
+    worstRating: data.worstRating || 1,
+  };
+};
+
+export const generateFAQPageSchema = (data: FAQPageSchema): object => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: data.questions.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+};
+
+export const generateOrganizationSchema = (data: OrganizationSchema): object => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: data.name,
+    url: data.url,
+    ...(data.logo && { logo: data.logo }),
+    ...(data.description && { description: data.description }),
+    ...(data.address && {
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: data.address.streetAddress,
+        addressLocality: data.address.addressLocality,
+        addressRegion: data.address.addressRegion,
+        postalCode: data.address.postalCode,
+        addressCountry: data.address.addressCountry,
+      },
+    }),
+    ...(data.contactPoint && {
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: data.contactPoint.telephone,
+        contactType: data.contactPoint.contactType,
+        ...(data.contactPoint.areaServed && {
+          areaServed: data.contactPoint.areaServed,
+        }),
+        ...(data.contactPoint.availableLanguage && {
+          availableLanguage: data.contactPoint.availableLanguage,
+        }),
+      },
+    }),
+    ...(data.sameAs && data.sameAs.length > 0 && { sameAs: data.sameAs }),
+    ...(data.foundingDate && { foundingDate: data.foundingDate }),
+    ...(data.numberOfEmployees && {
+      numberOfEmployees: {
+        "@type": "QuantitativeValue",
+        ...(data.numberOfEmployees.min && { minValue: data.numberOfEmployees.min }),
+        ...(data.numberOfEmployees.max && { maxValue: data.numberOfEmployees.max }),
+      },
+    }),
+  };
+};
+
+

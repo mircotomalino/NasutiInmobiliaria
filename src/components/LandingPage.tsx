@@ -17,6 +17,7 @@ import SEOHead from "./SEOHead";
 import {
   generateLocalBusinessSchema,
   generateRealEstateAgentSchema,
+  generateOrganizationSchema,
 } from "../utils/schemaMarkup";
 
 const LandingPage: React.FC = () => {
@@ -160,6 +161,29 @@ ${formData.mensaje}`;
     },
   });
 
+  // Organization Schema (Enhanced)
+  const organizationSchema = generateOrganizationSchema({
+    name: "Nasuti Inmobiliaria",
+    url: BASE_URL,
+    logo: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    description:
+      "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Más de 750 operaciones concretadas con profesionalismo e integridad.",
+    address: {
+      streetAddress: "25 de Mayo nro. 347, esquina 1ro. de Mayo",
+      addressLocality: "Marcos Juárez",
+      addressRegion: "Córdoba",
+      postalCode: "2580",
+      addressCountry: "AR",
+    },
+    contactPoint: {
+      telephone: "+543472521436",
+      contactType: "customer service",
+      areaServed: "AR",
+      availableLanguage: "Spanish",
+    },
+    foundingDate: "1964", // Aproximado - 60 años de experiencia
+  });
+
   return (
     <div>
       {/* SEO Meta Tags */}
@@ -186,6 +210,9 @@ ${formData.mensaje}`;
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify(localBusinessSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(organizationSchema)}
         </script>
         <script type="application/ld+json">
           {JSON.stringify(sergioSchema)}
