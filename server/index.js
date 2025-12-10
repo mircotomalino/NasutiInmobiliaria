@@ -62,15 +62,55 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.static("public"));
 
 // Inicializar base de datos
 initDatabase();
 
-// Rutas API
+// Ruta de prueba para verificar que el servidor está funcionando
+app.get("/", (req, res) => {
+  res.json({
+    message: "Nasuti Inmobiliaria API Server",
+    status: "running",
+    timestamp: new Date().toISOString(),
+    routes: {
+      health: "/api/health",
+      properties: "/api/properties",
+      propertiesFeatured: "/api/properties/featured",
+      sitemap: "/sitemap.xml"
+    }
+  });
+});
+
+// Logging middleware para debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
+
+// Rutas API - IMPORTANTE: Registrar ANTES de express.static para evitar conflictos
 app.use("/api/health", healthRouter);
 app.use("/api/properties", propertiesRouter);
 app.use("/api/properties", geographicRouter); // Rutas geográficas bajo /api/properties
+
+// Servir archivos estáticos (después de las rutas de API)
+app.use(express.static("public"));
+
+// Handler 404 para rutas no encontradas
+app.use((req, res) => {
+  console.warn(`[404] Route not found: ${req.method} ${req.path}`);
+  res.status(404).json({
+    error: "Route not found",
+    path: req.path,
+    method: req.method,
+    availableRoutes: {
+      root: "/",
+      health: "/api/health",
+      properties: "/api/properties",
+      propertiesFeatured: "/api/properties/featured",
+      sitemap: "/sitemap.xml"
+    }
+  });
+});
 
 // Sitemap XML - Generado dinámicamente con imágenes
 app.get("/sitemap.xml", async (req, res) => {
@@ -158,8 +198,10 @@ app.get("/sitemap.xml", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+// Railway requiere escuchar en 0.0.0.0 para aceptar conexiones externas
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Server accessible at http://0.0.0.0:${PORT}`);
   if (supabaseStorageConfigured) {
     console.log("📦 Supabase Storage configured successfully");
   } else {

@@ -42,7 +42,9 @@ function App() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`${API_BASE}/properties`);
+        const url = `${API_BASE}/properties`;
+        console.log("Fetching properties from:", url);
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -51,6 +53,15 @@ function App() {
         setFilteredProperties(data);
       } catch (error) {
         console.error("Error fetching properties:", error);
+        console.error("API Base URL:", API_BASE);
+        if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+          console.warn(
+            "⚠️ VITE_API_URL no está configurada en producción. " +
+            "Si el backend está en otro dominio (ej: Railway), " +
+            "configura VITE_API_URL en Vercel. " +
+            "Ver PRODUCTION_API_SETUP.md para más detalles."
+          );
+        }
         setProperties([]);
         setFilteredProperties([]);
       } finally {
