@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -10,15 +10,18 @@ const SiteNavbar: React.FC = () => {
   // Detectar si estamos en la página de login/admin
   const isLoginPage = pathname === "/admin";
 
-  const isInicio = pathname === "/";
+  // Inicio está activo cuando estamos en "/" sin hash o con hash "#inicio"
+  const isInicio =
+    pathname === "/" && (!hash || hash === "" || hash === "#inicio");
   const isCatalogo =
     pathname.startsWith("/catalogo") || pathname.startsWith("/propiedad");
   const isQuienes = pathname === "/" && hash === "#quienes-somos";
+  const isTrayectoria = pathname === "/" && hash === "#nuestra-trayectoria";
   const isContacto = pathname === "/" && hash === "#contacto";
 
   const linkBase =
-    "text-white hover:text-gray-100 transition-colors duration-200";
-  const activeMods = "text-white font-semibold underline";
+    "text-white hover:text-gray-100 transition-all duration-200 px-3 py-1.5 rounded-lg";
+  const activeMods = "text-white font-semibold bg-white/20 backdrop-blur-sm";
 
   const classes = (active: boolean) =>
     `${linkBase} ${active ? activeMods : ""}`;
@@ -27,6 +30,53 @@ const SiteNavbar: React.FC = () => {
   const handleLinkClick = () => {
     setIsMenuOpen(false);
   };
+
+  // Función para hacer scroll a una sección con offset para el header sticky
+  const scrollToSection = (hash: string) => {
+    const element = document.querySelector(hash);
+    if (element) {
+      const headerHeight = 80; // Altura aproximada del header sticky
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Manejar clic en enlaces de sección
+  const handleSectionClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    hash: string
+  ) => {
+    e.preventDefault();
+    handleLinkClick();
+
+    // Si estamos en otra página, navegar a la página principal con el hash
+    if (pathname !== "/") {
+      window.location.href = `/${hash}`;
+    } else {
+      // Si ya estamos en la página principal, hacer scroll primero (con animación suave)
+      scrollToSection(hash);
+      // Actualizar el hash usando navigate para que React Router lo detecte sin interrumpir la animación
+      setTimeout(() => {
+        navigate(hash, { replace: true });
+      }, 50);
+    }
+  };
+
+  // Manejar scroll cuando la página carga con un hash en la URL
+  useEffect(() => {
+    if (hash && pathname === "/") {
+      // Delay para asegurar que el DOM esté completamente renderizado
+      setTimeout(() => {
+        scrollToSection(hash);
+      }, 500);
+    }
+  }, [hash, pathname]);
 
   return (
     <header className="bg-[#f0782c] shadow-sm sticky top-0 z-50">
@@ -52,7 +102,7 @@ const SiteNavbar: React.FC = () => {
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-4">
               <NavLink
                 to="/"
                 className={classes(isInicio)}
@@ -66,10 +116,25 @@ const SiteNavbar: React.FC = () => {
               <NavLink to="/catalogo" className={classes(isCatalogo)}>
                 Propiedades
               </NavLink>
-              <a href="/#quienes-somos" className={classes(isQuienes)}>
+              <a
+                href="/#quienes-somos"
+                className={classes(isQuienes)}
+                onClick={e => handleSectionClick(e, "#quienes-somos")}
+              >
                 Quiénes Somos
               </a>
-              <a href="/#contacto" className={classes(isContacto)}>
+              <a
+                href="/#nuestra-trayectoria"
+                className={classes(isTrayectoria)}
+                onClick={e => handleSectionClick(e, "#nuestra-trayectoria")}
+              >
+                Nuestra Trayectoria
+              </a>
+              <a
+                href="/#contacto"
+                className={classes(isContacto)}
+                onClick={e => handleSectionClick(e, "#contacto")}
+              >
                 Contacto
               </a>
             </nav>
@@ -120,14 +185,21 @@ const SiteNavbar: React.FC = () => {
             <a
               href="/#quienes-somos"
               className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
-              onClick={handleLinkClick}
+              onClick={e => handleSectionClick(e, "#quienes-somos")}
             >
               Quiénes Somos
             </a>
             <a
+              href="/#nuestra-trayectoria"
+              className={`block py-2 px-4 rounded-lg ${classes(isTrayectoria)}`}
+              onClick={e => handleSectionClick(e, "#nuestra-trayectoria")}
+            >
+              Nuestra Trayectoria
+            </a>
+            <a
               href="/#contacto"
               className={`block py-2 px-4 rounded-lg ${classes(isContacto)}`}
-              onClick={handleLinkClick}
+              onClick={e => handleSectionClick(e, "#contacto")}
             >
               Contacto
             </a>

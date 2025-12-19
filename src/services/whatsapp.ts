@@ -2,7 +2,7 @@
 import { Property } from "../types";
 
 // Número de WhatsApp de Nasuti Inmobiliaria
-export const OWNER_PHONE = "5493513459377";
+export const OWNER_PHONE = "5493515911866";
 
 // Función para generar URL de WhatsApp con mensaje personalizado
 export const generateWhatsAppUrl = (message: string): string => {

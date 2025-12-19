@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    host: true,
     open: true,
     // Configuración para manejar rutas de SPA en desarrollo
     historyApiFallback: true,

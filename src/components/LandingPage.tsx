@@ -14,8 +14,7 @@ import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
 
 const LandingPage: React.FC = () => {
-  // Número de WhatsApp del propietario (configurable)
-  const OWNER_PHONE = "5493513459377"; // Número de WhatsApp de Nasuti Inmobiliaria
+  const OWNER_PHONE = "5493515911866";
 
   // Estado para el carrusel
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -24,6 +23,11 @@ const LandingPage: React.FC = () => {
 
   // Estados para el formulario de contacto
   const [formData, setFormData] = useState({
+    nombre: "",
+    asunto: "",
+    mensaje: "",
+  });
+  const [errors, setErrors] = useState({
     nombre: "",
     asunto: "",
     mensaje: "",
@@ -69,10 +73,42 @@ const LandingPage: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+    // Limpiar error cuando el usuario empieza a escribir
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar formulario
+    const newErrors = {
+      nombre: "",
+      asunto: "",
+      mensaje: "",
+    };
+
+    let isValid = true;
+
+    if (!formData.nombre.trim()) {
+      newErrors.nombre = "El nombre es requerido";
+      isValid = false;
+    }
+
+    if (!formData.mensaje.trim()) {
+      newErrors.mensaje = "El mensaje es requerido";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+
+    if (!isValid) {
+      return;
+    }
 
     // Construir el mensaje para WhatsApp
     const message = `Hola Nasuti! Mi nombre es: ${formData.nombre}
@@ -90,6 +126,11 @@ ${formData.mensaje}`;
 
     // Limpiar el formulario después del envío
     setFormData({
+      nombre: "",
+      asunto: "",
+      mensaje: "",
+    });
+    setErrors({
       nombre: "",
       asunto: "",
       mensaje: "",
@@ -118,10 +159,10 @@ ${formData.mensaje}`;
         {/* Header removido: ahora lo provee SiteNavbar dentro del Layout */}
 
         {/* Sección Hero */}
-        <section id="inicio" className="py-20 bg-white">
+        <section id="inicio" className="py-12 bg-white scroll-mt-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div className="order-2 lg:order-1">
                 <h2 className="text-4xl lg:text-5xl font-bold text-[#1F2937] mb-6">
                   60 Años de <span className="text-[#f0782c]">Experiencia</span>{" "}
                   en el Mercado Inmobiliario
@@ -149,7 +190,7 @@ ${formData.mensaje}`;
                 </div>
               </div>
 
-              <div className="relative">
+              <div className="relative order-1 lg:order-2">
                 <img
                   src="/img/institucionales/GastonYSergio1.jpg"
                   alt="Gastón y Sergio - Nasuti Inmobiliaria"
@@ -161,7 +202,7 @@ ${formData.mensaje}`;
         </section>
 
         {/* Sección Propiedades Destacadas */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-12 bg-gray-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">
@@ -412,24 +453,26 @@ ${formData.mensaje}`;
         </section>
 
         {/* Sección Quiénes Somos */}
-        <section id="quienes-somos" className="py-20 bg-gray-50">
+        <section id="quienes-somos" className="py-12 bg-gray-50 scroll-mt-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-[#1F2937] mb-4">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">
                 Quiénes Somos
               </h2>
+              <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4"></div>
               <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
-                Conozca a los integrantes de nuestra empresa
+                Personas comprometidas con acompañarte en cada paso.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="mb-6">
+                <div className="mb-6 w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg overflow-hidden">
                   <img
                     src="/img/institucionales/SergioNasuti.jpg"
                     alt="Sergio - Socio"
-                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
+                    className="w-full h-full object-cover object-top"
+                    style={{ transform: "scale(1.1)" }}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
@@ -439,11 +482,12 @@ ${formData.mensaje}`;
               </div>
 
               <div className="text-center">
-                <div className="mb-6">
+                <div className="mb-6 w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg overflow-hidden">
                   <img
                     src="/img/institucionales/GastonDurio.jpg"
                     alt="Gastón - Socio"
-                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
+                    className="w-full h-full object-cover object-top"
+                    style={{ transform: "scale(1.1)" }}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
@@ -453,41 +497,49 @@ ${formData.mensaje}`;
               </div>
 
               <div className="text-center">
-                <div className="mb-6">
+                <div className="mb-6 w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg overflow-hidden">
                   <img
-                    src="/img/institucionales/CamilaBuzzi.jpg"
-                    alt="Camila - Equipo"
-                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
+                    src="/img/institucionales/CamilaBuzzi2.jpg"
+                    alt="Camila - Asesora"
+                    className="w-full h-full object-cover object-top"
+                    style={{
+                      filter: "brightness(1.15)",
+                      transform: "scale(1.1) translateY(5px) translateX(8px)",
+                    }}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
                   Camila
                 </h3>
-                <p className="text-[#6B7280] text-sm">Equipo</p>
+                <p className="text-[#6B7280] text-sm">Asesora</p>
               </div>
 
               <div className="text-center">
-                <div className="mb-6">
+                <div className="mb-6 w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg overflow-hidden">
                   <img
                     src="/img/institucionales/AliciaNasuti.jpg"
-                    alt="Alicia - Equipo"
-                    className="w-40 h-40 lg:w-48 lg:h-48 rounded-full mx-auto shadow-lg object-cover object-top"
+                    alt="Alicia - Asesora"
+                    className="w-full h-full object-cover object-top"
+                    style={{ transform: "scale(1.1)" }}
                   />
                 </div>
                 <h3 className="text-xl font-semibold text-[#1F2937] mb-2">
                   Alicia
                 </h3>
-                <p className="text-[#6B7280] text-sm">Equipo</p>
+                <p className="text-[#6B7280] text-sm">Asesora</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="py-20 bg-gray-50">
+        <section
+          id="nuestra-trayectoria"
+          className="py-12 bg-gray-100 scroll-mt-20"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">
-                Nuestra Historia
+                Nuestra Trayectoria
               </h2>
               <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full"></div>
             </div>
@@ -508,7 +560,7 @@ ${formData.mensaje}`;
 
               <div className="text-center">
                 <div className="w-20 h-20 bg-[#f0782c] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <span className="text-white text-2xl font-bold">60+</span>
+                  <span className="text-white text-2xl font-bold">+60</span>
                 </div>
                 <h3 className="text-[#1F2937] text-lg font-semibold mb-2">
                   Años de Experiencia
@@ -520,7 +572,7 @@ ${formData.mensaje}`;
 
               <div className="text-center">
                 <div className="w-20 h-20 bg-[#f0782c] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <span className="text-white text-2xl font-bold">2024</span>
+                  <span className="text-white text-2xl font-bold">2026</span>
                 </div>
                 <h3 className="text-[#1F2937] text-lg font-semibold mb-2">
                   Presente
@@ -530,24 +582,27 @@ ${formData.mensaje}`;
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 h-[26rem] lg:h-[550px]">
-                <div className="relative">
+              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 md:h-[26rem] lg:h-[550px]">
+                <div className="relative h-64 md:h-full">
                   <img
                     src="/img/institucionales/InmobiliariaLateral1.jpg"
                     alt="Inmobiliaria Nasuti"
-                    className="w-full h-full object-cover rounded-l-xl"
+                    className="w-full h-full object-cover md:rounded-l-xl rounded-t-xl md:rounded-t-none"
+                    style={{
+                      objectPosition: "center 10%",
+                    }}
                   />
                 </div>
 
-                <div className="pt-6 pb-8 px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start">
+                <div className="pt-6 pb-8 px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start md:overflow-y-auto">
                   <div className="mb-2">
-                    <h3 className="text-[#1F2937] text-xl lg:text-2xl font-bold mb-1">
+                    <h3 className="text-[#1F2937] text-3xl md:text-xl lg:text-2xl font-bold mb-1">
                       El Legado de Erminio Nasuti
                     </h3>
                   </div>
 
                   <div className="space-y-4">
-                    <p className="text-sm text-[#374151] leading-relaxed">
+                    <p className="text-base md:text-[15px] text-[#374151] leading-relaxed">
                       La inmobiliaria Nasuti nació de la visión y el compromiso
                       de un hombre con valores inquebrantables: el{" "}
                       <span className="text-[#f0782c] font-semibold">
@@ -566,7 +621,7 @@ ${formData.mensaje}`;
                       prestigio de toda la comunidad.
                     </p>
 
-                    <p className="text-sm text-[#374151] leading-relaxed">
+                    <p className="text-base md:text-[15px] text-[#374151] leading-relaxed">
                       Su legado de{" "}
                       <span className="text-[#1F2937] font-semibold">
                         integridad
@@ -587,7 +642,7 @@ ${formData.mensaje}`;
                       mercado.
                     </p>
 
-                    <p className="text-sm text-[#374151] leading-relaxed">
+                    <p className="text-base md:text-[15px] text-[#374151] leading-relaxed">
                       A lo largo de los años, gracias al esfuerzo y la
                       dedicación de ambos, Inmobiliaria Nasuti ha concretado
                       <span className="text-[#f0782c] font-semibold">
@@ -600,7 +655,7 @@ ${formData.mensaje}`;
                       legales correspondientes.
                     </p>
 
-                    <p className="text-sm text-[#374151] leading-relaxed">
+                    <p className="text-base md:text-[15px] text-[#374151] leading-relaxed">
                       Con sólidos cimientos basados en el{" "}
                       <span className="text-[#1F2937] font-semibold">
                         profesionalismo
@@ -622,9 +677,12 @@ ${formData.mensaje}`;
         </section>
 
         {/* Sección de Contacto */}
-        <section id="contacto" className="py-20 bg-[#1F2937] text-white">
+        <section
+          id="contacto"
+          className="py-12 bg-[#1F2937] text-white scroll-mt-20"
+        >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold mb-4">
                 Contáctanos
               </h2>
@@ -666,9 +724,7 @@ ${formData.mensaje}`;
                         </svg>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-lg">
-                          Oficina Principal
-                        </h4>
+                        <h4 className="font-semibold text-lg">Oficina</h4>
                         <p className="text-gray-300">
                           25 de Mayo nro. 347, esquina 1ro. de Mayo
                         </p>
@@ -692,8 +748,9 @@ ${formData.mensaje}`;
                         </svg>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-lg">Teléfono</h4>
+                        <h4 className="font-semibold text-lg">Teléfonos</h4>
                         <p className="text-gray-300">+54 9 3472 52-1436</p>
+                        <p className="text-gray-300">+54 9 3515 91-1866</p>
                       </div>
                     </div>
 
@@ -740,9 +797,11 @@ ${formData.mensaje}`;
                           Horarios de Atención
                         </h4>
                         <p className="text-gray-300">
-                          Lunes a Viernes de 8:30 hs a 12:30 hs
+                          Lunes a Viernes
+                          <br />
+                          De 8:30 hs a 12:30 hs
+                          <br />y de 14:00 hs a 17:00 hs
                         </p>
-                        <p className="text-gray-300">y de 14 hs a 17 hs</p>
                       </div>
                     </div>
                   </div>
@@ -750,10 +809,10 @@ ${formData.mensaje}`;
 
                 {/* Redes sociales */}
                 <div>
-                  <h3 className="text-xl font-bold mb-4 text-[#f0782c]">
-                    Síguenos
-                  </h3>
-                  <div className="flex space-x-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <h3 className="text-xl font-bold text-[#f0782c]">
+                      Síguenos
+                    </h3>
                     <a
                       href="https://www.instagram.com/nasuti_inm/"
                       target="_blank"
@@ -775,7 +834,7 @@ ${formData.mensaje}`;
               {/* Formulario de contacto */}
               <div className="bg-white text-gray-800 p-8 rounded-xl shadow-lg">
                 <h3 className="text-2xl font-bold mb-6 text-[#1F2937]">
-                  Envíanos un Mensaje
+                  Envíanos un mensaje
                 </h3>
                 <form className="space-y-6" onSubmit={handleFormSubmit}>
                   <div>
@@ -791,10 +850,16 @@ ${formData.mensaje}`;
                       name="nombre"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent ${
+                        errors.nombre ? "border-red-500" : "border-gray-300"
+                      }`}
                       placeholder="Tu nombre completo"
-                      required
                     />
+                    {errors.nombre && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.nombre}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -833,10 +898,16 @@ ${formData.mensaje}`;
                       rows={4}
                       value={formData.mensaje}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent ${
+                        errors.mensaje ? "border-red-500" : "border-gray-300"
+                      }`}
                       placeholder="Cuéntanos en qué podemos ayudarte..."
-                      required
                     ></textarea>
+                    {errors.mensaje && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.mensaje}
+                      </p>
+                    )}
                   </div>
 
                   <button
@@ -863,7 +934,7 @@ ${formData.mensaje}`;
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <p className="text-gray-300">
-                © 2025 Nasuti Inmobiliaria. Todos los derechos reservados. | 60
+                © 2026 Nasuti Inmobiliaria. Todos los derechos reservados. | 60
                 años de experiencia en el mercado inmobiliario.
               </p>
             </div>
