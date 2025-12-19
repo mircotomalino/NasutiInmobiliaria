@@ -1,0 +1,44 @@
+{
+  "name": "Nasuti Inmobiliaria - 60 Años de Experiencia",
+  "short_name": "Nasuti Inmobiliaria",
+  "description": "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Casas, departamentos, terrenos y más.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f0782c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/img/logos/LogoNasuti.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/logos/LogoNasuti.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "real estate"],
+  "lang": "es-AR",
+  "dir": "ltr",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Catálogo",
+      "short_name": "Catálogo",
+      "description": "Ver catálogo de propiedades",
+      "url": "/catalogo",
+      "icons": [
+        {
+          "src": "/img/logos/LogoNasuti.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
+
+

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import PropertyFilters from "./components/PropertyFilters";
 import PropertyList from "./components/PropertyList";
+import SEOHead from "./components/SEOHead";
 import {
   Property,
   FilterOptions,
@@ -11,6 +13,8 @@ import {
   GarageType,
 } from "./types";
 import { getApiBase } from "./utils/api";
+import { generateCollectionPageSchema, generateBreadcrumbSchema } from "./utils/schemaMarkup";
+import { Link } from "react-router-dom";
 
 function App() {
   // Hook para manejar parámetros de URL
@@ -38,19 +42,35 @@ function App() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`${API_BASE}/properties`);
+        const url = `${API_BASE}/properties`;
+        console.log("Fetching properties from:", url);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setProperties(data);
         setFilteredProperties(data);
       } catch (error) {
         console.error("Error fetching properties:", error);
+        console.error("API Base URL:", API_BASE);
+        if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+          console.warn(
+            "⚠️ VITE_API_URL no está configurada en producción. " +
+            "Si el backend está en otro dominio (ej: Railway), " +
+            "configura VITE_API_URL en Vercel. " +
+            "Ver PRODUCTION_API_SETUP.md para más detalles."
+          );
+        }
+        setProperties([]);
+        setFilteredProperties([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperties();
-  }, []);
+  }, [API_BASE]);
 
   // Cargar filtros desde URL al montar el componente
   useEffect(() => {
@@ -180,8 +200,67 @@ function App() {
     );
   }
 
+  // Generar schema JSON-LD para CollectionPage
+  const collectionPageSchema = generateCollectionPageSchema();
+
+  // Generar schema JSON-LD para Breadcrumbs
+  const breadcrumbSchema = generateBreadcrumbSchema({
+    items: [
+      { name: "Inicio", url: "https://inmobiliarianasuti.com.ar/" },
+      { name: "Catálogo", url: "https://inmobiliarianasuti.com.ar/catalogo" },
+    ],
+  });
+
   return (
     <div>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Catálogo de Propiedades - Nasuti Inmobiliaria"
+        description="Catálogo completo de propiedades inmobiliarias en Marcos Juárez y la región. Casas, departamentos, terrenos, locales comerciales y más. Encuentra tu propiedad ideal."
+        canonicalUrl="/catalogo"
+        keywords={[
+          "catálogo propiedades",
+          "propiedades Marcos Juárez",
+          "casas en venta",
+          "departamentos",
+          "terrenos",
+          "locales comerciales",
+          "inmobiliaria",
+          "propiedades Córdoba",
+          "venta propiedades",
+          "alquiler propiedades",
+        ]}
+        ogImage="/img/logos/NombreYLogoNasutiInmobiliaria.png"
+      />
+
+      {/* Structured Data JSON-LD */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(collectionPageSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      </Helmet>
+
+      {/* Breadcrumbs visuales */}
+      <nav className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+        <ol className="flex items-center space-x-2 text-sm">
+          <li>
+            <Link
+              to="/"
+              className="text-gray-500 hover:text-[#f0782c] transition-colors"
+            >
+              Inicio
+            </Link>
+          </li>
+          <li className="text-gray-400">/</li>
+          <li className="text-gray-900 font-medium" aria-current="page">
+            Catálogo
+          </li>
+        </ol>
+      </nav>
+
       {/* Contenido principal */}
       <main>
         {/* Filtros */}

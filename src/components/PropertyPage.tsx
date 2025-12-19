@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft,
   MapPin,
@@ -16,6 +17,9 @@ import PropertyMap from "./PropertyMap";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
+import SEOHead from "./SEOHead";
+import { generatePropertySchema, generateBreadcrumbSchema } from "../utils/schemaMarkup";
+import { Link } from "react-router-dom";
 
 const PropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -108,8 +112,142 @@ const PropertyPage: React.FC = () => {
     latitudeFormatted !== null && longitudeFormatted !== null;
   const hasMultipleImages = images.length > 1;
 
+  // Datos para SEO
+  const BASE_URL = "https://inmobiliarianasuti.com.ar";
+  const propertyUrl = `${BASE_URL}/propiedad/${property.id}`;
+  const propertyImage =
+    images.length > 0
+      ? images[0].startsWith("http")
+        ? images[0]
+        : `${BASE_URL}${images[0]}`
+      : property.imageUrl
+        ? property.imageUrl.startsWith("http")
+          ? property.imageUrl
+          : `${BASE_URL}${property.imageUrl}`
+        : `${BASE_URL}/img/default-property.jpg`;
+
+  // Generar título y descripción para SEO
+  const seoTitle = `${property.title} - Nasuti Inmobiliaria`;
+  const seoDescription =
+    property.description && property.description.trim()
+      ? `${property.description.substring(0, 150)}...`
+      : `${property.type.charAt(0).toUpperCase() + property.type.slice(1)} en ${property.city} - ${property.area}m² - $${property.price.toLocaleString("es-AR")}`;
+
+  // Generar keywords dinámicos
+  const seoKeywords = [
+    property.type,
+    property.city,
+    "inmobiliaria",
+    "propiedad",
+    "venta",
+    property.status === "disponible" ? "disponible" : "",
+    property.bedrooms > 0 ? `${property.bedrooms} habitaciones` : "",
+    property.bathrooms > 0 ? `${property.bathrooms} baños` : "",
+    "Nasuti Inmobiliaria",
+  ].filter(Boolean);
+
+  // Generar schema JSON-LD para la propiedad
+  const propertySchema = generatePropertySchema({
+    name: property.title,
+    description: property.description || seoDescription,
+    url: propertyUrl,
+    image: propertyImage,
+    offers: {
+      price: property.price.toString(),
+      priceCurrency: "ARS",
+      availability:
+        property.status === "disponible"
+          ? "https://schema.org/InStock"
+          : property.status === "reservada"
+            ? "https://schema.org/PreOrder"
+            : "https://schema.org/SoldOut",
+      url: propertyUrl,
+    },
+    address: {
+      ...(property.address && { streetAddress: property.address }),
+      addressLocality: property.city,
+      addressRegion: "Córdoba",
+      addressCountry: "AR",
+    },
+    ...(hasValidCoordinates && {
+      geo: {
+        latitude: parseFloat(latitudeFormatted!),
+        longitude: parseFloat(longitudeFormatted!),
+      },
+    }),
+    ...(property.bedrooms > 0 && { numberOfRooms: property.bedrooms }),
+    ...(property.bathrooms > 0 && {
+      numberOfBathroomsTotal: property.bathrooms,
+    }),
+    ...(property.coveredArea && property.coveredArea > 0 && {
+      floorSize: {
+        value: property.coveredArea,
+        unitText: "m²",
+      },
+    }),
+  });
+
+  // Generar schema JSON-LD para Breadcrumbs
+  const breadcrumbSchema = generateBreadcrumbSchema({
+    items: [
+      { name: "Inicio", url: "https://inmobiliarianasuti.com.ar/" },
+      { name: "Catálogo", url: "https://inmobiliarianasuti.com.ar/catalogo" },
+      { name: property.title, url: propertyUrl },
+    ],
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonicalUrl={`/propiedad/${property.id}`}
+        keywords={seoKeywords}
+        ogImage={propertyImage}
+        ogImageAlt={`${property.title} - ${property.type} en ${property.city}`}
+        ogType="product"
+      />
+
+      {/* Structured Data JSON-LD */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(propertySchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      </Helmet>
+
+      {/* Breadcrumbs visuales */}
+      <nav className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+        <div className="max-w-6xl mx-auto">
+          <ol className="flex items-center space-x-2 text-sm">
+            <li>
+              <Link
+                to="/"
+                className="text-gray-500 hover:text-[#f0782c] transition-colors"
+              >
+                Inicio
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <Link
+                to="/catalogo"
+                className="text-gray-500 hover:text-[#f0782c] transition-colors"
+              >
+                Catálogo
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li className="text-gray-900 font-medium truncate max-w-xs" aria-current="page">
+              {property.title}
+            </li>
+          </ol>
+        </div>
+      </nav>
+
       {/* Botón de navegación */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <button

@@ -10,6 +10,13 @@ export default defineConfig({
     open: true,
     // Configuración para manejar rutas de SPA en desarrollo
     historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
     outDir: "dist",

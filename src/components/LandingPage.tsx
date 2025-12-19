@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   MapPin,
   Bed,
@@ -12,6 +13,12 @@ import { Property } from "../types";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
+import SEOHead from "./SEOHead";
+import {
+  generateLocalBusinessSchema,
+  generateRealEstateAgentSchema,
+  generateOrganizationSchema,
+} from "../utils/schemaMarkup";
 
 const LandingPage: React.FC = () => {
   const OWNER_PHONE = "5493515911866";
@@ -41,6 +48,9 @@ const LandingPage: React.FC = () => {
       try {
         // Usar el nuevo endpoint específico para propiedades destacadas
         const response = await fetch(`${API_BASE}/properties/featured`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         // Asegurarse de que data sea un array
@@ -60,7 +70,7 @@ const LandingPage: React.FC = () => {
     };
 
     fetchFeaturedProperties();
-  }, []);
+  }, [API_BASE]);
 
   // Funciones para manejar el formulario de contacto
   const handleInputChange = (
@@ -152,8 +162,107 @@ ${formData.mensaje}`;
     setCurrentSlide(index);
   };
 
+  // Datos para schemas JSON-LD
+  const BASE_URL = "https://inmobiliarianasuti.com.ar";
+
+  const localBusinessSchema = generateLocalBusinessSchema({
+    name: "Nasuti Inmobiliaria",
+    description:
+      "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Más de 750 operaciones concretadas con profesionalismo e integridad.",
+    url: BASE_URL,
+    telephone: "+543472521436",
+    address: {
+      streetAddress: "25 de Mayo nro. 347, esquina 1ro. de Mayo",
+      addressLocality: "Marcos Juárez",
+      addressRegion: "Córdoba",
+      postalCode: "2580",
+      addressCountry: "AR",
+    },
+    image: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    priceRange: "$$",
+  });
+
+  const sergioSchema = generateRealEstateAgentSchema({
+    name: "Sergio Nasuti",
+    jobTitle: "Socio y Gerente",
+    image: `${BASE_URL}/img/institucionales/SergioNasuti.jpg`,
+    worksFor: {
+      name: "Nasuti Inmobiliaria",
+      url: BASE_URL,
+    },
+  });
+
+  const gastonSchema = generateRealEstateAgentSchema({
+    name: "Gastón Durio",
+    jobTitle: "Socio y Gerente",
+    image: `${BASE_URL}/img/institucionales/GastonDurio.jpg`,
+    worksFor: {
+      name: "Nasuti Inmobiliaria",
+      url: BASE_URL,
+    },
+  });
+
+  // Organization Schema (Enhanced)
+  const organizationSchema = generateOrganizationSchema({
+    name: "Nasuti Inmobiliaria",
+    url: BASE_URL,
+    logo: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    description:
+      "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Más de 750 operaciones concretadas con profesionalismo e integridad.",
+    address: {
+      streetAddress: "25 de Mayo nro. 347, esquina 1ro. de Mayo",
+      addressLocality: "Marcos Juárez",
+      addressRegion: "Córdoba",
+      postalCode: "2580",
+      addressCountry: "AR",
+    },
+    contactPoint: {
+      telephone: "+543472521436",
+      contactType: "customer service",
+      areaServed: "AR",
+      availableLanguage: "Spanish",
+    },
+    foundingDate: "1964", // Aproximado - 60 años de experiencia
+  });
+
   return (
     <div>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Nasuti Inmobiliaria - 60 Años de Experiencia en Marcos Juárez"
+        description="Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Casas, departamentos, terrenos y más. Más de 750 operaciones concretadas con profesionalismo e integridad."
+        canonicalUrl="/"
+        keywords={[
+          "inmobiliaria",
+          "propiedades",
+          "casas",
+          "departamentos",
+          "terrenos",
+          "Marcos Juárez",
+          "Córdoba",
+          "venta",
+          "alquiler",
+          "inmobiliaria Nasuti",
+        ]}
+        ogImage="/img/logos/NombreYLogoNasutiInmobiliaria.png"
+      />
+
+      {/* Structured Data JSON-LD */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(localBusinessSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(organizationSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(sergioSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(gastonSchema)}
+        </script>
+      </Helmet>
+
       {/* Esta será la landing page que actualmente está en index.html */}
       <div className="min-h-screen bg-gray-50">
         {/* Header removido: ahora lo provee SiteNavbar dentro del Layout */}
@@ -261,6 +370,8 @@ ${formData.mensaje}`;
                                 }
                                 alt={property.title}
                                 className="w-full h-[19rem] object-cover"
+                                loading="lazy"
+                                decoding="async"
                               />
                               {/* Badges - Responsive */}
                               <div className="absolute top-3 left-3 lg:top-4 lg:left-4 flex flex-col gap-2">
@@ -582,19 +693,16 @@ ${formData.mensaje}`;
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 md:h-[26rem] lg:h-[550px]">
-                <div className="relative h-64 md:h-full">
+              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 min-h-[26rem] lg:h-[550px]">
+                <div className="relative">
                   <img
                     src="/img/institucionales/InmobiliariaLateral1.jpg"
                     alt="Inmobiliaria Nasuti"
-                    className="w-full h-full object-cover md:rounded-l-xl rounded-t-xl md:rounded-t-none"
-                    style={{
-                      objectPosition: "center 10%",
-                    }}
+                    className="w-full h-full object-cover rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
                   />
                 </div>
 
-                <div className="pt-6 pb-8 px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start md:overflow-y-auto">
+                <div className="pt-6 pb-8 px-4 sm:px-6 md:px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start overflow-y-auto">
                   <div className="mb-2">
                     <h3 className="text-[#1F2937] text-3xl md:text-xl lg:text-2xl font-bold mb-1">
                       El Legado de Erminio Nasuti

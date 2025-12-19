@@ -21,6 +21,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           }
           alt={property.title}
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
 
         {/* Badges */}

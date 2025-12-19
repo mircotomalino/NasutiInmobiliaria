@@ -1,0 +1,12 @@
+# robots.txt para Nasuti Inmobiliaria
+# https://inmobiliarianasuti.com.ar
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://inmobiliarianasuti.com.ar/sitemap.xml
+
+
