@@ -58,10 +58,6 @@ const LandingPage: React.FC = () => {
         // Fallback a array vacío si hay error
         setFeaturedProperties([]);
       } finally {
-        // Simular delay para mostrar el loader (solo en desarrollo)
-        if (import.meta.env.DEV) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        }
         setLoading(false);
       }
     };
