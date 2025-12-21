@@ -5,11 +5,12 @@ import {
   Bed,
   Bath,
   Square,
+  Map,
   ChevronLeft,
   ChevronRight,
   Trees,
   Car,
-} from "lucide-react";
+} from "../icons";
 import { Property } from "../types";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
@@ -144,8 +145,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                     property.status === "disponible"
                       ? "status-available"
                       : property.status === "reservada"
-                        ? "status-reserved"
-                        : "status-sold"
+                      ? "status-reserved"
+                      : "status-sold"
                   }`}
                 >
                   {property.status.charAt(0).toUpperCase() +
@@ -159,22 +160,21 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                 <div className="modal-location-text">
                   {property.address && <h5>{property.address}</h5>}
                   <h5>{property.city}</h5>
-                  {property.latitude != null &&
-                    property.longitude != null && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {typeof property.latitude === "number"
-                          ? property.latitude.toFixed(6)
-                          : parseFloat(
-                              String(property.latitude).trim()
-                            ).toFixed(6)}
-                        ,{" "}
-                        {typeof property.longitude === "number"
-                          ? property.longitude.toFixed(6)
-                          : parseFloat(
-                              String(property.longitude).trim()
-                            ).toFixed(6)}
-                      </p>
-                    )}
+                  {property.latitude != null && property.longitude != null && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {typeof property.latitude === "number"
+                        ? property.latitude.toFixed(6)
+                        : parseFloat(String(property.latitude).trim()).toFixed(
+                            6
+                          )}
+                      ,{" "}
+                      {typeof property.longitude === "number"
+                        ? property.longitude.toFixed(6)
+                        : parseFloat(String(property.longitude).trim()).toFixed(
+                            6
+                          )}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -204,7 +204,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({
                     </div>
                   )}
                   <div className="modal-feature">
-                    <Square className="w-5 h-5" />
+                    <Map className="w-5 h-5" />
                     <span>Terreno: {property.area} m²</span>
                   </div>
                   {property.coveredArea && property.coveredArea > 0 && (

@@ -7,18 +7,22 @@ import {
   Bed,
   Bath,
   Square,
+  Map,
   Trees,
   Car,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
+} from "../icons";
 import { Property } from "../types";
 import PropertyMap from "./PropertyMap";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
 import SEOHead from "./SEOHead";
-import { generatePropertySchema, generateBreadcrumbSchema } from "../utils/schemaMarkup";
+import {
+  generatePropertySchema,
+  generateBreadcrumbSchema,
+} from "../utils/schemaMarkup";
 import { Link } from "react-router-dom";
 
 const PropertyPage: React.FC = () => {
@@ -121,17 +125,19 @@ const PropertyPage: React.FC = () => {
         ? images[0]
         : `${BASE_URL}${images[0]}`
       : property.imageUrl
-        ? property.imageUrl.startsWith("http")
-          ? property.imageUrl
-          : `${BASE_URL}${property.imageUrl}`
-        : `${BASE_URL}/img/default-property.jpg`;
+      ? property.imageUrl.startsWith("http")
+        ? property.imageUrl
+        : `${BASE_URL}${property.imageUrl}`
+      : `${BASE_URL}/img/default-property.jpg`;
 
   // Generar título y descripción para SEO
   const seoTitle = `${property.title} - Nasuti Inmobiliaria`;
   const seoDescription =
     property.description && property.description.trim()
       ? `${property.description.substring(0, 150)}...`
-      : `${property.type.charAt(0).toUpperCase() + property.type.slice(1)} en ${property.city} - ${property.area}m² - $${property.price.toLocaleString("es-AR")}`;
+      : `${property.type.charAt(0).toUpperCase() + property.type.slice(1)} en ${
+          property.city
+        } - ${property.area}m² - $${property.price.toLocaleString("es-AR")}`;
 
   // Generar keywords dinámicos
   const seoKeywords = [
@@ -159,8 +165,8 @@ const PropertyPage: React.FC = () => {
         property.status === "disponible"
           ? "https://schema.org/InStock"
           : property.status === "reservada"
-            ? "https://schema.org/PreOrder"
-            : "https://schema.org/SoldOut",
+          ? "https://schema.org/PreOrder"
+          : "https://schema.org/SoldOut",
       url: propertyUrl,
     },
     address: {
@@ -179,12 +185,13 @@ const PropertyPage: React.FC = () => {
     ...(property.bathrooms > 0 && {
       numberOfBathroomsTotal: property.bathrooms,
     }),
-    ...(property.coveredArea && property.coveredArea > 0 && {
-      floorSize: {
-        value: property.coveredArea,
-        unitText: "m²",
-      },
-    }),
+    ...(property.coveredArea &&
+      property.coveredArea > 0 && {
+        floorSize: {
+          value: property.coveredArea,
+          unitText: "m²",
+        },
+      }),
   });
 
   // Generar schema JSON-LD para Breadcrumbs
@@ -220,7 +227,10 @@ const PropertyPage: React.FC = () => {
       </Helmet>
 
       {/* Breadcrumbs visuales */}
-      <nav className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+      <nav
+        className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8"
+        aria-label="Breadcrumb"
+      >
         <div className="max-w-6xl mx-auto">
           <ol className="flex items-center space-x-2 text-sm">
             <li>
@@ -241,7 +251,10 @@ const PropertyPage: React.FC = () => {
               </Link>
             </li>
             <li className="text-gray-400">/</li>
-            <li className="text-gray-900 font-medium truncate max-w-xs" aria-current="page">
+            <li
+              className="text-gray-900 font-medium truncate max-w-xs"
+              aria-current="page"
+            >
               {property.title}
             </li>
           </ol>
@@ -340,15 +353,15 @@ const PropertyPage: React.FC = () => {
                     property.status === "disponible"
                       ? "bg-green-100 text-green-800"
                       : property.status === "reservada"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
                   }`}
                 >
                   {property.status === "disponible"
                     ? "Disponible"
                     : property.status === "reservada"
-                      ? "Reservada"
-                      : "Vendida"}
+                    ? "Reservada"
+                    : "Vendida"}
                 </div>
               </div>
             </div>
@@ -440,7 +453,7 @@ const PropertyPage: React.FC = () => {
                     )}
 
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Square className="w-5 h-5 text-[#f0782c]" />
+                      <Map className="w-5 h-5 text-[#f0782c]" />
                       <div>
                         <p className="font-medium text-gray-900">
                           {property.area} m²

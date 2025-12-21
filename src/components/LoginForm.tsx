@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff, Lock, User, AlertCircle, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Lock, User, AlertCircle, ArrowLeft } from "../icons";
 
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState("");

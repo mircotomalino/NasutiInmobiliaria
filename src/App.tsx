@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import PropertyFilters from "./components/PropertyFilters";
 import PropertyList from "./components/PropertyList";
 import SEOHead from "./components/SEOHead";
+import PropertyLoader from "./components/PropertyLoader";
 import {
   Property,
   FilterOptions,
@@ -13,7 +14,10 @@ import {
   GarageType,
 } from "./types";
 import { getApiBase } from "./utils/api";
-import { generateCollectionPageSchema, generateBreadcrumbSchema } from "./utils/schemaMarkup";
+import {
+  generateCollectionPageSchema,
+  generateBreadcrumbSchema,
+} from "./utils/schemaMarkup";
 import { Link } from "react-router-dom";
 
 function App() {
@@ -57,14 +61,18 @@ function App() {
         if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
           console.warn(
             "⚠️ VITE_API_URL no está configurada en producción. " +
-            "Si el backend está en otro dominio (ej: Railway), " +
-            "configura VITE_API_URL en Vercel. " +
-            "Ver PRODUCTION_API_SETUP.md para más detalles."
+              "Si el backend está en otro dominio (ej: Railway), " +
+              "configura VITE_API_URL en Vercel. " +
+              "Ver PRODUCTION_API_SETUP.md para más detalles."
           );
         }
         setProperties([]);
         setFilteredProperties([]);
       } finally {
+        // Simular delay para mostrar el loader (solo en desarrollo)
+        if (import.meta.env.DEV) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
         setLoading(false);
       }
     };
@@ -193,11 +201,7 @@ function App() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Cargando catálogo...</div>
-      </div>
-    );
+    return <PropertyLoader />;
   }
 
   // Generar schema JSON-LD para CollectionPage
@@ -244,7 +248,10 @@ function App() {
       </Helmet>
 
       {/* Breadcrumbs visuales */}
-      <nav className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+      <nav
+        className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8"
+        aria-label="Breadcrumb"
+      >
         <ol className="flex items-center space-x-2 text-sm">
           <li>
             <Link

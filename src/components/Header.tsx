@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Home } from "lucide-react";
+import { Search, Home } from "../icons";
 
 interface HeaderProps {
   searchTerm: string;

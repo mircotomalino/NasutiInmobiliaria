@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import {
-  MapPin,
-  Bed,
-  Bath,
-  Square,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { MapPin, Bed, Bath, Map, ChevronLeft, ChevronRight } from "../icons";
 import { Property } from "../types";
 import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
@@ -65,6 +58,10 @@ const LandingPage: React.FC = () => {
         // Fallback a array vacío si hay error
         setFeaturedProperties([]);
       } finally {
+        // Simular delay para mostrar el loader (solo en desarrollo)
+        if (import.meta.env.DEV) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
         setLoading(false);
       }
     };
@@ -468,7 +465,7 @@ ${formData.mensaje}`;
                                   </div>
                                 )}
                                 <div className="bg-gray-50 p-2 sm:p-3 rounded-lg text-center">
-                                  <Square className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 mx-auto mb-1" />
+                                  <Map className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 mx-auto mb-1" />
                                   <div className="text-base sm:text-lg font-bold text-[#1F2937]">
                                     {property.area}
                                   </div>

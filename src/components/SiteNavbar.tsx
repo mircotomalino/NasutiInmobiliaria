@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X } from "../icons";
 
 const SiteNavbar: React.FC = () => {
   const { pathname, hash } = useLocation();

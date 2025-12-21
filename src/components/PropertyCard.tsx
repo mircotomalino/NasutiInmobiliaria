@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Bed, Bath, Square, Home, Trees, Car } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Map, Home, Trees, Car } from "../icons";
 import { Property } from "../types";
 import { getPropertyTypeIconSmall } from "../utils/propertyUtils";
 
@@ -37,8 +37,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               property.status === "disponible"
                 ? "status-available"
                 : property.status === "reservada"
-                  ? "status-reserved"
-                  : "status-sold"
+                ? "status-reserved"
+                : "status-sold"
             }`}
           >
             {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
@@ -110,13 +110,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           )}
           {property.area > 0 && (
             <div className="property-feature flex items-center gap-1 text-gray-600">
-              <Square className="w-3 h-3" />
+              <Map className="w-3 h-3" />
               <span>Terreno: {property.area}m²</span>
             </div>
           )}
           {property.area === 0 && (
             <div className="property-feature flex items-center gap-1 text-gray-400">
-              <Square className="w-3 h-3" />
+              <Map className="w-3 h-3" />
               <span>Terreno: 0m²</span>
             </div>
           )}

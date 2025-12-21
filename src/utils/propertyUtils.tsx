@@ -5,22 +5,21 @@ import {
   Store,
   Briefcase,
   TreePine,
-  Square,
+  Map,
   Warehouse,
   Car,
   Wheat,
-  LucideIcon,
-} from "lucide-react";
+} from "../icons";
 import { PropertyType } from "../types";
 import React from "react";
 
 export const PROPERTY_TYPE_CONFIG: Record<
   PropertyType,
-  { label: string; icon: LucideIcon }
+  { label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }
 > = {
   casa: { label: "Casa", icon: Home },
   departamento: { label: "Departamento", icon: Building },
-  terreno: { label: "Terreno", icon: Square },
+  terreno: { label: "Terreno", icon: Map },
   oficina: { label: "Oficina", icon: Briefcase },
   local: { label: "Local", icon: Store },
   quinta: { label: "Quinta", icon: TreePine },

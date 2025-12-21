@@ -9,7 +9,7 @@ import {
   ExternalLink,
   Star,
   LogOut,
-} from "lucide-react";
+} from "../icons";
 import {
   propertyStatuses,
   cities,

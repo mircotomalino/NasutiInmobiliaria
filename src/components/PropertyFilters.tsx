@@ -1,5 +1,5 @@
 import React from "react";
-import { Filter, RotateCcw } from "lucide-react";
+import { Filter, RotateCcw } from "../icons";
 import { FilterOptions } from "../types";
 import {
   propertyStatuses,

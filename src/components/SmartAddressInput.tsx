@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, AlertCircle } from "lucide-react";
+import { MapPin, AlertCircle } from "../icons";
 
 interface SmartAddressInputProps {
   value: string;

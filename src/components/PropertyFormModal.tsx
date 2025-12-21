@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { X, Save, ImagePlus, Trash2, Loader2 } from "lucide-react";
+import { X, Save, ImagePlus, Trash2, Loader2 } from "../icons";
 import SmartAddressInput from "./SmartAddressInput";
 import ConfirmDialog from "./ConfirmDialog";
 import {
