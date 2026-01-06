@@ -24,12 +24,10 @@ const LandingPage: React.FC = () => {
   // Estados para el formulario de contacto
   const [formData, setFormData] = useState({
     nombre: "",
-    asunto: "",
     mensaje: "",
   });
   const [errors, setErrors] = useState({
     nombre: "",
-    asunto: "",
     mensaje: "",
   });
 
@@ -91,7 +89,6 @@ const LandingPage: React.FC = () => {
     // Validar formulario
     const newErrors = {
       nombre: "",
-      asunto: "",
       mensaje: "",
     };
 
@@ -115,7 +112,6 @@ const LandingPage: React.FC = () => {
 
     // Construir el mensaje para WhatsApp
     const message = `Hola Nasuti! Mi nombre es: ${formData.nombre}
-Te hablo para ${formData.asunto || "Consulta general"}
 ${formData.mensaje}`;
 
     // Codificar el mensaje para URL
@@ -130,12 +126,10 @@ ${formData.mensaje}`;
     // Limpiar el formulario después del envío
     setFormData({
       nombre: "",
-      asunto: "",
       mensaje: "",
     });
     setErrors({
       nombre: "",
-      asunto: "",
       mensaje: "",
     });
   };
@@ -686,19 +680,19 @@ ${formData.mensaje}`;
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid md:grid-cols-[2fr_3fr] gap-4 lg:gap-6 min-h-[26rem] lg:h-[550px]">
-                <div className="relative">
+              <div className="grid md:grid-cols-[1fr_3fr] gap-4 lg:gap-6 min-h-[20rem] lg:min-h-[400px]">
+                <div className="relative flex items-center justify-center h-80 md:h-auto">
                   <img
-                    src="/img/institucionales/InmobiliariaLateral1.jpg"
-                    alt="Inmobiliaria Nasuti"
-                    className="w-full h-full object-cover rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
+                    src="/img/institucionales/Erminio Nasuti.png"
+                    alt="Erminio Nasuti - Fundador de Nasuti Inmobiliaria"
+                    className="w-full h-full object-cover object-top md:object-contain rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
                   />
                 </div>
 
-                <div className="pt-6 pb-8 px-4 sm:px-6 md:px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start overflow-y-auto">
+                <div className="pt-6 pb-8 px-4 sm:px-6 md:px-8 lg:pt-8 lg:pb-12 lg:px-12 flex flex-col justify-start">
                   <div className="mb-2">
-                    <h3 className="text-[#1F2937] text-3xl md:text-xl lg:text-2xl font-bold mb-1">
-                      El Legado de Erminio Nasuti
+                    <h3 className="text-[#1F2937] text-2xl md:text-xl lg:text-2xl font-bold mb-1">
+                      El legado de Erminio Nasuti
                     </h3>
                   </div>
 
@@ -961,29 +955,6 @@ ${formData.mensaje}`;
                         {errors.nombre}
                       </p>
                     )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="asunto"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Asunto
-                    </label>
-                    <select
-                      id="asunto"
-                      name="asunto"
-                      value={formData.asunto}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f0782c] focus:border-transparent"
-                    >
-                      <option value="">Selecciona un asunto</option>
-                      <option value="compra">Comprar propiedad</option>
-                      <option value="venta">Vender propiedad</option>
-                      <option value="alquiler">Alquilar propiedad</option>
-                      <option value="tasacion">Tasación</option>
-                      <option value="consulta">Consulta general</option>
-                    </select>
                   </div>
 
                   <div>
