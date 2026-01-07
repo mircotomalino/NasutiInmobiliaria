@@ -680,12 +680,12 @@ ${formData.mensaje}`;
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid md:grid-cols-[1fr_3fr] gap-4 lg:gap-6 min-h-[20rem] lg:min-h-[400px]">
-                <div className="relative flex items-center justify-center h-80 md:h-auto">
+              <div className="grid md:grid-cols-[1fr_3fr] gap-4 lg:gap-6">
+                <div className="relative flex items-center justify-center h-96 md:h-[500px] overflow-hidden">
                   <img
-                    src="/img/institucionales/Erminio Nasuti.png"
+                    src="/img/institucionales/ErminioNasuti2.jpg"
                     alt="Erminio Nasuti - Fundador de Nasuti Inmobiliaria"
-                    className="w-full h-full object-cover object-top md:object-contain rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
+                    className="w-full h-full object-cover object-[center_25%] md:object-bottom rounded-l-xl md:rounded-l-xl rounded-t-xl md:rounded-t-none"
                   />
                 </div>
 
