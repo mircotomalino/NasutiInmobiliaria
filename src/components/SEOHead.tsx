@@ -13,7 +13,7 @@ interface SEOHeadProps {
 }
 
 const BASE_URL = "https://inmobiliarianasuti.com.ar";
-const DEFAULT_OG_IMAGE = `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`;
+const DEFAULT_OG_IMAGE = `${BASE_URL}/img/logos/Logo.png`;
 
 const SEOHead: React.FC<SEOHeadProps> = ({
   title,

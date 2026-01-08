@@ -230,7 +230,7 @@ function App() {
           "venta propiedades",
           "alquiler propiedades",
         ]}
-        ogImage="/img/logos/NombreYLogoNasutiInmobiliaria.png"
+        ogImage="/img/logos/Logo.png"
       />
 
       {/* Structured Data JSON-LD */}

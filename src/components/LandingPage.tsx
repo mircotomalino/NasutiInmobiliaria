@@ -165,7 +165,7 @@ ${formData.mensaje}`;
       postalCode: "2580",
       addressCountry: "AR",
     },
-    image: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    image: `${BASE_URL}/img/logos/Logo.png`,
     priceRange: "$$",
   });
 
@@ -193,7 +193,7 @@ ${formData.mensaje}`;
   const organizationSchema = generateOrganizationSchema({
     name: "Nasuti Inmobiliaria",
     url: BASE_URL,
-    logo: `${BASE_URL}/img/logos/NombreYLogoNasutiInmobiliaria.png`,
+    logo: `${BASE_URL}/img/logos/Logo.png`,
     description:
       "Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Más de 750 operaciones concretadas con profesionalismo e integridad.",
     address: {
@@ -231,7 +231,7 @@ ${formData.mensaje}`;
           "alquiler",
           "inmobiliaria Nasuti",
         ]}
-        ogImage="/img/logos/NombreYLogoNasutiInmobiliaria.png"
+        ogImage="/img/logos/Logo.png"
       />
 
       {/* Structured Data JSON-LD */}
