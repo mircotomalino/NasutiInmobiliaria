@@ -230,10 +230,10 @@ function App() {
           "venta propiedades",
           "alquiler propiedades",
         ]}
-        ogImage="/img/logos/Logo.png"
+        ogImage="/img/logos/logo_naranja.png"
       />
 
-      {/* Structured Data JSON-LD */}
+      {/* Structured Data JSON-LD (solo para SEO, no visual) */}
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify(collectionPageSchema)}
@@ -242,27 +242,6 @@ function App() {
           {JSON.stringify(breadcrumbSchema)}
         </script>
       </Helmet>
-
-      {/* Breadcrumbs visuales */}
-      <nav
-        className="bg-gray-50 py-3 px-4 sm:px-6 lg:px-8"
-        aria-label="Breadcrumb"
-      >
-        <ol className="flex items-center space-x-2 text-sm">
-          <li>
-            <Link
-              to="/"
-              className="text-gray-500 hover:text-[#f0782c] transition-colors"
-            >
-              Inicio
-            </Link>
-          </li>
-          <li className="text-gray-400">/</li>
-          <li className="text-gray-900 font-medium" aria-current="page">
-            Catálogo
-          </li>
-        </ol>
-      </nav>
 
       {/* Contenido principal */}
       <main>

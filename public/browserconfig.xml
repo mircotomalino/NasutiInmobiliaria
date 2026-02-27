@@ -2,9 +2,9 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="/img/logos/LogoNasuti.png"/>
-      <square150x150logo src="/img/logos/LogoNasuti.png"/>
-      <square310x310logo src="/img/logos/LogoNasuti.png"/>
+      <square70x70logo src="/img/logos/logo_naranja.png"/>
+      <square150x150logo src="/img/logos/logo_naranja.png"/>
+      <square310x310logo src="/img/logos/logo_naranja.png"/>
       <TileColor>#f0782c</TileColor>
     </tile>
   </msapplication>

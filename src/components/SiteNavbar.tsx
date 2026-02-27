@@ -79,19 +79,18 @@ const SiteNavbar: React.FC = () => {
   }, [hash, pathname]);
 
   return (
-    <header className="bg-[#f0782c] shadow-sm sticky top-0 z-50">
+    <header className="bg-[#f0782c] shadow-sm sticky top-0 z-50 overflow-visible">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo - Clickeable */}
+        <div className="flex justify-between items-center h-24 overflow-visible">
           <div
-            className="logo-container cursor-pointer hover:opacity-80 transition-opacity flex items-center"
+            className="logo-container cursor-pointer hover:opacity-80 transition-opacity flex items-center overflow-visible"
             onClick={() => {
               navigate("/");
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <img
-              src="/img/logos/LogoNasuti.png"
+              src="/img/logos/logo_blanco_horizontal.png"
               alt="Nasuti Inmobiliaria Logo"
               className="h-16 w-auto"
             />
