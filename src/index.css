@@ -945,3 +945,64 @@ main {
   max-width: 24rem;
   margin: 0 auto;
 }
+
+/* Animación de entrada para las cards de "Cómo trabajamos" */
+@keyframes howWeWorkFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-how-we-work {
+  animation: howWeWorkFadeIn 0.5s ease-out forwards;
+}
+
+/* Botones CTA principales (landing) */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  background-color: #f0782c;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 16px 40px rgba(240, 120, 44, 0.35);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-cta:hover {
+  background-color: #e0661d;
+  box-shadow: 0 20px 55px rgba(240, 120, 44, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-cta--outline {
+  background-color: transparent;
+  color: #f0782c;
+  border: 2px solid #f0782c;
+  box-shadow: none;
+}
+
+.btn-cta--outline:hover {
+  background-color: #f0782c;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .btn-cta {
+    font-size: 1rem;
+  }
+}
+

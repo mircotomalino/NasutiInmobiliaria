@@ -51,4 +51,5 @@ export {
   EyeOff,
   Lock,
   User,
+  Megaphone,
 } from "lucide-react";

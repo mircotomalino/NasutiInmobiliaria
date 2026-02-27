@@ -7,6 +7,7 @@ import { handlePropertyWhatsAppContact } from "../services/whatsapp";
 import { getPropertyTypeIcon } from "../utils/propertyUtils";
 import { getApiBase } from "../utils/api";
 import SEOHead from "./SEOHead";
+import HowWeWorkSection from "./HowWeWorkSection";
 import {
   generateLocalBusinessSchema,
   generateRealEstateAgentSchema,
@@ -216,8 +217,8 @@ ${formData.mensaje}`;
     <div>
       {/* SEO Meta Tags */}
       <SEOHead
-        title="Nasuti Inmobiliaria - 60 Años de Experiencia en Marcos Juárez"
-        description="Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Casas, departamentos, terrenos y más. Más de 750 operaciones concretadas con profesionalismo e integridad."
+        title="Nasuti Inmobiliaria - 60 Años de Experiencia"
+        description="Inmobiliaria con más de 60 años de trayectoria en Marcos Juárez y la región. Casas, departamentos, terrenos y más, con más de 750 operaciones concretadas."
         canonicalUrl="/"
         keywords={[
           "inmobiliaria",
@@ -270,18 +271,18 @@ ${formData.mensaje}`;
                   servicio personalizado y profesional para encontrar la
                   propiedad ideal para usted.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <a
-                    href="/catalogo"
-                    className="bg-[#f0782c] hover:bg-black text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center"
+                    href="#como-trabajamos"
+                    className="btn-cta"
                   >
-                    Ver Propiedades
+                    Publica tu propiedad con nosotros
                   </a>
                   <a
-                    href="#contacto"
-                    className="border-2 border-[#f0782c] text-[#f0782c] hover:bg-black hover:text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center"
+                    href="/catalogo"
+                    className="btn-cta btn-cta--outline"
                   >
-                    Contactar
+                    Ver Propiedades
                   </a>
                 </div>
               </div>
@@ -296,6 +297,9 @@ ${formData.mensaje}`;
             </div>
           </div>
         </section>
+
+        {/* Sección Cómo trabajamos */}
+        <HowWeWorkSection />
 
         {/* Sección Propiedades Destacadas */}
         <section className="py-12 bg-gray-100">
@@ -325,7 +329,7 @@ ${formData.mensaje}`;
                   </div>
                   <a
                     href="#contacto"
-                    className="inline-block bg-[#f0782c] hover:bg-[#e06a1f] text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-lg"
+                    className="btn-cta"
                   >
                     Contactar Ahora
                   </a>
@@ -469,7 +473,7 @@ ${formData.mensaje}`;
                               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                 <Link
                                   to={`/propiedad/${property.id}`}
-                                  className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-200 text-center text-sm sm:text-base shadow-md hover:shadow-lg"
+                                  className="btn-cta flex-1 text-sm sm:text-base"
                                 >
                                   Ver Detalles
                                 </Link>
@@ -477,7 +481,7 @@ ${formData.mensaje}`;
                                   onClick={() =>
                                     handlePropertyWhatsAppContact(property)
                                   }
-                                  className="flex-1 bg-[#f0782c] hover:bg-[#e06a1f] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-200 text-center text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                                  className="btn-cta flex-1 text-sm sm:text-base"
                                 >
                                   <svg
                                     className="w-4 h-4 sm:w-5 sm:h-5"
@@ -536,7 +540,7 @@ ${formData.mensaje}`;
                 <div className="text-center mt-8 sm:mt-12">
                   <a
                     href="/catalogo"
-                    className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-black text-white font-bold py-3 px-6 sm:py-4 sm:px-10 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
+                    className="btn-cta"
                   >
                     <span className="hidden sm:inline">
                       Ver todas las propiedades
@@ -984,7 +988,7 @@ ${formData.mensaje}`;
 
                   <button
                     type="submit"
-                    className="w-full bg-[#f0782c] hover:bg-black text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="btn-cta w-full"
                   >
                     <svg
                       className="w-5 h-5"

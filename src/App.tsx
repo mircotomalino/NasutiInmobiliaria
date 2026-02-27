@@ -215,7 +215,7 @@ function App() {
       {/* SEO Meta Tags */}
       <SEOHead
         title="Catálogo de Propiedades - Nasuti Inmobiliaria"
-        description="Catálogo completo de propiedades inmobiliarias en Marcos Juárez y la región. Casas, departamentos, terrenos, locales comerciales y más. Encuentra tu propiedad ideal."
+        description="Catálogo de propiedades en Marcos Juárez y la región. Casas, departamentos, terrenos y locales comerciales para comprar o alquilar."
         canonicalUrl="/catalogo"
         keywords={[
           "catálogo propiedades",

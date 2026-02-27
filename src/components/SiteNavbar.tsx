@@ -15,13 +15,14 @@ const SiteNavbar: React.FC = () => {
     pathname === "/" && (!hash || hash === "" || hash === "#inicio");
   const isCatalogo =
     pathname.startsWith("/catalogo") || pathname.startsWith("/propiedad");
+  const isComoTrabajamos = pathname === "/" && hash === "#como-trabajamos";
   const isQuienes = pathname === "/" && hash === "#quienes-somos";
   const isTrayectoria = pathname === "/" && hash === "#nuestra-trayectoria";
   const isContacto = pathname === "/" && hash === "#contacto";
 
   const linkBase =
-    "text-white hover:text-gray-100 transition-all duration-200 px-3 py-1.5 rounded-lg";
-  const activeMods = "text-white font-semibold bg-white/20 backdrop-blur-sm";
+    "text-white font-medium hover:text-gray-100 transition-all duration-200 px-2 py-1.5 rounded-lg";
+  const activeMods = "text-white font-bold bg-white/20 backdrop-blur-sm";
 
   const classes = (active: boolean) =>
     `${linkBase} ${active ? activeMods : ""}`;
@@ -98,7 +99,7 @@ const SiteNavbar: React.FC = () => {
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
-            <nav className="hidden md:flex space-x-4">
+            <nav className="hidden md:flex space-x-2">
               <NavLink
                 to="/"
                 className={classes(isInicio)}
@@ -112,6 +113,13 @@ const SiteNavbar: React.FC = () => {
               <NavLink to="/catalogo" className={classes(isCatalogo)}>
                 Propiedades
               </NavLink>
+              <a
+                href="/#como-trabajamos"
+                className={classes(isComoTrabajamos)}
+                onClick={e => handleSectionClick(e, "#como-trabajamos")}
+              >
+                Cómo trabajamos
+              </a>
               <a
                 href="/#quienes-somos"
                 className={classes(isQuienes)}
@@ -160,7 +168,7 @@ const SiteNavbar: React.FC = () => {
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <nav className="px-4 pt-2 pb-4 space-y-3 bg-[#f0782c] border-t border-[#e06a1f]">
+          <nav className="px-4 pt-2 pb-4 space-y-1 bg-[#f0782c] border-t border-[#e06a1f]">
             <NavLink
               to="/"
               className={`block py-2 px-4 rounded-lg ${classes(isInicio)}`}
@@ -178,6 +186,13 @@ const SiteNavbar: React.FC = () => {
             >
               Propiedades
             </NavLink>
+            <a
+              href="/#como-trabajamos"
+              className={`block py-2 px-4 rounded-lg ${classes(isComoTrabajamos)}`}
+              onClick={e => handleSectionClick(e, "#como-trabajamos")}
+            >
+              Cómo trabajamos
+            </a>
             <a
               href="/#quienes-somos"
               className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
