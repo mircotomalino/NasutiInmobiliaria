@@ -18,7 +18,6 @@ import {
   generateCollectionPageSchema,
   generateBreadcrumbSchema,
 } from "./utils/schemaMarkup";
-import { Link } from "react-router-dom";
 
 function App() {
   // Hook para manejar parámetros de URL
