@@ -10,6 +10,20 @@ export const generateWhatsAppUrl = (message: string): string => {
   return `https://wa.me/${OWNER_PHONE}?text=${encodedMessage}`;
 };
 
+// Message for "sell my property" (HowWeWorkSection, contact section CTA vender)
+export const CTA_SELL_PROPERTY_MESSAGE =
+  "Hola! Quiero vender mi propiedad. ¿Coordinamos una visita?";
+
+export const getWhatsAppSellPropertyUrl = (): string =>
+  generateWhatsAppUrl(CTA_SELL_PROPERTY_MESSAGE);
+
+// Message for generic contact (floating button - "solo apretaron WhatsApp")
+export const CTA_GENERAL_CONTACT_MESSAGE =
+  "Hola! Quisiera hacer una consulta con Nasuti.";
+
+export const getWhatsAppGeneralContactUrl = (): string =>
+  generateWhatsAppUrl(CTA_GENERAL_CONTACT_MESSAGE);
+
 // Función para abrir WhatsApp con mensaje
 export const openWhatsApp = (message: string): void => {
   const url = generateWhatsAppUrl(message);
@@ -32,7 +46,5 @@ export const handlePropertyWhatsAppContact = (property: Property): void => {
 
 // Función para manejar contacto general por WhatsApp
 export const handleGeneralWhatsAppContact = (): void => {
-  const message =
-    "Hola! Me interesa conocer más sobre las propiedades disponibles. ¿Podrías brindarme información?";
-  openWhatsApp(message);
+  openWhatsApp(CTA_GENERAL_CONTACT_MESSAGE);
 };

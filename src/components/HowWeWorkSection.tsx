@@ -1,5 +1,6 @@
 import React from "react";
 import { Home, Briefcase, Navigation, User, Megaphone } from "../icons";
+import { getWhatsAppSellPropertyUrl } from "../services/whatsapp";
 import HowWeWorkCard from "./HowWeWorkCard";
 
 type HowWeWorkStep = {
@@ -41,18 +42,15 @@ const steps: HowWeWorkStep[] = [
   },
 ];
 
-const CTA_WHATSAPP_MESSAGE =
-  "Hola! Quiero vender mi propiedad. ¿Coordinamos una visita?";
-const CTA_WHATSAPP_URL = `https://wa.me/5493515911866?text=${encodeURIComponent(CTA_WHATSAPP_MESSAGE)}`;
-
 const HowWeWorkSection: React.FC = () => {
   return (
-    <section id="como-trabajamos" className="py-12 bg-gray-50 scroll-mt-20">
+    <section id="como-trabajamos" className="min-h-[calc(100vh-6rem)] py-12 bg-gray-50 scroll-mt-20 flex flex-col justify-center">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1F2937] mb-4">
             Cómo trabajamos
           </h2>
+          <div className="w-24 h-1 bg-[#f0782c] mx-auto rounded-full mb-4" />
           <p className="text-lg text-[#4B5563] max-w-2xl mx-auto mb-4">
             Publicar tu propiedad con nosotros es simple y transparente.
           </p>
@@ -75,7 +73,7 @@ const HowWeWorkSection: React.FC = () => {
 
           <div className="mt-10 flex justify-center">
             <a
-              href={CTA_WHATSAPP_URL}
+              href={getWhatsAppSellPropertyUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-cta"

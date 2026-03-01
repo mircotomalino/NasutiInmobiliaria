@@ -2,23 +2,31 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "../icons";
 
+const SECTION_IDS = [
+  "inicio",
+  "como-trabajamos",
+  "quienes-somos",
+  "nuestra-trayectoria",
+  "contacto",
+] as const;
+
 const SiteNavbar: React.FC = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
-  // Detectar si estamos en la página de login/admin
   const isLoginPage = pathname === "/admin";
+  const isOnHome = pathname === "/";
 
-  // Inicio está activo cuando estamos en "/" sin hash o con hash "#inicio"
-  const isInicio =
-    pathname === "/" && (!hash || hash === "" || hash === "#inicio");
+  const resolvedSection = isOnHome ? (activeSection || "inicio") : null;
+  const isInicio = resolvedSection === "inicio";
   const isCatalogo =
     pathname.startsWith("/catalogo") || pathname.startsWith("/propiedad");
-  const isComoTrabajamos = pathname === "/" && hash === "#como-trabajamos";
-  const isQuienes = pathname === "/" && hash === "#quienes-somos";
-  const isTrayectoria = pathname === "/" && hash === "#nuestra-trayectoria";
-  const isContacto = pathname === "/" && hash === "#contacto";
+  const isComoTrabajamos = resolvedSection === "como-trabajamos";
+  const isQuienes = resolvedSection === "quienes-somos";
+  const isTrayectoria = resolvedSection === "nuestra-trayectoria";
+  const isContacto = resolvedSection === "contacto";
 
   const linkBase =
     "text-white font-medium hover:text-gray-100 transition-all duration-200 px-2 py-1.5 rounded-lg";
@@ -48,36 +56,53 @@ const SiteNavbar: React.FC = () => {
     }
   };
 
-  // Manejar clic en enlaces de sección
   const handleSectionClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    hash: string
+    sectionId: string
   ) => {
     e.preventDefault();
     handleLinkClick();
 
-    // Si estamos en otra página, navegar a la página principal con el hash
     if (pathname !== "/") {
-      window.location.href = `/${hash}`;
+      navigate("/", { state: { scrollTo: sectionId } });
     } else {
-      // Si ya estamos en la página principal, hacer scroll primero (con animación suave)
-      scrollToSection(hash);
-      // Actualizar el hash usando navigate para que React Router lo detecte sin interrumpir la animación
-      setTimeout(() => {
-        navigate(hash, { replace: true });
-      }, 50);
+      scrollToSection(`#${sectionId}`);
     }
   };
 
-  // Manejar scroll cuando la página carga con un hash en la URL
+  // Scroll to section when landing on home with state.scrollTo (e.g. from menu on another page)
   useEffect(() => {
-    if (hash && pathname === "/") {
-      // Delay para asegurar que el DOM esté completamente renderizado
-      setTimeout(() => {
-        scrollToSection(hash);
-      }, 500);
-    }
-  }, [hash, pathname]);
+    const scrollTo = state && typeof state === "object" && "scrollTo" in state ? (state as { scrollTo: string }).scrollTo : null;
+    if (!scrollTo || !isOnHome) return;
+    const id = setTimeout(() => {
+      scrollToSection(`#${scrollTo}`);
+      navigate(".", { replace: true, state: {} });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [isOnHome, state, navigate]);
+
+  // Detect which section is in view on scroll (home only)
+  useEffect(() => {
+    if (!isOnHome) return;
+
+    const HEADER_OFFSET = 120;
+
+    const updateActiveSection = () => {
+      // Section that contains the line just below the header is active; else last section that has passed that line
+      let current: string = SECTION_IDS[0];
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= HEADER_OFFSET) current = id;
+      }
+      setActiveSection(current);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    return () => window.removeEventListener("scroll", updateActiveSection);
+  }, [isOnHome]);
 
   return (
     <header className="bg-[#f0782c] shadow-sm sticky top-0 z-50 overflow-visible">
@@ -99,48 +124,55 @@ const SiteNavbar: React.FC = () => {
 
           {/* Navegación desktop - Ocultar en página de login */}
           {!isLoginPage && (
-            <nav className="hidden md:flex space-x-2">
+            <nav className="hidden md:flex items-center gap-1">
               <NavLink
                 to="/"
                 className={classes(isInicio)}
                 onClick={() => {
-                  // Desplazar al tope siempre que se haga click en Inicio
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
                 Inicio
               </NavLink>
-              <NavLink to="/catalogo" className={classes(isCatalogo)}>
-                Propiedades
-              </NavLink>
               <a
-                href="/#como-trabajamos"
+                href="/"
                 className={classes(isComoTrabajamos)}
-                onClick={e => handleSectionClick(e, "#como-trabajamos")}
+                onClick={e => handleSectionClick(e, "como-trabajamos")}
               >
                 Cómo trabajamos
               </a>
               <a
-                href="/#quienes-somos"
+                href="/"
                 className={classes(isQuienes)}
-                onClick={e => handleSectionClick(e, "#quienes-somos")}
+                onClick={e => handleSectionClick(e, "quienes-somos")}
               >
-                Quiénes Somos
+                Quiénes somos
               </a>
               <a
-                href="/#nuestra-trayectoria"
+                href="/"
                 className={classes(isTrayectoria)}
-                onClick={e => handleSectionClick(e, "#nuestra-trayectoria")}
+                onClick={e => handleSectionClick(e, "nuestra-trayectoria")}
               >
-                Nuestra Trayectoria
+                Trayectoria
               </a>
               <a
-                href="/#contacto"
+                href="/"
                 className={classes(isContacto)}
-                onClick={e => handleSectionClick(e, "#contacto")}
+                onClick={e => handleSectionClick(e, "contacto")}
               >
                 Contacto
               </a>
+              <span className="mx-2 h-5 w-px bg-white/40" aria-hidden />
+              <NavLink
+                to="/catalogo"
+                className={`rounded-lg px-3 py-1.5 font-bold transition-all duration-200 ${
+                  isCatalogo
+                    ? "bg-white text-[#f0782c]"
+                    : "bg-white/90 text-[#f0782c] hover:bg-white"
+                }`}
+              >
+                Propiedades
+              </NavLink>
             </nav>
           )}
 
@@ -179,41 +211,44 @@ const SiteNavbar: React.FC = () => {
             >
               Inicio
             </NavLink>
-            <NavLink
-              to="/catalogo"
-              className={`block py-2 px-4 rounded-lg ${classes(isCatalogo)}`}
-              onClick={handleLinkClick}
-            >
-              Propiedades
-            </NavLink>
             <a
-              href="/#como-trabajamos"
+              href="/"
               className={`block py-2 px-4 rounded-lg ${classes(isComoTrabajamos)}`}
-              onClick={e => handleSectionClick(e, "#como-trabajamos")}
+              onClick={e => handleSectionClick(e, "como-trabajamos")}
             >
               Cómo trabajamos
             </a>
             <a
-              href="/#quienes-somos"
+              href="/"
               className={`block py-2 px-4 rounded-lg ${classes(isQuienes)}`}
-              onClick={e => handleSectionClick(e, "#quienes-somos")}
+              onClick={e => handleSectionClick(e, "quienes-somos")}
             >
               Quiénes Somos
             </a>
             <a
-              href="/#nuestra-trayectoria"
+              href="/"
               className={`block py-2 px-4 rounded-lg ${classes(isTrayectoria)}`}
-              onClick={e => handleSectionClick(e, "#nuestra-trayectoria")}
+              onClick={e => handleSectionClick(e, "nuestra-trayectoria")}
             >
-              Nuestra Trayectoria
+              Nuestra trayectoria
             </a>
             <a
-              href="/#contacto"
+              href="/"
               className={`block py-2 px-4 rounded-lg ${classes(isContacto)}`}
-              onClick={e => handleSectionClick(e, "#contacto")}
+              onClick={e => handleSectionClick(e, "contacto")}
             >
               Contacto
             </a>
+            <div className="my-2 border-t border-white/30" />
+            <NavLink
+              to="/catalogo"
+              className={`block py-2.5 px-4 rounded-lg font-bold ${
+                isCatalogo ? "bg-white text-[#f0782c]" : "bg-white/90 text-[#f0782c]"
+              }`}
+              onClick={handleLinkClick}
+            >
+              Propiedades
+            </NavLink>
           </nav>
         </div>
       )}

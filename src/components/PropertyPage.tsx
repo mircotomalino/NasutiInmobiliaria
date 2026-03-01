@@ -508,7 +508,7 @@ const PropertyPage: React.FC = () => {
                     ¿Te interesa esta propiedad?
                   </h3>
                   <p className="mb-4 text-orange-100">
-                    Contáctanos para más información, precios y para coordinar
+                    Contactanos para más información, precios y para coordinar
                     una visita.
                   </p>
                   <button
